@@ -80,8 +80,9 @@ export function theme() {
         hint: textHint
       },
       background: {
-        paper: paper,
-        default: background
+        //paper: paper,
+        //default: background
+        default: '##4A4A4A'
       }
     },
     typography: {

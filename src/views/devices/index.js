@@ -1,88 +1,73 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardContent, Divider, Grid, Typography, Button, TextField, List, ListItem, ListItemText, CircularProgress, IconButton } from '@mui/material';
+import { Card, CardHeader, CardContent, Divider, Grid, Typography, Button, ListItem, CircularProgress, IconButton, Chip } from '@mui/material';
 import Breadcrumb from 'component/Breadcrumb';
 import { gridSpacing } from 'config.js';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+
+const mockDevices = [
+  { id: 1, name: 'Device 1', ipAddress: '192.168.1.1', type: 'PC', connected: true, sdkInstalled: true },
+  { id: 2, name: 'Device 2', ipAddress: '192.168.1.2', type: 'Phone', connected: true, sdkInstalled: true },
+  { id: 3, name: 'Device 3', ipAddress: '192.168.1.3', type: 'Tablet', connected: true, sdkInstalled: true }
+];
 
 const DeviceManagement = () => {
   const [devices, setDevices] = useState([]);
   const [scanning, setScanning] = useState(false);
-  const [sdkURL, setSdkURL] = useState('');
   const [installing, setInstalling] = useState(false);
-  const [editingDevice, setEditingDevice] = useState(null);
 
-  useEffect(() => {
-    // Fetch devices from backend when component mounts
-    fetchDevices();
-  }, []);
-
-  const fetchDevices = async () => {
-    // Fetch devices from backend API endpoint
-    // Replace '/api/devices' with your actual backend API endpoint for fetching devices
-    try {
-      const response = await fetch('/api/devices');
-      const data = await response.json();
-      setDevices(data.devices);
-    } catch (error) {
-      console.error('Error fetching devices:', error);
-    }
-  };
-
-  const handleScanDevices = async () => {
+  const handleScanDevices = () => {
     setScanning(true);
-    try {
-      // Replace with your backend API endpoint for scanning devices
-      const response = await fetch('/api/devices/scan');
-      const data = await response.json();
-      setDevices(data.devices);
-    } catch (error) {
-      console.error('Error scanning devices:', error);
-    } finally {
+    setTimeout(() => {
       setScanning(false);
-    }
+      // Simulate detecting new devices and add them to the devices array
+      const newDevices = [
+        { id: 4, name: 'Device 4', ipAddress: '192.168.1.4', type: 'Laptop', connected: true, sdkInstalled: false },
+        { id: 5, name: 'Device 5', ipAddress: '192.168.1.5', type: 'Smartwatch', connected: false, sdkInstalled: true },
+        { id: 6, name: 'Device 6', ipAddress: '192.168.1.6', type: 'Smart TV', connected: false, sdkInstalled: false }
+      ];
+      setDevices(prevDevices => [...prevDevices, ...newDevices]);
+    }, 1000);
   };
 
-  const handleInstallSDK = async (device) => {
-    setInstalling(true);
-    try {
-      // Replace with your backend API endpoint for installing SDK
-      const response = await fetch('/api/devices/install-sdk', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ device, sdkURL })
-      });
-      if (response.ok) {
-        // Handle success message or any other action upon successful installation
-        console.log(`SDK installed successfully on ${device.name}`);
-      } else {
-        console.error(`Failed to install SDK on ${device.name}`);
+  const handleConnectToDevice = (device) => {
+    // Implement logic to handle connecting to device
+    const updatedDevices = devices.map(dev => {
+      if (dev.id === device.id) {
+        return { ...dev, connected: true };
       }
-    } catch (error) {
-      console.error('Error installing SDK:', error);
-    } finally {
-      setInstalling(false);
-    }
+      return dev;
+    });
+    setDevices(updatedDevices);
+  };
+
+  const handleInstallSDK = (device) => {
+    // Implement logic to handle installing SDK
+    const updatedDevices = devices.map(dev => {
+      if (dev.id === device.id) {
+        return { ...dev, sdkInstalled: true };
+      }
+      return dev;
+    });
+    setDevices(updatedDevices);
   };
 
   const handleEditDevice = (device) => {
-    setEditingDevice(device);
-    setSdkURL(device.sdkURL);
+    // Implement logic for editing device
   };
 
-  const handleSaveEdit = async () => {
-    // Perform save edit logic
-    setEditingDevice(null);
-    setSdkURL('');
-    // You can implement logic to update the device with the new SDK URL
+  const handleDeleteDevice = (device) => {
+    // Implement logic for deleting device
   };
 
-  const handleDeleteDevice = async (device) => {
-    // Perform delete device logic
-    // You can implement logic to delete the device from the backend
-  };
+  useEffect(() => {
+    // Initialize devices that are already connected and have SDK installed
+    setDevices(mockDevices);
+  }, []);
+
+  const connectedDevices = devices.filter(device => device.connected && device.sdkInstalled);
+  const newDevices = devices.filter(device => !device.connected || !device.sdkInstalled);
 
   return (
     <>
@@ -106,52 +91,178 @@ const DeviceManagement = () => {
             />
             <Divider />
             <CardContent>
-              <Button variant="contained" color="primary" disabled={scanning} onClick={handleScanDevices}>
-                {scanning ? <CircularProgress size={24} /> : 'Scan Devices'}
-              </Button>
-              {devices.length > 0 && (
-                <List>
-                  {devices.map((device, index) => (
-                    <ListItem key={index}>
-                      <ListItemText primary={device.name} secondary={device.ipAddress} />
-                      {editingDevice === device ? (
-                        <>
-                          <TextField
-                            variant="outlined"
-                            label="SDK URL"
-                            fullWidth
-                            value={sdkURL}
-                            onChange={(e) => setSdkURL(e.target.value)}
-                          />
-                          <Button variant="contained" color="primary" onClick={handleSaveEdit}>Save</Button>
-                        </>
-                      ) : (
-                        <>
-                          <Button variant="contained" color="primary" disabled={installing} onClick={() => handleInstallSDK(device)}>
-                            {installing ? <CircularProgress size={20} /> : 'Install SDK'}
-                          </Button>
-                          <IconButton aria-label="edit" onClick={() => handleEditDevice(device)}>
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton aria-label="delete" onClick={() => handleDeleteDevice(device)}>
-                            <DeleteIcon />
-                          </IconButton>
-                        </>
-                      )}
-                    </ListItem>
-                  ))}
-                </List>
-              )}
-            </CardContent>
-            <Divider />
-            <CardContent>
-              <TextField
-                variant="outlined"
-                label="SDK URL"
-                fullWidth
-                value={sdkURL}
-                onChange={(e) => setSdkURL(e.target.value)}
-              />
+              <Grid container justifyContent="center" spacing={gridSpacing}>
+                <Grid item>
+                  <Button variant="contained" color="primary" disabled={scanning} onClick={handleScanDevices} style={{ marginBottom: '10px' }}  >
+                    {scanning ? <CircularProgress size={24} /> : 'Scan Devices'}
+                  </Button>
+                </Grid>
+              </Grid>
+              <Grid container spacing={gridSpacing} direction="row">
+                <Grid item xs={12} md={6}>
+                  {connectedDevices.length > 0 && (
+                    <>
+                      <Typography variant="h6" gutterBottom>
+                        Connected Devices
+                      </Typography>
+                      {connectedDevices.map((device, index) => (
+                        <Card key={index} variant="outlined" style={{ marginBottom: '16px' }}>
+                          <ListItem>
+                            <Grid container alignItems="center" spacing={2}>
+                              <Grid item xs={12} md={6}>
+                                <Typography variant="h6" gutterBottom>
+                                  {device.name}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary" gutterBottom>
+                                  IP Address: {device.ipAddress}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary" gutterBottom>
+                                  Type: {device.type}
+                                </Typography>
+                              </Grid>
+                              <Grid item xs={12} md={6} container justifyContent="flex-end" alignItems="center">
+                                <Grid item>
+                                  <Chip
+                                    label={device.connected ? "Connected" : "Disconnected"}
+                                    color={device.connected ? "success" : "default"}
+                                    style={{ marginRight: '20px' }}
+                                  />
+                                </Grid>
+                                <Grid item>
+                                  <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => handleConnectToDevice(device)}
+                                    style={{ marginRight: '16px' }}
+                                  >
+                                    Connect
+                                  </Button>
+                                </Grid>
+                                <Grid item>
+                                  <Chip
+                                    icon={device.sdkInstalled ? <CheckCircleOutlineIcon /> : null}
+                                    label={device.sdkInstalled ? "SDK Installed" : "SDK Not Installed"}
+                                    color={device.sdkInstalled ? "success" : "default"}
+                                    style={{ marginRight: '20px', marginTop: '10px' }}
+                                  />
+                                </Grid>
+                                <Grid item>
+                                  <Button
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={!device.connected || installing}
+                                    onClick={() => handleInstallSDK(device)}
+                                    style={{marginTop: '10px'}}
+                                  >
+                                    {installing ? <CircularProgress size={20} /> : 'Install SDK'}
+                                  </Button>
+                                </Grid>
+                                <Grid item container alignItems="center" spacing={1}>
+                                  <Grid item xs={8} md={6} container justifyContent="flex-end" alignItems="center">
+                                    <IconButton aria-label="edit" onClick={() => handleEditDevice(device)}>
+                                      <EditIcon />
+                                    </IconButton>
+                                  </Grid>
+                                  <Grid item xs={8} md={2} container justifyContent="flex-end" alignItems="center">
+                                    <IconButton aria-label="delete" onClick={() => handleDeleteDevice(device)}>
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                            </Grid>
+                          </ListItem>
+                        </Card>
+                      ))}
+                    </>
+                  )}
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  {newDevices.length > 0 ? (
+                    <>
+                      <Typography variant="h6" gutterBottom>
+                        New Devices
+                      </Typography>
+                      {newDevices.map((device, index) => (
+                        <Card key={index} variant="outlined" style={{ marginBottom: '16px' }}>
+                          <ListItem>
+                            <Grid container alignItems="center" spacing={2}>
+                              <Grid item xs={12} md={6}>
+                                <Typography variant="h6" gutterBottom>
+                                  {device.name}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary" gutterBottom>
+                                  IP Address: {device.ipAddress}
+                                </Typography>
+                                <Typography variant="body1" color="textSecondary" gutterBottom>
+                                  Type: {device.type}
+                                </Typography>
+                              </Grid>
+                              <Grid item xs={12} md={6} container justifyContent="flex-end" alignItems="center">
+                                <Grid item>
+                                  <Chip
+                                    label={device.connected ? "Connected" : "Disconnected"}
+                                    color={device.connected ? "success" : "default"}
+                                    style={{ marginRight: '20px' }}
+                                  />
+                                </Grid>
+                                  <Grid item>
+                                    <Button
+                                      variant="contained"
+                                      color="primary"
+                                      onClick={() => handleConnectToDevice(device)}
+                                      style={{ marginRight: '16px' }}
+                                    >
+                                      Connect
+                                    </Button>
+                                  </Grid>
+                                <Grid item>
+                                  <Chip
+                                    icon={device.sdkInstalled ? <CheckCircleOutlineIcon /> : null}
+                                    label={device.sdkInstalled ? "SDK Installed" : "SDK Not Installed"}
+                                    color={device.sdkInstalled ? "success" : "default"}
+                                    style={{ marginRight: '20px', marginTop: '10px' }}
+
+                                  />
+                                </Grid>
+                                  <Grid item>
+                                    <Button
+                                      variant="contained"
+                                      color="primary"
+                                      disabled={!device.connected || installing}
+                                      onClick={() => handleInstallSDK(device)}
+                                      style={{marginTop: '10px'}}
+                                    >
+                                      {installing ? <CircularProgress size={20} /> : 'Install SDK'}
+                                    </Button>
+                                  </Grid>
+                                <Grid item container alignItems="center" spacing={1}>
+                                  <Grid item xs={8} md={6} container justifyContent="flex-end" alignItems="center">
+                                    <IconButton aria-label="edit" onClick={() => handleEditDevice(device)}>
+                                      <EditIcon />
+                                    </IconButton>
+                                  </Grid>
+                                  <Grid item xs={8} md={2} container justifyContent="flex-end" alignItems="center">
+                                    <IconButton aria-label="delete" onClick={() => handleDeleteDevice(device)}>
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </Grid>
+                                </Grid>
+                              </Grid>
+                            </Grid>
+                          </ListItem>
+                        </Card>
+                      ))}
+                    </>
+                  ) : (
+                    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '200px' }}>
+                      <Typography variant="body1" color="textSecondary" style={{ marginTop: '30px' }}>
+                        No new devices found.
+                      </Typography>
+                    </Grid>
+                  )}
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
         </Grid>
