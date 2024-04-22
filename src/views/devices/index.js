@@ -133,6 +133,7 @@ const DeviceManagement = () => {
                                     variant="contained"
                                     color="primary"
                                     onClick={() => handleConnectToDevice(device)}
+                                    disabled={device.connected || device.sdkInstalled}
                                     style={{ marginRight: '16px' }}
                                   >
                                     Connect
@@ -150,25 +151,33 @@ const DeviceManagement = () => {
                                   <Button
                                     variant="contained"
                                     color="primary"
-                                    disabled={!device.connected || installing}
-                                    onClick={() => handleInstallSDK(device)}
-                                    style={{marginTop: '10px'}}
+                                    disabled={!device.connected || installing || device.sdkInstalled} onClick={() => handleInstallSDK(device)}
+                                    style={{ marginTop: '10px' }}
                                   >
                                     {installing ? <CircularProgress size={20} /> : 'Install SDK'}
                                   </Button>
                                 </Grid>
                                 <Grid item container alignItems="center" spacing={1}>
                                   <Grid item xs={8} md={6} container justifyContent="flex-end" alignItems="center">
-                                    <IconButton aria-label="edit" onClick={() => handleEditDevice(device)}>
+                                    <IconButton
+                                      aria-label="edit"
+                                      onClick={() => handleEditDevice(device)}
+                                      style={{ color: 'blue', backgroundColor: 'lightblue' , marginTop:'20px'}} // Change color and background for edit button
+                                    >
                                       <EditIcon />
                                     </IconButton>
                                   </Grid>
                                   <Grid item xs={8} md={2} container justifyContent="flex-end" alignItems="center">
-                                    <IconButton aria-label="delete" onClick={() => handleDeleteDevice(device)}>
+                                    <IconButton
+                                      aria-label="delete"
+                                      onClick={() => handleDeleteDevice(device)}
+                                      style={{ color: 'red', backgroundColor: 'pink', marginTop:'20px' }} // Change color and background for delete button
+                                    >
                                       <DeleteIcon />
                                     </IconButton>
                                   </Grid>
                                 </Grid>
+
                               </Grid>
                             </Grid>
                           </ListItem>
@@ -206,16 +215,16 @@ const DeviceManagement = () => {
                                     style={{ marginRight: '20px' }}
                                   />
                                 </Grid>
-                                  <Grid item>
-                                    <Button
-                                      variant="contained"
-                                      color="primary"
-                                      onClick={() => handleConnectToDevice(device)}
-                                      style={{ marginRight: '16px' }}
-                                    >
-                                      Connect
-                                    </Button>
-                                  </Grid>
+                                <Grid item>
+                                  <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={() => handleConnectToDevice(device)}
+                                    style={{ marginRight: '16px' }}
+                                  >
+                                    Connect
+                                  </Button>
+                                </Grid>
                                 <Grid item>
                                   <Chip
                                     icon={device.sdkInstalled ? <CheckCircleOutlineIcon /> : null}
@@ -225,29 +234,38 @@ const DeviceManagement = () => {
 
                                   />
                                 </Grid>
-                                  <Grid item>
-                                    <Button
-                                      variant="contained"
-                                      color="primary"
-                                      disabled={!device.connected || installing}
-                                      onClick={() => handleInstallSDK(device)}
-                                      style={{marginTop: '10px'}}
-                                    >
-                                      {installing ? <CircularProgress size={20} /> : 'Install SDK'}
-                                    </Button>
-                                  </Grid>
+                                <Grid item>
+                                  <Button
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={!device.connected || installing}
+                                    onClick={() => handleInstallSDK(device)}
+                                    style={{ marginTop: '10px' }}
+                                  >
+                                    {installing ? <CircularProgress size={20} /> : 'Install SDK'}
+                                  </Button>
+                                </Grid>
                                 <Grid item container alignItems="center" spacing={1}>
                                   <Grid item xs={8} md={6} container justifyContent="flex-end" alignItems="center">
-                                    <IconButton aria-label="edit" onClick={() => handleEditDevice(device)}>
+                                    <IconButton
+                                      aria-label="edit"
+                                      onClick={() => handleEditDevice(device)}
+                                      style={{ color: 'blue', backgroundColor: 'lightblue' ,  marginTop:'20px'}} // Change color and background for edit button
+                                    >
                                       <EditIcon />
                                     </IconButton>
                                   </Grid>
                                   <Grid item xs={8} md={2} container justifyContent="flex-end" alignItems="center">
-                                    <IconButton aria-label="delete" onClick={() => handleDeleteDevice(device)}>
+                                    <IconButton
+                                      aria-label="delete"
+                                      onClick={() => handleDeleteDevice(device)}
+                                      style={{ color: 'red', backgroundColor: 'pink' , marginTop:'20px'}} // Change color and background for delete button
+                                    >
                                       <DeleteIcon />
                                     </IconButton>
                                   </Grid>
                                 </Grid>
+
                               </Grid>
                             </Grid>
                           </ListItem>
