@@ -1,37 +1,46 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardContent, Divider, Grid, Typography, Table, TableHead, TableBody, TableRow, TableCell, Button, TextField } from '@mui/material';
-import Breadcrumb from 'component/Breadcrumb'; // Ensure this is correctly imported
-import { gridSpacing } from 'config.js';        // Ensure this is correctly imported
+import { Card, CardHeader, CardContent, Divider, Grid, Typography, TextField, Button } from '@mui/material';
+import Breadcrumb from 'component/Breadcrumb';
+import { gridSpacing } from 'config.js';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';                      // Ensure dayjs is correctly installed and imported
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat'; // Ensure this plugin is installed
+
+dayjs.extend(customParseFormat);
 
 const AttendanceManagement = () => {
   const [attendances, setAttendances] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedDate, setSelectedDate] = useState(dayjs());
+  const [filters, setFilters] = useState({ nom: '', prenom: '', date: dayjs(), time: '' });
 
-  // Handle adding a dummy attendance
   const handleAddAttendance = () => {
     const newAttendance = {
-      _id: Date.now(), // Simple unique ID for example purposes
+      _id: Date.now(),
       nom: 'Sample',
       prenom: 'User',
-      date: selectedDate.format('YYYY-MM-DD'),
+      date: dayjs().format('YYYY-MM-DD'),
       time: dayjs().format('HH:mm:ss')
     };
     setAttendances([...attendances, newAttendance]);
   };
 
-  // Handle deleting all attendances
   const handleDeleteAllAttendances = () => {
     setAttendances([]);
   };
 
-  // Filter attendances based on the search term and selected date
-  const filteredAttendances = attendances.filter((attendance) =>
-    attendance.nom.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    attendance.date === selectedDate.format('YYYY-MM-DD')
+  const handleDeleteByDate = (date) => {
+    setAttendances(attendances.filter(a => a.date !== dayjs(date).format('YYYY-MM-DD')));
+  };
+
+  const handleDeleteByMonth = (month) => {
+    setAttendances(attendances.filter(a => dayjs(a.date).format('YYYY-MM') !== month));
+  };
+
+  const filteredAttendances = attendances.filter(attendance =>
+    attendance.nom.toLowerCase().includes(filters.nom.toLowerCase()) &&
+    attendance.prenom.toLowerCase().includes(filters.prenom.toLowerCase()) &&
+    (filters.date ? attendance.date === dayjs(filters.date).format('YYYY-MM-DD') : true) &&
+    (filters.time ? attendance.time === filters.time : true)
   );
 
   return (
@@ -50,48 +59,70 @@ const AttendanceManagement = () => {
             <CardHeader title={<Typography component="div" variant="h4">All Attendances</Typography>} />
             <Divider />
             <CardContent>
-              <TextField
-                label="Search by Name"
-                variant="outlined"
-                fullWidth
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                sx={{ mb: 2 }}
-              />
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                  label="Filter by Date"
-                  value={selectedDate}
-                  onChange={setSelectedDate}
-                  renderInput={(params) => <TextField {...params} />}
-                />
-              </LocalizationProvider>
-              <Button variant="contained" color="primary" onClick={handleAddAttendance} sx={{ mb: 2 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={3}>
+                  <TextField
+                    label="Search by Name"
+                    variant="outlined"
+                    fullWidth
+                    value={filters.nom}
+                    onChange={e => setFilters({ ...filters, nom: e.target.value })}
+                  />
+                </Grid>
+                <Grid item xs={3}>
+                  <TextField
+                    label="Search by Prenom"
+                    variant="outlined"
+                    fullWidth
+                    value={filters.prenom}
+                    onChange={e => setFilters({ ...filters, prenom: e.target.value })}
+                  />
+                </Grid>
+                <Grid item xs={3}>
+                  <LocalizationProvider dateAdapter={AdapterDayjs}>
+                    <DatePicker
+                      label="Filter by Date"
+                      value={filters.date}
+                      onChange={(newValue) => {
+                        setFilters({ ...filters, date: newValue });
+                      }}
+                      renderInput={(params) => <TextField {...params} fullWidth />}
+                    />
+                  </LocalizationProvider>
+                </Grid>
+                <Grid item xs={3}>
+                  <TextField
+                    label="Filter by Time"
+                    variant="outlined"
+                    fullWidth
+                    value={filters.time}
+                    onChange={e => setFilters({ ...filters, time: e.target.value })}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={2} sx={{ marginTop: 2 }}>
+                {filteredAttendances.map((attendance) => (
+                  <Grid item xs={12} sm={6} md={4} key={attendance._id}>
+                    <Card>
+                      <CardContent>
+                        <Typography variant="subtitle1">{attendance.nom} {attendance.prenom}</Typography>
+                        <Typography variant="body2">{attendance.date}</Typography>
+                        <Typography variant="body2">{attendance.time}</Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+              <Button variant="contained" color="primary" onClick={handleAddAttendance} sx={{ marginTop: 2 }}>
                 Add Dummy Attendance
               </Button>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>ID</TableCell>
-                    <TableCell>Nom</TableCell>
-                    <TableCell>Prenom</TableCell>
-                    <TableCell>Date</TableCell>
-                    <TableCell>Time</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {filteredAttendances.map((attendance) => (
-                    <TableRow key={attendance._id}>
-                      <TableCell>{attendance._id}</TableCell>
-                      <TableCell>{attendance.nom}</TableCell>
-                      <TableCell>{attendance.prenom}</TableCell>
-                      <TableCell>{attendance.date}</TableCell>
-                      <TableCell>{attendance.time}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <Button variant="contained" color="error" onClick={handleDeleteAllAttendances}>
+              <Button variant="contained" color="error" onClick={() => handleDeleteByDate(dayjs().format('YYYY-MM-DD'))} sx={{ marginTop: 2, marginLeft: 2 }}>
+                Delete Today's Attendances
+              </Button>
+              <Button variant="contained" color="error" onClick={() => handleDeleteByMonth(dayjs().format('YYYY-MM'))} sx={{ marginTop: 2, marginLeft: 2 }}>
+                Delete This Month's Attendances
+              </Button>
+              <Button variant="contained" color="error" onClick={handleDeleteAllAttendances} sx={{ marginTop: 2, marginLeft: 2 }}>
                 Delete All Attendances
               </Button>
             </CardContent>
