@@ -15,7 +15,10 @@ const LeaveManagement = Loadable(lazy(() => import('../views/Conge/LeaveManageme
 const PlanningManagement = Loadable(lazy(() => import('../views/planning/index')));
 
 const AttendanceManagement = Loadable(lazy(() => import('../views/attendances/index')));
+
 const DeviceManagement = Loadable(lazy(() => import('../views/devices/index')));
+
+
 
 // ==============================|| MAIN ROUTES ||============================== //
 
