@@ -17,7 +17,7 @@ const MenuList = () => {
       default:
         return (
           <Typography key={item.id} variant="h6" color="error" align="center">
-            Menu Items Error
+            error: {item.type}    // il va nous donner le erros si le type n'est pas group
           </Typography>
         );
     }

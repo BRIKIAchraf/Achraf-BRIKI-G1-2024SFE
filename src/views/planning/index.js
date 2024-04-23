@@ -12,8 +12,9 @@ import {
   TableRow,
   TableCell,
   Button,
+  TextField
 } from '@mui/material';
-import { LocalizationProvider, CalendarPicker } from '@mui/x-date-pickers';
+import { LocalizationProvider, StaticDatePicker } from '@mui/x-date-pickers';
 import AdapterDateFns from '@date-io/date-fns';
 import Breadcrumb from 'component/Breadcrumb';
 import { gridSpacing } from 'config.js';
@@ -51,6 +52,8 @@ const PlanningManagement = () => {
     }
   };
 
+  const [value, setValue] = useState(new Date());
+
   return (
     <>
       <Breadcrumb title="Planning Management">
@@ -74,10 +77,24 @@ const PlanningManagement = () => {
             <Divider />
             <CardContent>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <CalendarPicker
-                  date={selectedDate}
-                  onChange={(newDate) => setSelectedDate(newDate)}
-                />
+                <Grid container spacing={2}>
+                  <Grid item xs={12}>
+                    <Card>
+                      <CardContent>
+                        <Typography variant="h5">Select a Date</Typography>
+                        <StaticDatePicker
+                          displayStaticWrapperAs="desktop"
+                          openTo="day"
+                          value={value}
+                          onChange={(newValue) => {
+                            setValue(newValue);
+                          }}
+                          renderInput={(params) => <TextField {...params} />}
+                        />
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                </Grid>
               </LocalizationProvider>
             </CardContent>
           </Card>
@@ -107,7 +124,13 @@ const PlanningManagement = () => {
                       <TableCell>{planning._id}</TableCell>
                       <TableCell>{planning.intitule}</TableCell>
                       <TableCell>
-                        <Button variant="contained" color="error" onClick={() => handleDeletePlanning(planning._id)}>Delete</Button>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          onClick={() => handleDeletePlanning(planning._id)}
+                        >
+                          Delete
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}

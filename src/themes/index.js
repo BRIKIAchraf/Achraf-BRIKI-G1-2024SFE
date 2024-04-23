@@ -1,9 +1,14 @@
-// material-ui
 import { createTheme } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 
 // project import
 import value from '../assets/scss/_themes-vars.scss';
+
+// Updated color definitions based on your request
+const mainBackground = 'rgb(242, 247, 255)'; // F2F7FF
+const secondaryBackground = 'rgb(232, 249, 253)'; // E8F9FD
+const primaryColor = 'rgb(101, 183, 65)'; // 65B741
+const blackColor = 'rgb(0, 0, 0)'; // 000000
 
 // ==============================|| THEME ||============================== //
 
@@ -17,24 +22,23 @@ export function theme() {
   let menuCaption;
   let textInversePrimary;
 
-  textPrimary = textInversePrimary = menuCaption = value.textPrimary;
+  textPrimary = textInversePrimary = menuCaption = blackColor; // Set text color to black
   textSecondary = value.textSecondary;
-  textDark = value.textDark;
+  textDark = blackColor; // Set dark text color to black
   textHint = value.textHint;
 
-  background = value.backgound;
-  paper = value.paper;
-
+  background = mainBackground;
+  paper = secondaryBackground;
   return createTheme({
     direction: 'ltr',
     palette: {
       mode: 'light',
       common: {
-        black: value.paperDark
+        black: blackColor
       },
       primary: {
         light: value.primaryLight,
-        main: value.primary,
+        main: primaryColor,
         dark: value.primaryDark,
         100: value.primary100
       },
@@ -80,9 +84,8 @@ export function theme() {
         hint: textHint
       },
       background: {
-        //paper: paper,
-        //default: background
-        default: '##4A4A4A'
+        paper: paper,
+        default: background
       }
     },
     typography: {
@@ -145,7 +148,7 @@ export function theme() {
       menuCaption: {
         fontSize: '0.6875rem',
         fontWeight: 600,
-        color: value.primary,
+        color: menuCaption,
         padding: '5px 15px 5px',
         textTransform: 'uppercase',
         marginTop: '10px'
@@ -160,7 +163,7 @@ export function theme() {
         color: 'red'
       },
       cardTitle: {
-        color: value.primary,
+        color: primaryColor,
         fontSize: '1rem'
       },
       breadcrumbTitle: {
@@ -170,245 +173,47 @@ export function theme() {
       }
     },
     components: {
-      MuiList: {
+      MuiButton: {
         styleOverrides: {
           root: {
-            overflow: 'hidden'
-          }
-        }
-      },
-      MuiSvgIcon: {
-        styleOverrides: {
-          root: {
-            fontSize: '1.3rem'
-          },
-          fontSizeInherit: {
-            fontSize: 'inherit'
-          },
-          fontSizeLarge: {
-            fontSize: '2.1875rem'
-          }
-        }
-      },
-      MuiListItem: {
-        styleOverrides: {
-          root: {
-            color: textInversePrimary,
-            paddingTop: '12px',
-            paddingBottom: '12px',
-            '&.Mui-selected': {
-              '& .MuiListItemIcon-root': {
-                color: value.primary
-              },
-              color: value.primary,
-              backgroundColor: value.menuHover
-            },
-            '&:hover': {
-              backgroundColor: value.menuHover,
-              color: value.primary,
-              '& .MuiListItemIcon-root': {
-                color: value.primary
-              }
-            },
-            button: {
-              '&:hover': {
-                backgroundColor: value.menuHover
-              }
-            }
-          }
-        }
-      },
-      MuiListItemButton: {
-        styleOverrides: {
-          root: {
-            color: textInversePrimary,
-            paddingTop: '12px',
-            paddingBottom: '12px',
-            '&.Mui-selected': {
-              '& .MuiListItemIcon-root': {
-                color: value.primary
-              },
-              color: value.primary,
-              backgroundColor: value.menuHover
-            },
-            '&:hover': {
-              backgroundColor: value.menuHover,
-              color: value.primary,
-              '& .MuiListItemIcon-root': {
-                color: value.primary
-              }
-            },
-            button: {
-              '&:hover': {
-                backgroundColor: value.menuHover
-              }
-            }
-          }
-        }
-      },
-      MuiListItemIcon: {
-        styleOverrides: {
-          root: {
-            minWidth: '36px',
-            color: textInversePrimary
-          }
-        }
-      },
-      MuiAccordion: {
-        styleOverrides: {
-          root: {
-            boxShadow: 'none'
-          }
-        }
-      },
-      MuiAccordionSummary: {
-        styleOverrides: {
-          root: {
-            fontWeight: 600,
-            fontSize: '0.875rem'
-          },
-          content: {
-            color: textSecondary,
-            fontWeight: 500
+            textTransform: 'none',
+            margin: '8px',
           }
         }
       },
       MuiPaper: {
         styleOverrides: {
           elevation1: {
-            boxShadow: '0 4px 6px -2px rgb(0 0 0 / 12%), 0 2px 2px -1px rgb(0 0 0 / 5%)'
+            boxShadow: '0px 3px 5px -1px rgba(0,0,0,0.2), 0px 6px 10px 0px rgba(0,0,0,0.14), 0px 1px 18px 0px rgba(0,0,0,0.12)'
           },
           rounded: {
-            borderRadius: '10px'
+            borderRadius: '12px'
           }
         }
       },
-      MuiCardHeader: {
+      MuiAppBar: {
         styleOverrides: {
           root: {
-            color: textDark,
-            padding: '24px'
+            backgroundColor: primaryColor,
+            color: 'white'
           }
         }
       },
-      MuiCardContent: {
+      MuiToolbar: {
         styleOverrides: {
           root: {
-            padding: '24px'
+            minHeight: '64px',
+            padding: '0 24px',
+            backgroundColor: 'rgba(255, 255, 255, 0.72)',
+            backdropFilter: 'blur(10px)'
           }
         }
       },
-      MuiCardActions: {
+      MuiDrawer: {
         styleOverrides: {
-          root: {
-            padding: '24px'
-          }
-        }
-      },
-      // Table
-      MuiTableCell: {
-        styleOverrides: {
-          root: {
-            padding: '16px 36px 16px 36px',
-            whiteSpace: 'normal'
-          },
-          head: {
-            padding: '16px 36px 16px 36px',
-            color: textDark,
-            fontWeight: 600
-          },
-          paddingCheckbox: {
-            paddingLeft: '18px',
-            position: 'relative'
-          }
-        }
-      },
-      MUIDataTableSelectCell: {
-        styleOverrides: {
-          fixedLeft: {
-            position: 'unset'
-          }
-        }
-      },
-      MuiTableHead: {
-        styleOverrides: {
-          root: {
-            background: background
-          },
-          MuiChip: {
-            root: {
-              backgroundColor: value.secondary
-            }
-          }
-        }
-      },
-      MuiChip: {
-        styleOverrides: {
-          colorDefault: {
-            color: grey[100],
-            backgroundColor: value.secondary
-          },
-          colorSecondary: {
-            color: grey[100]
-          },
-          colorPrimary: {
-            color: grey[100]
-          },
-          root: {
-            color: grey[100]
-          },
-          outlined: {
-            color: grey[500]
-          },
-          deleteIcon: {
-            color: grey[500]
-          }
-        }
-      },
-      MuiTimelineDot: {
-        styleOverrides: {
-          filledGrey: {
-            background: grey[300]
-          }
-        }
-      },
-      MuiCheckbox: {
-        styleOverrides: {
-          root: {
-            color: value.textSecondary
-          },
-          indeterminate: {
-            color: value.textPrimary
-          }
-        }
-      },
-      MuiTimelineConnector: {
-        styleOverrides: {
-          root: {
-            background: grey[300]
-          }
-        }
-      },
-      MuiTableContainer: {
-        styleOverrides: {
-          root: {
-            boxShadow: 'none',
-            maxWidth: '100%'
-          }
-        }
-      },
-      MuiAvatar: {
-        styleOverrides: {
-          colorDefault: {
-            backgroundColor: value.textHint,
-            color: grey[100]
-          }
-        }
-      },
-      MuiInputBase: {
-        styleOverrides: {
-          input: {
-            color: textDark
+          paper: {
+            backgroundColor: value.secondary,
+            color: 'white'
           }
         }
       }

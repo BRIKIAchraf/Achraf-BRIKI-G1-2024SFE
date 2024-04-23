@@ -19,10 +19,6 @@ const Main = styled((props) => <main {...props} />)(({ theme }) => ({
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen
   }),
-  [theme.breakpoints.up('md')]: {
-    marginLeft: -drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`
-  }
 }));
 
 const OutletDiv = styled((props) => <div {...props} />)(({ theme }) => ({
@@ -57,14 +53,8 @@ const MainLayout = () => {
       <Sidebar drawerOpen={drawerOpen} drawerToggle={handleDrawerToggle} />
       <Main
         style={{
-          ...(drawerOpen && {
-            transition: theme.transitions.create('margin', {
-              easing: theme.transitions.easing.easeOut,
-              duration: theme.transitions.duration.enteringScreen
-            }),
-            marginLeft: 0,
-            marginRight: 'inherit'
-          })
+          marginLeft: drawerOpen ? 0 : `-${drawerWidth}px`,
+          marginRight: 'inherit'
         }}
       >
         <Box sx={theme.mixins.toolbar} />
