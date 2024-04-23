@@ -11,7 +11,8 @@ import { Provider } from 'react-redux';
 
 // project import
 import App from 'layout/App';
-import reducer from 'store/reducer';
+import reducer from './store/reducer';
+//import store from 'store/store';
 import * as serviceWorker from 'serviceWorker';
 
 const store = configureStore({ reducer });

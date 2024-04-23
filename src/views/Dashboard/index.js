@@ -1,5 +1,6 @@
-import React from 'react';
-
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchStats } from '../../store/dashboardSlice';
 // material-ui
 import { useTheme, styled } from '@mui/material/styles';
 import { Grid, Card, CardHeader, CardContent, Typography, Divider, LinearProgress } from '@mui/material';
@@ -16,10 +17,10 @@ import { gridSpacing } from 'config.js';
 // assets
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
-import MonetizationOnTwoTone from '@mui/icons-material/MonetizationOnTwoTone';
-import DescriptionTwoTone from '@mui/icons-material/DescriptionTwoTone';
-import ThumbUpAltTwoTone from '@mui/icons-material/ThumbUpAltTwoTone';
-import CalendarTodayTwoTone from '@mui/icons-material/CalendarTodayTwoTone';
+import PeopleAltTwoTone from '@mui/icons-material/PeopleAltTwoTone';
+import VpnKeyTwoTone from '@mui/icons-material/VpnKeyTwoTone';
+import FingerprintTwoTone from '@mui/icons-material/FingerprintTwoTone';
+import EventNoteTwoTone from '@mui/icons-material/EventNoteTwoTone';
 
 // custom style
 const FlatCardBlock = styled((props) => <Grid item sm={6} xs={12} {...props} />)(({ theme }) => ({
@@ -38,51 +39,63 @@ const FlatCardBlock = styled((props) => <Grid item sm={6} xs={12} {...props} />)
 
 const Default = () => {
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const { stats, status, error } = useSelector((state) => state.dashboard);
+
+  // Fetch data on component mount
+  useEffect(() => {
+    dispatch(fetchStats());
+  }, [dispatch]);
+
+  // Handle loading and error states
+  if (status === 'loading') return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <Grid container spacing={gridSpacing}>
       <Grid item xs={12}>
         <Grid container spacing={gridSpacing}>
-          <Grid item lg={3} sm={6} xs={12}>
-            <ReportCard
-              primary="$30200"
-              secondary="All Earnings"
-              color={theme.palette.warning.main}
-              footerData="10% changes on profit"
-              iconPrimary={MonetizationOnTwoTone}
-              iconFooter={TrendingUpIcon}
-            />
-          </Grid>
-          <Grid item lg={3} sm={6} xs={12}>
-            <ReportCard
-              primary="145"
-              secondary="Task"
-              color={theme.palette.error.main}
-              footerData="28% task performance"
-              iconPrimary={CalendarTodayTwoTone}
-              iconFooter={TrendingDownIcon}
-            />
-          </Grid>
-          <Grid item lg={3} sm={6} xs={12}>
-            <ReportCard
-              primary="290+"
-              secondary="Page Views"
-              color={theme.palette.success.main}
-              footerData="10k daily views"
-              iconPrimary={DescriptionTwoTone}
-              iconFooter={TrendingUpIcon}
-            />
-          </Grid>
-          <Grid item lg={3} sm={6} xs={12}>
-            <ReportCard
-              primary="500"
-              secondary="Downloads"
-              color={theme.palette.primary.main}
-              footerData="1k download in App store"
-              iconPrimary={ThumbUpAltTwoTone}
-              iconFooter={TrendingUpIcon}
-            />
-          </Grid>
+          {/* Dynamically generated stats cards */}
+          {stats && (
+            <>
+              <Grid item lg={3} sm={6} xs={12}>
+                <ReportCard
+                  primary={stats.totalEmployees ? stats.totalEmployees.toString() : 'N/A'}
+                  secondary="Total Employees"
+                  color={theme.palette.primary.main}
+                  iconPrimary={PeopleAltTwoTone}
+                  iconFooter={TrendingUpIcon}
+                />
+              </Grid>
+              <Grid item lg={3} sm={6} xs={12}>
+                <ReportCard
+                  primary={stats.totalWithCard ? stats.totalWithCard.toString() : 'N/A'}
+                  secondary="Total with Card"
+                  color={theme.palette.warning.main}
+                  iconPrimary={VpnKeyTwoTone}
+                  iconFooter={TrendingUpIcon}
+                />
+              </Grid>
+              <Grid item lg={3} sm={6} xs={12}>
+                <ReportCard
+                  primary={stats.totalWithPassword ? stats.totalWithPassword.toString() : 'N/A'}
+                  secondary="Total with Password"
+                  color={theme.palette.error.main}
+                  iconPrimary={FingerprintTwoTone}
+                  iconFooter={TrendingDownIcon}
+                />
+              </Grid>
+              <Grid item lg={3} sm={6} xs={12}>
+                <ReportCard
+                  primary={stats.totalWithFingerprints ? stats.totalWithFingerprints.toString() : 'N/A'}
+                  secondary="Total with Fingerprints"
+                  color={theme.palette.success.main}
+                  iconPrimary={EventNoteTwoTone}
+                  iconFooter={TrendingUpIcon}
+                />
+              </Grid>
+            </>
+          )}
         </Grid>
       </Grid>
       <Grid item xs={12}>
