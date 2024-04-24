@@ -1,8 +1,8 @@
 // src/views/attendances/AttendanceManagement.js
 import React from 'react';
-import { Card, CardHeader, CardContent, Divider, Grid, Typography } from '@mui/material';
-import Breadcrumb from 'component/Breadcrumb'; // Make sure the import path is correct
-import { gridSpacing } from 'config.js'; // Ensure this is correctly defined
+import { Card, CardHeader, CardContent, Divider, Grid, Typography, Paper } from '@mui/material';
+import Breadcrumb from 'component/Breadcrumb'; // Check path correctness
+import { gridSpacing } from 'config.js'; // Check this definition
 import AttendanceCard from './AttendanceCard';
 
 const AttendanceManagement = ({ attendances }) => {
@@ -18,9 +18,18 @@ const AttendanceManagement = ({ attendances }) => {
             <CardHeader title={<Typography variant="h4">All Attendances</Typography>} />
             <Divider />
             <CardContent>
+              <Paper style={{ padding: '16px', marginBottom: '16px' }}>
+                <Grid container spacing={2}>
+                  <Grid item><Typography variant="h6">Picture</Typography></Grid>
+                  <Grid item xs><Typography variant="h6">Name & Department</Typography></Grid>
+                  <Grid item><Typography variant="h6">Punch Status</Typography></Grid>
+                  <Grid item><Typography variant="h6">Active Status</Typography></Grid>
+                  <Grid item><Typography variant="h6">Timestamp</Typography></Grid>
+                </Grid>
+              </Paper>
               <Grid container spacing={2}>
                 {attendances ? attendances.map((attendance) => (
-                  <Grid item xs={12} sm={6} md={4} key={attendance._id.$oid}>
+                  <Grid item xs={12} key={attendance._id.$oid}>
                     <AttendanceCard attendance={attendance} />
                   </Grid>
                 )) : <Typography>No data available</Typography>}
