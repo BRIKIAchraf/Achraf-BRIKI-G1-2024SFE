@@ -118,7 +118,7 @@ export default {
           id: 'Department',
           title: 'Department',
           type: 'item',
-          url: '/department',
+          url: '/DepartmentManagement',
           icon: icons['BusinessOutlinedIcon']
         },
         {
