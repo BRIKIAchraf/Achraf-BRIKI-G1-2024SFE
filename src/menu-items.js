@@ -1,4 +1,3 @@
-// assets
 import NavigationOutlinedIcon from '@mui/icons-material/NavigationOutlined';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
@@ -8,31 +7,33 @@ import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import ChromeReaderModeOutlinedIcon from '@mui/icons-material/ChromeReaderModeOutlined';
 import SecurityOutlinedIcon from '@mui/icons-material/SecurityOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
-import AccessTimeIcon from '@mui/icons-material/AccessTime'; // Import AccessTimeIcon for leave
-import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined'; 
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
 import EventNoteOutlinedIcon from '@mui/icons-material/EventNoteOutlined';
 import EventAvailableOutlinedIcon from '@mui/icons-material/EventAvailableOutlined';
 import DevicesOutlinedIcon from '@mui/icons-material/DevicesOutlined';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined'; // New icon for department
 
 const icons = {
-  NavigationOutlinedIcon: NavigationOutlinedIcon,
-  HomeOutlinedIcon: HomeOutlinedIcon,
-  ChromeReaderModeOutlinedIcon: ChromeReaderModeOutlinedIcon,
-  HelpOutlineOutlinedIcon: HelpOutlineOutlinedIcon,
-  SecurityOutlinedIcon: SecurityOutlinedIcon,
-  AccountTreeOutlinedIcon: AccountTreeOutlinedIcon,
-  BlockOutlinedIcon: BlockOutlinedIcon,
-  AppsOutlinedIcon: AppsOutlinedIcon,
-  ContactSupportOutlinedIcon: ContactSupportOutlinedIcon,
-  AccessTimeIcon: AccessTimeIcon,
-  PersonOutlinedIcon: PersonOutlinedIcon,
-  EventNoteOutlinedIcon: EventNoteOutlinedIcon,
-  EventAvailableOutlinedIcon: EventAvailableOutlinedIcon,
-  DevicesOutlinedIcon: DevicesOutlinedIcon,
-  AddCircleOutlineIcon: AddCircleOutlineIcon
-
-  
+  NavigationOutlinedIcon,
+  HomeOutlinedIcon,
+  ChromeReaderModeOutlinedIcon,
+  HelpOutlineOutlinedIcon,
+  SecurityOutlinedIcon,
+  AccountTreeOutlinedIcon,
+  BlockOutlinedIcon,
+  AppsOutlinedIcon,
+  ContactSupportOutlinedIcon,
+  AccessTimeIcon,
+  PersonOutlinedIcon,
+  EventNoteOutlinedIcon,
+  EventAvailableOutlinedIcon,
+  DevicesOutlinedIcon,
+  AddCircleOutlineIcon,
+  LockOpenIcon,
+  BusinessOutlinedIcon // New icon added for department
 };
 
 // Configuration du menu
@@ -70,29 +71,27 @@ export default {
           icon: icons['PersonOutlinedIcon']
         },
         {
-          id: 'leave-management', // ID pour la gestion des congés
-          title: 'Leave Management', // Titre du menu
-          type: 'item', // Type d'élément de menu
-          url: '/leavemanagement', // URL de la page de gestion des congés
+          id: 'leave-management',
+          title: 'Leave Management',
+          type: 'item',
+          url: '/leavemanagement',
           icon: icons['EventNoteOutlinedIcon'],
-          children : [
-            { 
-              id : 'leave-management',
-              title : 'Leave Management',
-              type : 'item',
-              url : '/leavemanagement/addleave',
-              icon : icons['AddCircleOutlineIcon']
-
+          children: [
+            {
+              id: 'leave-management',
+              title: 'Add Leave',
+              type: 'item',
+              url: '/leavemanagement/addleave',
+              icon: icons['AddCircleOutlineIcon']
             }
-          ] // Icône du menu
+          ]
         },
         {
-          id: 'planning-management', // ID pour la gestion des plannings
-          title: 'Planning Management', // Titre du menu
-          type: 'item', // Type d'élément de menu
-          url: '/planningmanagement', // URL de la page de gestion des plannings
-          icon: icons['AccessTimeIcon'] // Icône du menu
-        
+          id: 'planning-management',
+          title: 'Planning Management',
+          type: 'item',
+          url: '/planningmanagement',
+          icon: icons['AccessTimeIcon']
         },
         {
           id: 'attendance-management',
@@ -100,14 +99,27 @@ export default {
           type: 'item',
           url: '/attendancemanagement',
           icon: icons['EventAvailableOutlinedIcon']
-
         },
         {
-         id :  'device-management',
-         title : 'Device Management',
-         type : 'item',
-         url : '/devicemanagement',
-         icon : icons['DevicesOutlinedIcon']
+          id: 'device-management',
+          title: 'Device Management',
+          type: 'item',
+          url: '/devicemanagement',
+          icon: icons['DevicesOutlinedIcon']
+        },
+        {
+          id: 'login-methods',
+          title: 'Login Methods',
+          type: 'item',
+          url: '/login',
+          icon: icons['LockOpenIcon']
+        },
+        {
+          id: 'Department',
+          title: 'Department',
+          type: 'item',
+          url: '/department',
+          icon: icons['BusinessOutlinedIcon']
         },
         {
           id: 'auth',
