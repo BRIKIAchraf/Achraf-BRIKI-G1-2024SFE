@@ -1,11 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
 // Fetch all employees
 export const fetchAllEmployees = createAsyncThunk(
   'employees/fetchAll',
   async () => {
-    const response = await fetch('/api/employes');
-    return response.json();
+    const response = await axios.get('http://localhost:3001/api/employes');
+    return response.data;
   }
 );
 

@@ -14,11 +14,11 @@ const LeaveManagement = Loadable(lazy(() => import('../views/Conge/LeaveManageme
 
 const PlanningManagement = Loadable(lazy(() => import('../views/planning/index')));
 
-const AttendanceManagement = Loadable(lazy(() => import('../views/attendances/index')));
+//const AttendanceManagement = Loadable(lazy(() => import('../views/attendances/index')));
 
 const DeviceManagement = Loadable(lazy(() => import('../views/devices/index')));
 
-const LoginMethods = Loadable(lazy(() => import('../views/login/index')));
+//const LoginMethods = Loadable(lazy(() => import('../views/login/index')));
 
 const DepartmentManagement = Loadable(lazy(() => import('../views/departement/index')));
 // ==============================|| MAIN ROUTES ||============================== //
@@ -39,9 +39,9 @@ const MainRoutes = {
     { path: '/sample-page', element: <SamplePage /> },
     { path: '/LeaveManagement', element: <LeaveManagement/> },
     { path: '/PlanningManagement', element: <PlanningManagement/> },
-    { path: '/AttendanceManagement', element: <AttendanceManagement/> },
+    //{ path: '/AttendanceManagement', element: <AttendanceManagement/> },
     { path: '/DeviceManagement', element: <DeviceManagement/>},
-    { path: '/login', element: <LoginMethods/>},
+    //{ path: '/login', element: <LoginMethods/>},
     { path: '/DepartmentManagement', element: <DepartmentManagement/>}
 
   ]
