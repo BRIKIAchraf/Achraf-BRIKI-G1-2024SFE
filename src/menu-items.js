@@ -95,7 +95,7 @@ export default {
         },
         {
           id: 'planning-management',
-          title: 'Planning Management',
+          title: 'Horraire',
           type: 'collapse',
           icon: icons['AccessTimeIcon'],
           children: [
@@ -124,7 +124,7 @@ export default {
         },
         {
           id: 'device-management',
-          title: 'Device Management',
+          title: 'Appareils',
           type: 'item',
           url: '/devicemanagement',
           icon: icons['DevicesOutlinedIcon']

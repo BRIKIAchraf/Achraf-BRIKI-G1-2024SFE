@@ -64,6 +64,27 @@ export const deletePlanning = createAsyncThunk(
   }
 );
 
+// Add planning
+export const addPlanning = createAsyncThunk(
+  'planning/addPlanning',
+  async (planningData, { rejectWithValue }) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/plannings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(planningData)
+      });
+      if (!response.ok) throw new Error('Failed to create planning');
+      return await response.json();
+    } catch (error) {
+      return rejectWithValue(error.toString());
+    }
+  }
+);
+
+
 const planningSlice = createSlice({
   name: 'planning',
   initialState: {
@@ -87,6 +108,9 @@ const planningSlice = createSlice({
       })
       .addCase(deletePlanning.fulfilled, (state, action) => {
         state.plannings = state.plannings.filter(planning => planning.id !== action.payload);
+      })
+      .addCase(addPlanning.fulfilled, (state, action) => {
+        state.plannings.push(action.payload);
       });
   }
 });

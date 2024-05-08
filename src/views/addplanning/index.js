@@ -1,41 +1,37 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid } from '@mui/material';
-import axios from 'axios'; // Assuming you are using axios for API calls
+import { TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, IconButton } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import DeleteIcon from '@mui/icons-material/Delete';
+import axios from 'axios'; // Assuming axios for API calls
 
 const AddPlanningForm = () => {
   const [intitule, setIntitule] = useState('');
-  const [employees, setEmployees] = useState([]);
-  const [selectedEmployees, setSelectedEmployees] = useState([]);
+  const [jours, setJours] = useState([
+    { h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '' }
+  ]);
 
-  useEffect(() => {
-    // Fetch all employees from the backend when the component mounts
-    fetchEmployees();
-  }, []);
-
-  const fetchEmployees = async () => {
-    try {
-      const response = await axios.get('/api/employees'); // Adjust the endpoint according to your backend route
-      setEmployees(response.data);
-    } catch (error) {
-      console.error('Error fetching employees:', error);
-    }
+  const handleJourChange = (index, field, value) => {
+    const newJours = [...jours];
+    newJours[index][field] = value;
+    setJours(newJours);
   };
 
-  const handleEmployeeSelect = (event) => {
-    const selectedEmployeeId = event.target.value;
-    const employee = employees.find(emp => emp._id === selectedEmployeeId);
-    setSelectedEmployees([...selectedEmployees, employee]);
+  const addJour = () => {
+    setJours([...jours, { h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '' }]);
+  };
+
+  const removeJour = (index) => {
+    setJours(jours.filter((_, idx) => idx !== index));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      // Send a POST request to your backend to create the new planning
-      const response = await axios.post('/api/plannings', { intitule, selectedEmployees });
+      const planningData = { intitule, jours };
+      const response = await axios.post('/api/plannings', planningData);
       console.log('New planning created:', response.data);
-      // Reset form fields and selected employees
       setIntitule('');
-      setSelectedEmployees([]);
+      setJours([{ h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '' }]);
     } catch (error) {
       console.error('Error creating new planning:', error);
     }
@@ -52,21 +48,59 @@ const AddPlanningForm = () => {
             onChange={(e) => setIntitule(e.target.value)}
           />
         </Grid>
+        {jours.map((jour, index) => (
+          <React.Fragment key={index}>
+            <Grid item xs={3}>
+              <TextField
+                type="time"
+                label="Heure Entrée 1"
+                value={jour.h_entree1}
+                onChange={(e) => handleJourChange(index, 'h_entree1', e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <TextField
+                type="time"
+                label="Heure Sortie 1"
+                value={jour.h_sortie1}
+                onChange={(e) => handleJourChange(index, 'h_sortie1', e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <TextField
+                type="time"
+                label="Heure Entrée 2"
+                value={jour.h_entree2}
+                onChange={(e) => handleJourChange(index, 'h_entree2', e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={2}>
+              <TextField
+                type="time"
+                label="Heure Sortie 2"
+                value={jour.h_sortie2}
+                onChange={(e) => handleJourChange(index, 'h_sortie2', e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={1} style={{ display: 'flex', alignItems: 'flex-end' }}>
+              <IconButton onClick={() => removeJour(index)} color="error">
+                <DeleteIcon />
+              </IconButton>
+            </Grid>
+          </React.Fragment>
+        ))}
         <Grid item xs={12}>
-          <FormControl fullWidth>
-            <InputLabel>Select Employees</InputLabel>
-            <Select
-              multiple
-              value={selectedEmployees.map(emp => emp._id)}
-              onChange={handleEmployeeSelect}
-            >
-              {employees.map(employee => (
-                <MenuItem key={employee._id} value={employee._id}>
-                  {employee.nom} {employee.prenom}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Button startIcon={<AddCircleOutlineIcon />} onClick={addJour} variant="outlined">
+            Add Day
+          </Button>
         </Grid>
         <Grid item xs={12}>
           <Button type="submit" variant="contained" color="primary">Create Planning</Button>
