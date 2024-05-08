@@ -79,9 +79,16 @@ export default {
           children: [
             {
               id: 'add-leave-form',
-              title: 'Liste des congés',
+              title: 'Ajouter un congé',
               type: 'item',
               url: '/leavemanagement/AddLeaveForm1',
+              icon: icons['EventNoteOutlinedIcon'],
+            },
+            {
+              id: 'list-leave-form',
+              title: 'Voir les conges',
+              type: 'item',
+              url: '/LeaveManagement',
               icon: icons['EventNoteOutlinedIcon'],
             }
           ]
@@ -94,9 +101,16 @@ export default {
           children: [
             {
               id: 'add-planning',
-              title: 'Add Planning',
+              title: 'Ajouter un Horraire',
               type: 'item',
               url: '/addplanning',
+              icon: icons['AccessTimeIcon'],
+            },
+            {
+              id: 'list-planning',
+              title: 'Liste des Horraires',
+              type: 'item',
+              url: '/PlanningManagement',  // ici on met le nom dans le fichier MainRoutes.js qui affecter dans le conte comme un variable
               icon: icons['AccessTimeIcon'],
             }
           ]
