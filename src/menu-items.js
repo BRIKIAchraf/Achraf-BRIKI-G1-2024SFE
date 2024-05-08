@@ -33,7 +33,8 @@ const icons = {
   DevicesOutlinedIcon,
   AddCircleOutlineIcon,
   LockOpenIcon,
-  BusinessOutlinedIcon // New icon added for department
+  BusinessOutlinedIcon,
+  AddCircleOutlineIcon
 };
 
 // Configuration du menu
@@ -65,37 +66,47 @@ export default {
       children: [
         {
           id: 'sample-page',
-          title: 'gestion de employe',
+          title: 'Employe',
           type: 'item',
           url: '/sample-page',
           icon: icons['PersonOutlinedIcon']
         },
         {
           id: 'leave-management',
-          title: 'Leave Management',
+          title: 'Congé ',
           type: 'item',
           url: '/leavemanagement',
           icon: icons['EventNoteOutlinedIcon'],
           children: [
             {
-              id: 'leave-management',
-              title: 'Add Leave',
+              id: 'Liste des congés',
+              title: 'Liste des congés',
               type: 'item',
-              url: '/leavemanagement/addleave',
+              url: '/leavemanagement/leavelist',
+              icon: icons['EventNoteOutlinedIcon']
+            }
+          ]
+      
+        },
+        {
+          id: 'planning-management',
+          title: 'Horaire',
+          type: 'collapse',
+          url: '/planningmanagement',
+          icon: icons['AccessTimeIcon'],
+          children: [
+            {
+              id: 'add-planning',
+              title: 'Ajouter un horaire',
+              type: 'item',
+              url: '/planningmanagement/addplanning',
               icon: icons['AddCircleOutlineIcon']
             }
           ]
         },
         {
-          id: 'planning-management',
-          title: 'Planning Management',
-          type: 'item',
-          url: '/planningmanagement',
-          icon: icons['AccessTimeIcon']
-        },
-        {
           id: 'attendance-management',
-          title: 'Attendance Management',
+          title: 'Presence',
           type: 'item',
           url: '/attendancemanagement',
           icon: icons['EventAvailableOutlinedIcon']
@@ -109,7 +120,7 @@ export default {
         },
         {
           id: 'login-methods',
-          title: 'Login Methods',
+          title: 'Methode de pointage',
           type: 'item',
           url: '/login',
           icon: icons['LockOpenIcon']

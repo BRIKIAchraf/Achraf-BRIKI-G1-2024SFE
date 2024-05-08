@@ -1,4 +1,3 @@
-// src/features/planning/planningSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // Fetch all plannings
@@ -6,7 +5,7 @@ export const fetchPlannings = createAsyncThunk(
   'planning/fetchPlannings',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await fetch('http://127.0.0.1:42345/api/plannings');
+      const response = await fetch('http://localhost:3001/api/plannings');
       if (!response.ok) throw new Error('Network response was not ok');
       return await response.json();
     } catch (error) {
@@ -20,7 +19,7 @@ export const fetchPlanningById = createAsyncThunk(
   'planning/fetchPlanningById',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://127.0.0.1:42345/api/plannings/${id}`);
+      const response = await fetch(`http://localhost:3001/api/plannings/${id}`);
       if (!response.ok) throw new Error('Network response was not ok');
       return await response.json();
     } catch (error) {
@@ -34,7 +33,7 @@ export const updatePlanning = createAsyncThunk(
   'planning/updatePlanning',
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://127.0.0.1:42345/api/plannings/${id}`, {
+      const response = await fetch(`http://localhost:3001/api/plannings/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +53,7 @@ export const deletePlanning = createAsyncThunk(
   'planning/deletePlanning',
   async (id, { rejectWithValue }) => {
     try {
-      const response = await fetch(`http://127.0.0.1:42345/api/plannings/${id}`, {
+      const response = await fetch(`http://localhost:3001/api/plannings/${id}`, {
         method: 'DELETE'
       });
       if (!response.ok) throw new Error('Network response was not ok');

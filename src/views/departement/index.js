@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Typography, Grid, TextField, Button, List, ListItem, ListItemText, ListItemAvatar, Avatar, IconButton, MenuItem, Paper } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { Typography, TextField, Button, MenuItem, Box, Paper } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import WorkIcon from '@mui/icons-material/Work';
 import ComputerIcon from '@mui/icons-material/Computer';
-import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import MarketingIcon from '@mui/icons-material/Assessment'; // Placeholder for marketing
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
@@ -18,10 +17,11 @@ const DepartmentManagement = () => {
   ];
 
   const [departments, setDepartments] = useState(initialDepartments);
-  const [employees, setEmployees] = useState([]);
   const [newDepartmentName, setNewDepartmentName] = useState('');
   const [newEmployeeName, setNewEmployeeName] = useState('');
+  const [newEmployeeLastName, setNewEmployeeLastName] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
+  const [assignedEmployee, setAssignedEmployee] = useState(null);
 
   const handleAddDepartment = () => {
     if (newDepartmentName) {
@@ -31,104 +31,99 @@ const DepartmentManagement = () => {
   };
 
   const handleAddEmployee = () => {
-    if (newEmployeeName && selectedDepartment) {
-      setEmployees([...employees, { id: uuidv4(), name: newEmployeeName, departmentId: selectedDepartment, avatar: `https://i.pravatar.cc/150?img=${Math.floor(Math.random() * 70)}` }]);
+    if (newEmployeeName && newEmployeeLastName && selectedDepartment) {
+      const updatedDepartments = departments.map(department => {
+        if (department.id === selectedDepartment) {
+          return {
+            ...department,
+            employees: [...department.employees, { id: uuidv4(), firstName: newEmployeeName, lastName: newEmployeeLastName }]
+          };
+        }
+        return department;
+      });
+
+      setDepartments(updatedDepartments);
       setNewEmployeeName('');
+      setNewEmployeeLastName('');
+      setSelectedDepartment('');
+      setAssignedEmployee(null);
     }
   };
 
-  const handleDeleteEmployee = (employeeId) => {
-    setEmployees(employees.filter(employee => employee.id !== employeeId));
+  const handleEmployeeSelection = (event) => {
+    setAssignedEmployee(event.target.value);
   };
 
-  const handleChangeEmployeeDepartment = (employeeId, newDepartmentId) => {
-    setEmployees(employees.map(employee => {
-      if (employee.id === employeeId) {
-        return { ...employee, departmentId: newDepartmentId };
-      }
-      return employee;
-    }));
+  const renderDepartments = () => {
+    return (
+      <Box display="flex" flexDirection="row" justifyContent="flex-end" flexWrap="wrap">
+        {departments.map((department) => (
+          <Box key={department.id} textAlign="center" marginRight="50px" marginBottom="90px">
+            {department.icon}
+            <Typography variant="h6">{department.name}</Typography>
+          </Box>
+        ))}
+      </Box>
+    );
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '960px', margin: 'auto' }}>
+    <div style={{ padding: '20px', maxWidth: '1200px', margin: '10px' }}>
       <Typography variant="h4" gutterBottom>
         Department Management System
       </Typography>
-      <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12}>
-          {departments.map((dept) => (
-            <Paper key={dept.id} style={{ margin: '10px', padding: '10px', textAlign: 'center' }}>
-              {dept.icon}
-              <Typography variant="h6">{dept.name}</Typography>
-            </Paper>
-          ))}
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="New Employee Name"
-            value={newEmployeeName}
-            onChange={(e) => setNewEmployeeName(e.target.value)}
-            fullWidth
-          />
-          <TextField
-            select
-            label="Assign Department"
-            value={selectedDepartment}
-            onChange={(e) => setSelectedDepartment(e.target.value)}
-            fullWidth
-            style={{ marginTop: '10px' }}
-          >
-            {departments.map((department) => (
-              <MenuItem key={department.id} value={department.id}>
-                {department.name}
-              </MenuItem>
-            ))}
-          </TextField>
-          <Button onClick={handleAddEmployee} style={{ marginTop: '10px' }}>Add Employee</Button>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="New Department Name"
-            value={newDepartmentName}
-            onChange={(e) => setNewDepartmentName(e.target.value)}
-            fullWidth
-          />
-          <Button onClick={handleAddDepartment} style={{ marginTop: '10px' }}>Add Department</Button>
-        </Grid>
-        {departments.map((department) => (
-          <Grid item xs={12} sm={4} key={department.id}>
-            <Typography variant="h6" align="center">{department.name}</Typography>
-            <List>
-              {employees.filter(emp => emp.departmentId === department.id).map((employee) => (
-                <ListItem key={employee.id} secondaryAction={
-                  <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteEmployee(employee.id)}>
-                    <DeleteIcon />
-                  </IconButton>
-                }>
-                  <ListItemAvatar>
-                    <Avatar src={employee.avatar} />
-                  </ListItemAvatar>
-                  <ListItemText primary={employee.name} />
-                  <TextField
-                    select
-                    label="Change Department"
-                    value={employee.departmentId}
-                    onChange={(e) => handleChangeEmployeeDepartment(employee.id, e.target.value)}
-                    style={{ width: '200px' }}
-                  >
-                    {departments.map((dept) => (
-                      <MenuItem key={dept.id} value={dept.id}>
-                        {dept.name}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </ListItem>
+      <Box display="flex">
+        <Box style={{ marginRight: '90px' }}>
+          <Paper style={{ padding: '20px', width: '300px', marginBottom: '20px' }}>
+            <Typography variant="h6" gutterBottom>Manage Departments</Typography>
+            <TextField
+              label="New Department Name"
+              value={newDepartmentName}
+              onChange={(e) => setNewDepartmentName(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+            <Button variant="contained" color="primary" onClick={handleAddDepartment} style={{ marginTop: '10px' }}>
+              Add Department
+            </Button>
+          </Paper>
+          <Paper style={{ padding: '20px', width: '300px', marginBottom: '20px' }}>
+            <Typography variant="h6" gutterBottom>Assign Employees</Typography>
+            <TextField
+              label="New Employee First Name"
+              value={newEmployeeName}
+              onChange={(e) => setNewEmployeeName(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              label="New Employee Last Name"
+              value={newEmployeeLastName}
+              onChange={(e) => setNewEmployeeLastName(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
+            <TextField
+              select
+              label="Assign Department"
+              value={selectedDepartment}
+              onChange={(e) => setSelectedDepartment(e.target.value)}
+              fullWidth
+              margin="normal"
+            >
+              {departments.map((department) => (
+                <MenuItem key={department.id} value={department.id}>
+                  {department.name}
+                </MenuItem>
               ))}
-            </List>
-          </Grid>
-        ))}
-      </Grid>
+            </TextField>
+            <Button variant="contained" color="primary" onClick={handleAddEmployee} style={{ marginTop: '10px' }}>
+              Add Employee
+            </Button>
+          </Paper>
+        </Box>
+        {renderDepartments()}
+      </Box>
     </div>
   );
 };

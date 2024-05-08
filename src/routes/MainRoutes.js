@@ -21,6 +21,9 @@ const DeviceManagement = Loadable(lazy(() => import('../views/devices/index')));
 //const LoginMethods = Loadable(lazy(() => import('../views/login/index')));
 
 const DepartmentManagement = Loadable(lazy(() => import('../views/departement/index')));
+
+
+const LeaveRequestForm = Loadable(lazy(() => import('../views/Conge/LeaveRequestForm')));
 // ==============================|| MAIN ROUTES ||============================== //
 
 const MainRoutes = {
@@ -42,7 +45,8 @@ const MainRoutes = {
     //{ path: '/AttendanceManagement', element: <AttendanceManagement/> },
     { path: '/DeviceManagement', element: <DeviceManagement/>},
     //{ path: '/login', element: <LoginMethods/>},
-    { path: '/DepartmentManagement', element: <DepartmentManagement/>}
+    { path: '/DepartmentManagement', element: <DepartmentManagement/>},
+    { path: '/LeaveRequestForm', element: <LeaveRequestForm/>},
 
   ]
 };
