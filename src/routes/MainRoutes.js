@@ -22,8 +22,8 @@ const DeviceManagement = Loadable(lazy(() => import('../views/devices/index')));
 
 const DepartmentManagement = Loadable(lazy(() => import('../views/departement/index')));
 
+const AddLeaveForm1 = Loadable(lazy(() => import('../views/Conge/AddLeaveForm')));
 
-const LeaveRequestForm = Loadable(lazy(() => import('../views/Conge/LeaveRequestForm')));
 // ==============================|| MAIN ROUTES ||============================== //
 
 const MainRoutes = {
@@ -40,13 +40,15 @@ const MainRoutes = {
     },
     { path: '/utils/util-typography', element: <UtilsTypography /> },
     { path: '/sample-page', element: <SamplePage /> },
-    { path: '/LeaveManagement', element: <LeaveManagement/> },
+    { path: '/LeaveManagement', element: <LeaveManagement/>}, 
     { path: '/PlanningManagement', element: <PlanningManagement/> },
     //{ path: '/AttendanceManagement', element: <AttendanceManagement/> },
     { path: '/DeviceManagement', element: <DeviceManagement/>},
     //{ path: '/login', element: <LoginMethods/>},
     { path: '/DepartmentManagement', element: <DepartmentManagement/>},
-    { path: '/LeaveRequestForm', element: <LeaveRequestForm/>},
+    { path: '/AddLeaveForm1', element: <AddLeaveForm1/>},
+    {path: '/leavemanagement/AddLeaveForm1', element: <AddLeaveForm1 />}
+
 
   ]
 };

@@ -19,11 +19,61 @@ const LeaveManagement = () => {
     // Mock data with unique IDs for each leave entry
     const mockLeaves = [
       // Include your mock data here
-      { id: 1, type: 'Annual', employees: [{ name: 'John Doe', avatar: 'https://via.placeholder.com/150' }, { name: 'Emily Rae', avatar: 'https://via.placeholder.com/150' }] },
-      { id: 2, type: 'Sick', employees: [{ name: 'Jane Smith', avatar: 'https://via.placeholder.com/150' }, { name: 'Emily Rae', avatar: 'https://via.placeholder.com/150' }] },
-      { id: 1, type: 'Annual', employees: [{ name: 'John Doe', avatar: 'https://via.placeholder.com/150' }, { name: 'Emily Rae', avatar: 'https://via.placeholder.com/150' }] },
-      { id: 2, type: 'Sick', employees: [{ name: 'Jane Smith', avatar: 'https://via.placeholder.com/150' }, { name: 'Emily Rae', avatar: 'https://via.placeholder.com/150' }] },
-
+      {
+        id: 1,
+        type: 'Annual',
+        status: 'Approved',
+        startDate: '2023-01-01',
+        endDate: '2023-01-10',
+        employees: [
+          { name: 'John Doe', department: 'HR', avatar: 'https://via.placeholder.com/150' },
+          { name: 'Emily Rae', department: 'Marketing', avatar: 'https://via.placeholder.com/150' }
+        ]
+      },
+      {
+        id: 2,
+        type: 'Annual',
+        status: 'Approved',
+        startDate: '2023-01-01',
+        endDate: '2023-01-10',
+        employees: [
+          { name: 'John Doe', department: 'HR', avatar: 'https://via.placeholder.com/150' },
+          { name: 'Emily Rae', department: 'Marketing', avatar: 'https://via.placeholder.com/150' }
+        ]
+      },
+      {
+        id: 3,
+        type: 'Annual',
+        status: 'Approved',
+        startDate: '2023-01-01',
+        endDate: '2023-01-10',
+        employees: [
+          { name: 'John Doe', department: 'HR', avatar: 'https://via.placeholder.com/150' },
+          { name: 'Emily Rae', department: 'Marketing', avatar: 'https://via.placeholder.com/150' }
+        ]
+      },
+      {
+        id: 4,
+        type: 'Annual',
+        status: 'Approved',
+        startDate: '2023-01-01',
+        endDate: '2023-01-10',
+        employees: [
+          { name: 'John Doe', department: 'HR', avatar: 'https://via.placeholder.com/150' },
+          { name: 'Emily Rae', department: 'Marketing', avatar: 'https://via.placeholder.com/150' }
+        ]
+      },
+      {
+        id: 5,
+        type: 'Annual',
+        status: 'Approved',
+        startDate: '2023-01-01',
+        endDate: '2023-01-10',
+        employees: [
+          { name: 'John Doe', department: 'HR', avatar: 'https://via.placeholder.com/150' },
+          { name: 'Emily Rae', department: 'Marketing', avatar: 'https://via.placeholder.com/150' }
+        ]
+      },
     ];
     setLeaves(mockLeaves);
   }, []);
@@ -123,9 +173,12 @@ const LeaveManagement = () => {
           color="primary"
         />
       </Stack>
+      
       <Routes>
-        <Route path=":leaveId" element={<LeaveDetails leaves={leaves} />} />
+        <Route path="/leave/:leaveId" element={<LeaveDetails leaves={leaves} />} />
       </Routes>
+    
+
     </>
   );
 };

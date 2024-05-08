@@ -74,19 +74,17 @@ export default {
         {
           id: 'leave-management',
           title: 'Congé ',
-          type: 'item',
-          url: '/leavemanagement',
+          type: 'collapse',
           icon: icons['EventNoteOutlinedIcon'],
           children: [
             {
-              id: 'Liste des congés',
+              id: 'add-leave-form',
               title: 'Liste des congés',
               type: 'item',
-              url: '/leavemanagement/leavelist',
-              icon: icons['EventNoteOutlinedIcon']
+              url: '/leavemanagement/AddLeaveForm1',
+              icon: icons['EventNoteOutlinedIcon'],
             }
           ]
-      
         },
         {
           id: 'planning-management',
