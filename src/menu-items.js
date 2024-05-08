@@ -88,17 +88,16 @@ export default {
         },
         {
           id: 'planning-management',
-          title: 'Horaire',
+          title: 'Planning Management',
           type: 'collapse',
-          url: '/planningmanagement',
           icon: icons['AccessTimeIcon'],
           children: [
             {
               id: 'add-planning',
-              title: 'Ajouter un horaire',
+              title: 'Add Planning',
               type: 'item',
-              url: '/planningmanagement/addplanning',
-              icon: icons['AddCircleOutlineIcon']
+              url: '/addplanning',
+              icon: icons['AccessTimeIcon'],
             }
           ]
         },
