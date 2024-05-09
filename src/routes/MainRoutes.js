@@ -5,7 +5,6 @@ import MainLayout from 'layout/MainLayout';
 import Loadable from 'component/Loadable';
 import { Navigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
-import { Lazy } from 'yup';
 
 
 const DashboardDefault = Loadable(lazy(() => import('../views/Dashboard')));
@@ -27,9 +26,11 @@ const AddLeaveForm1 = Loadable(lazy(() => import('../views/Conge/AddLeaveForm'))
 
 const AddPlanning = Loadable(lazy(() => import('../views/addplanning/index')));
 
-//const attendance = Loadable (Lazy(()=> import ('../views/attendances/index')));
-
 const LoginPage = Loadable(lazy(() => import('../views/Login/loginpage')));
+
+const attendance = Loadable(lazy(() => import('../views/attendances/index')));
+
+const LoginMethods = Loadable(lazy(() => import('../views/login/index')));
 // ==============================|| MAIN ROUTES ||============================== //
 
 const ProtectedRoute = ({ children }) => {
@@ -49,24 +50,25 @@ const MainRoutes = {
   children: [
     {
       path: '/',
-      element: <ProtectedRoute><DashboardDefault /></ProtectedRoute>
+      element: <DashboardDefault />
     },
     {
       path: '/dashboard/default',
-      element: <ProtectedRoute><DashboardDefault /></ProtectedRoute>
+      element: <DashboardDefault />
     }, {path: '/LoginPage',
     element: <LoginPage />},
 
     { path: '/utils/util-typography', element: <UtilsTypography /> },
-    { path: '/sample-page', element: <ProtectedRoute><SamplePage /></ProtectedRoute> },
-    { path: '/LeaveManagement', element: <ProtectedRoute><LeaveManagement/></ProtectedRoute>}, 
-    { path: '/PlanningManagement', element:<ProtectedRoute><PlanningManagement/></ProtectedRoute> },
-    //{ path: '/AttendanceManagement', element: <AttendanceManagement/> },
-    { path: '/DeviceManagement', element: <ProtectedRoute><DeviceManagement/></ProtectedRoute>},
-    { path: '/DepartmentManagement', element: <ProtectedRoute><DepartmentManagement/></ProtectedRoute>},
-    { path: '/AddLeaveForm1', element: <ProtectedRoute><AddLeaveForm1/></ProtectedRoute>},
-    {path: '/leavemanagement/AddLeaveForm1', element: <ProtectedRoute><AddLeaveForm1 /></ProtectedRoute>},
-    { path: '/addplanning', element: <ProtectedRoute><AddPlanning /> </ProtectedRoute>}
+    { path: '/sample-page', element:<SamplePage />},
+    { path: '/LeaveManagement', element: <LeaveManagement/>}, 
+    { path: '/PlanningManagement', element:<PlanningManagement/> },
+    { path: '/attendance', element: <attendance />},
+    { path: '/DeviceManagement', element: <DeviceManagement/>},
+    { path: '/DepartmentManagement', element: <DepartmentManagement/>},
+    { path: '/AddLeaveForm1', element: <AddLeaveForm1/>},
+    {path: '/leavemanagement/AddLeaveForm1', element: <AddLeaveForm1 />},
+    { path: '/addplanning', element: <AddPlanning /> },
+    { path: '/loginmethods', element: <LoginMethods /> }
 
 
   ]

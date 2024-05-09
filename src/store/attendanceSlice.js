@@ -5,7 +5,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export const fetchAttendances = createAsyncThunk(
   'attendance/fetchAttendances',
   async () => {
-    const response = await fetch('http://127.0.0.1:42345/api/attendances');
+    const response = await fetch('http://localhost:3001/api/attendances');
     if (!response.ok) throw new Error('Failed to fetch');
     return await response.json();
   }
@@ -15,7 +15,7 @@ export const fetchAttendances = createAsyncThunk(
 export const deleteAllAttendances = createAsyncThunk(
   'attendance/deleteAllAttendances',
   async () => {
-    const response = await fetch('http://127.0.0.1:42345/api/attendances/all', { method: 'DELETE' });
+    const response = await fetch('http://localhost:3001/api/attendances/all', { method: 'DELETE' });
     if (!response.ok) throw new Error('Failed to delete');
     return await response.json(); // Assuming the API returns the updated list
   }

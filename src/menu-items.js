@@ -116,10 +116,10 @@ export default {
           ]
         },
         {
-          id: 'attendance-management',
+          id: 'attendance',
           title: 'Presence',
           type: 'item',
-          url: '/attendancemanagement',
+          url: '/attendance',
           icon: icons['EventAvailableOutlinedIcon']
         },
         {
@@ -130,10 +130,10 @@ export default {
           icon: icons['DevicesOutlinedIcon']
         },
         {
-          id: 'login-methods',
+          id: 'LoginMethods',
           title: 'Methode de pointage',
           type: 'item',
-          url: '/login',
+          url: '/LoginMethods',
           icon: icons['LockOpenIcon']
         },
         {
