@@ -1,21 +1,19 @@
 import React from 'react';
-
-// material-ui
 import { useTheme } from '@mui/material/styles';
 import { Fade, Button, ClickAwayListener, Paper, Popper, List, ListItemText, ListItemIcon, ListItemButton } from '@mui/material';
 
 // assets
 import PersonTwoToneIcon from '@mui/icons-material/PersonTwoTone';
-import DraftsTwoToneIcon from '@mui/icons-material/DraftsTwoTone';
 import LockOpenTwoTone from '@mui/icons-material/LockOpenTwoTone';
-import SettingsTwoToneIcon from '@mui/icons-material/SettingsTwoTone';
 import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
 import MeetingRoomTwoToneIcon from '@mui/icons-material/MeetingRoomTwoTone';
 
-// ==============================|| PROFILE SECTION ||============================== //
+// Auth0 hook
+import { useAuth0 } from '@auth0/auth0-react';
 
 const ProfileSection = () => {
   const theme = useTheme();
+  const { logout, isAuthenticated } = useAuth0();
 
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [open, setOpen] = React.useState(false);
@@ -23,6 +21,9 @@ const ProfileSection = () => {
 
   const handleListItemClick = (event, index) => {
     setSelectedIndex(index);
+    if (index === 4 && isAuthenticated) {  // Assuming index 4 is for logout
+      logout({ returnTo: window.location.origin });
+    }
   };
 
   const handleToggle = () => {
@@ -33,7 +34,6 @@ const ProfileSection = () => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
       return;
     }
-
     setOpen(false);
   };
 
@@ -42,7 +42,6 @@ const ProfileSection = () => {
     if (prevOpen.current === true && open === false) {
       anchorRef.current.focus();
     }
-
     prevOpen.current = open;
   }, [open]);
 
@@ -95,23 +94,11 @@ const ProfileSection = () => {
                     borderRadius: '10px'
                   }}
                 >
-                  <ListItemButton selected={selectedIndex === 0} onClick={(event) => handleListItemClick(event, 0)}>
-                    <ListItemIcon>
-                      <SettingsTwoToneIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Settings" />
-                  </ListItemButton>
                   <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
                     <ListItemIcon>
                       <PersonTwoToneIcon />
                     </ListItemIcon>
                     <ListItemText primary="Profile" />
-                  </ListItemButton>
-                  <ListItemButton selected={selectedIndex === 2} onClick={(event) => handleListItemClick(event, 2)}>
-                    <ListItemIcon>
-                      <DraftsTwoToneIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="My Messages" />
                   </ListItemButton>
                   <ListItemButton selected={selectedIndex === 3} onClick={(event) => handleListItemClick(event, 3)}>
                     <ListItemIcon>
@@ -119,7 +106,7 @@ const ProfileSection = () => {
                     </ListItemIcon>
                     <ListItemText primary="Lock Screen" />
                   </ListItemButton>
-                  <ListItemButton selected={selectedIndex === 4}>
+                  <ListItemButton selected={selectedIndex === 4} onClick={(event) => handleListItemClick(event, 4)}>
                     <ListItemIcon>
                       <MeetingRoomTwoToneIcon />
                     </ListItemIcon>

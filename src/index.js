@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { Auth0Provider } from '@auth0/auth0-react';
 
 // assets
 import 'assets/scss/style.scss';
@@ -12,24 +13,36 @@ import { Provider } from 'react-redux';
 // project import
 import App from 'layout/App';
 import reducer from './store/reducer';
-//import store from 'store/store';
 import * as serviceWorker from 'serviceWorker';
 
 const store = configureStore({ reducer });
 
+const domain = process.env.REACT_APP_AUTH0_DOMAIN;       // Your Auth0 domain
+const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID; // Your Auth0 client ID // The API Identifier that you set up in Auth0
+
+// Function to run after authentication
+const onRedirectCallback = (appState) => {
+  window.history.replaceState(
+    {},
+    document.title,
+    appState?.returnTo || window.location.pathname
+  );
+};
+
 const root = createRoot(document.getElementById('root'));
-
-// ==============================|| MAIN - REACT DOM RENDER  ||==============
-
 root.render(
   <Provider store={store}>
-    <BrowserRouter basename={process.env.REACT_APP_BASE_NAME}>
-      <App />
-    </BrowserRouter>
+    <Auth0Provider
+      domain={domain}
+      clientId={clientId}
+      authorizationParams={window.location.origin}
+    >
+      <BrowserRouter basename={process.env.REACT_APP_BASE_NAME}>
+        <App />
+      </BrowserRouter>
+    </Auth0Provider>
   </Provider>
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
+// Service worker configuration
 serviceWorker.unregister();

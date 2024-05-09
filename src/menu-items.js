@@ -143,28 +143,6 @@ export default {
           url: '/DepartmentManagement',
           icon: icons['BusinessOutlinedIcon']
         },
-        {
-          id: 'auth',
-          title: 'Authentication',
-          type: 'collapse',
-          icon: icons['SecurityOutlinedIcon'],
-          children: [
-            {
-              id: 'login-1',
-              title: 'Login',
-              type: 'item',
-              url: '/application/login',
-              target: true
-            },
-            {
-              id: 'register',
-              title: 'Register',
-              type: 'item',
-              url: '/application/register',
-              target: true
-            }
-          ]
-        }
       ]
     },
   ]
