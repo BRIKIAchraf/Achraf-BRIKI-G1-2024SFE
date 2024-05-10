@@ -19,13 +19,13 @@ import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined'; // New 
 const icons = {
   NavigationOutlinedIcon,
   HomeOutlinedIcon,
-  ChromeReaderModeOutlinedIcon,
-  HelpOutlineOutlinedIcon,
-  SecurityOutlinedIcon,
   AccountTreeOutlinedIcon,
-  BlockOutlinedIcon,
   AppsOutlinedIcon,
   ContactSupportOutlinedIcon,
+  BlockOutlinedIcon,
+  ChromeReaderModeOutlinedIcon,
+  SecurityOutlinedIcon,
+  HelpOutlineOutlinedIcon,
   AccessTimeIcon,
   PersonOutlinedIcon,
   EventNoteOutlinedIcon,
@@ -33,12 +33,10 @@ const icons = {
   DevicesOutlinedIcon,
   AddCircleOutlineIcon,
   LockOpenIcon,
-  BusinessOutlinedIcon,
-  AddCircleOutlineIcon
+  BusinessOutlinedIcon
 };
 
 // Configuration du menu
-// eslint-disable-next-line
 export default {
   items: [
     {
@@ -46,13 +44,13 @@ export default {
       title: '',
       caption: 'Dashboard',
       type: 'group',
-      icon: icons['NavigationOutlinedIcon'],
+      icon: icons.NavigationOutlinedIcon,
       children: [
         {
           id: 'dashboard',
           title: 'Dashboard',
           type: 'item',
-          icon: icons['HomeOutlinedIcon'],
+          icon: icons.HomeOutlinedIcon,
           url: '/dashboard/default'
         }
       ]
@@ -62,34 +60,34 @@ export default {
       title: 'Pages',
       caption: 'Prebuild Pages',
       type: 'group',
-      icon: icons['NavigationOutlinedIcon'],
+      icon: icons.NavigationOutlinedIcon,
       children: [
         {
           id: 'sample-page',
           title: 'Employe',
           type: 'item',
           url: '/sample-page',
-          icon: icons['PersonOutlinedIcon']
+          icon: icons.PersonOutlinedIcon
         },
         {
           id: 'leave-management',
           title: 'Congé ',
           type: 'collapse',
-          icon: icons['EventNoteOutlinedIcon'],
+          icon: icons.EventNoteOutlinedIcon,
           children: [
             {
               id: 'add-leave-form',
               title: 'Ajouter un congé',
               type: 'item',
-              url: '/leavemanagement/AddLeaveForm1',
-              icon: icons['EventNoteOutlinedIcon'],
+              url: '/leavemanagement/add',
+              icon: icons.EventNoteOutlinedIcon,
             },
             {
               id: 'list-leave-form',
               title: 'Voir les conges',
               type: 'item',
-              url: '/LeaveManagement',
-              icon: icons['EventNoteOutlinedIcon'],
+              url: '/leavemanagement/list',
+              icon: icons.EventNoteOutlinedIcon,
             }
           ]
         },
@@ -97,21 +95,21 @@ export default {
           id: 'planning-management',
           title: 'Horraire',
           type: 'collapse',
-          icon: icons['AccessTimeIcon'],
+          icon: icons.AccessTimeIcon,
           children: [
             {
               id: 'add-planning',
               title: 'Ajouter un Horraire',
               type: 'item',
-              url: '/addplanning',
-              icon: icons['AccessTimeIcon'],
+              url: '/planningmanagement/add',
+              icon: icons.AccessTimeIcon,
             },
             {
               id: 'list-planning',
               title: 'Liste des Horraires',
               type: 'item',
-              url: '/PlanningManagement',  // ici on met le nom dans le fichier MainRoutes.js qui affecter dans le conte comme un variable
-              icon: icons['AccessTimeIcon'],
+              url: '/planningmanagement/list',
+              icon: icons.AccessTimeIcon,
             }
           ]
         },
@@ -120,28 +118,43 @@ export default {
           title: 'Presence',
           type: 'item',
           url: '/attendance',
-          icon: icons['EventAvailableOutlinedIcon']
+          icon: icons.EventAvailableOutlinedIcon
         },
         {
           id: 'device-management',
           title: 'Appareils',
           type: 'item',
           url: '/devicemanagement',
-          icon: icons['DevicesOutlinedIcon']
+          icon: icons.DevicesOutlinedIcon
         },
         {
-          id: 'LoginMethods',
+          id: 'login-methods',
           title: 'Methode de pointage',
-          type: 'item',
-          url: '/LoginMethods',
-          icon: icons['LockOpenIcon']
+          type: 'collapse',
+          icon: icons.LockOpenIcon,
+          children: [
+            {
+              id: 'add-login-method',
+              title: 'Ajouter une methode de pointage',
+              type: 'item',
+              url: 'AddLoginMethod',
+              icon: icons.AddCircleOutlineIcon,
+            },
+            {
+              id: 'list-login-method',
+              title: 'Liste des methode de pointage',
+              type: 'item',
+              url: 'LoginMethodsList',
+              icon: icons.LockOpenIcon,
+            }
+          ]
         },
         {
-          id: 'Department',
+          id: 'department-management',
           title: 'Department',
           type: 'item',
-          url: '/DepartmentManagement',
-          icon: icons['BusinessOutlinedIcon']
+          url: '/departmentmanagement',
+          icon: icons.BusinessOutlinedIcon
         },
       ]
     },

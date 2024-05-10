@@ -1,77 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Typography, TextField, Button, MenuItem, Box, Paper } from '@mui/material';
-import { v4 as uuidv4 } from 'uuid';
+import { fetchDepartments, addDepartment, addEmployee } from '../../store/departementSlice';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import WorkIcon from '@mui/icons-material/Work';
 import ComputerIcon from '@mui/icons-material/Computer';
-import MarketingIcon from '@mui/icons-material/Assessment'; // Placeholder for marketing
+import MarketingIcon from '@mui/icons-material/Assessment';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
-const DepartmentManagement = () => {
-  const initialDepartments = [
-    { id: uuidv4(), name: 'HR', icon: <BusinessCenterIcon style={{ fontSize: '80px' }} /> },
-    { id: uuidv4(), name: 'Financial', icon: <WorkIcon style={{ fontSize: '80px' }} /> },
-    { id: uuidv4(), name: 'IT', icon: <ComputerIcon style={{ fontSize: '80px' }} /> },
-    { id: uuidv4(), name: 'Marketing', icon: <MarketingIcon style={{ fontSize: '80px' }} /> },
-    { id: uuidv4(), name: 'Administration', icon: <AdminPanelSettingsIcon style={{ fontSize: '80px' }} /> }
-  ];
+const icons = {
+  HR: <BusinessCenterIcon style={{ fontSize: '80px' }} />,
+  Financial: <WorkIcon style={{ fontSize: '80px' }} />,
+  IT: <ComputerIcon style={{ fontSize: '80px' }} />,
+  Marketing: <MarketingIcon style={{ fontSize: '80px' }} />,
+  Administration: <AdminPanelSettingsIcon style={{ fontSize: '80px' }} />
+};
 
-  const [departments, setDepartments] = useState(initialDepartments);
+const DepartmentManagement = () => {
+  const dispatch = useDispatch();
+  const { departments, status, error } = useSelector(state => state.departements);
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchDepartments());
+    }
+  }, [status, dispatch]);
+
   const [newDepartmentName, setNewDepartmentName] = useState('');
   const [newEmployeeName, setNewEmployeeName] = useState('');
   const [newEmployeeLastName, setNewEmployeeLastName] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
-  const [assignedEmployee, setAssignedEmployee] = useState(null);
 
   const handleAddDepartment = () => {
     if (newDepartmentName) {
-      setDepartments([...departments, { id: uuidv4(), name: newDepartmentName, icon: <WorkIcon style={{ fontSize: '80px' }} /> }]);
+      dispatch(addDepartment({ name: newDepartmentName, icon: icons[newDepartmentName] || <WorkIcon style={{ fontSize: '80px' }} /> }));
       setNewDepartmentName('');
     }
   };
 
   const handleAddEmployee = () => {
     if (newEmployeeName && newEmployeeLastName && selectedDepartment) {
-      const updatedDepartments = departments.map(department => {
-        if (department.id === selectedDepartment) {
-          return {
-            ...department,
-            employees: [...department.employees, { id: uuidv4(), firstName: newEmployeeName, lastName: newEmployeeLastName }]
-          };
-        }
-        return department;
-      });
-
-      setDepartments(updatedDepartments);
+      dispatch(addEmployee({
+        departmentId: selectedDepartment,
+        employee: { firstName: newEmployeeName, lastName: newEmployeeLastName }
+      }));
       setNewEmployeeName('');
       setNewEmployeeLastName('');
       setSelectedDepartment('');
-      setAssignedEmployee(null);
     }
   };
 
-  const handleEmployeeSelection = (event) => {
-    setAssignedEmployee(event.target.value);
-  };
-
-  const renderDepartments = () => {
-    return (
-      <Box display="flex" flexDirection="row" justifyContent="flex-end" flexWrap="wrap">
-        {departments.map((department) => (
-          <Box key={department.id} textAlign="center" marginRight="50px" marginBottom="90px">
-            {department.icon}
-            <Typography variant="h6">{department.name}</Typography>
-          </Box>
-        ))}
-      </Box>
-    );
-  };
+  const renderDepartments = () => (
+    <Box display="flex" flexDirection="row" justifyContent="flex-end" flexWrap="wrap">
+      {departments.map((department) => (
+        <Box key={department.id} textAlign="center" marginRight="50px" marginBottom="90px">
+          {department.icon}
+          <Typography variant="h6">{department.name}</Typography>
+        </Box>
+      ))}
+    </Box>
+  );
 
   return (
     <div style={{ padding: '20px', maxWidth: '1200px', margin: '10px' }}>
-      <Typography variant="h4" gutterBottom>
-        Department Management System
-      </Typography>
+      <Typography variant="h4" gutterBottom>Department Management System</Typography>
       <Box display="flex">
         <Box style={{ marginRight: '90px' }}>
           <Paper style={{ padding: '20px', width: '300px', marginBottom: '20px' }}>

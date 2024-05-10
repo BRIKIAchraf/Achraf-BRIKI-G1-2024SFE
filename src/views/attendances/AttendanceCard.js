@@ -9,7 +9,7 @@ dayjs.extend(customParseFormat);
 dayjs.extend(utc);
 
 const AttendanceCard = ({ attendance }) => {
-  const statusColor = attendance.punch === 0 ? "error" : "primary"; // Assuming punch 0 means missing check-in/out
+  const statusColor = attendance.punch === 0 ? "error" : "primary";
 
   return (
     <Card>

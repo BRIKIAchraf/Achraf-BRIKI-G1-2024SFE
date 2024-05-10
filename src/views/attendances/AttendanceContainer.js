@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchAttendances } from '../../store/attendanceSlice';
-import AttendanceManagement from './index';
+import AttendanceManagement from './AttendanceManagement';
 
 const AttendanceContainer = () => {
   const dispatch = useDispatch();

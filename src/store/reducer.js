@@ -7,6 +7,8 @@ import dashboardReducer from './dashboardSlice'; // Import the dashboard slice r
 import attendanceReducer from './attendanceSlice'; // Import the attendance slice reducer
 import planningReducer from './planningSlice'; // Import the planning slice reducer
 import employeeReducer from './employeeSlice'; // Import the employee slice reducer
+import searchReducer from './searchSlice'; // Import the search slice reducer
+import departementReducer from './departementSlice'; // Import the departement slice reducer
 // ==============================|| REDUCER ||============================== //
 
 const reducer = combineReducers({
@@ -15,6 +17,9 @@ const reducer = combineReducers({
   attendance: attendanceReducer,
   planning: planningReducer,
   employees: employeeReducer,
+  search: searchReducer,
+  departements: departementReducer,
+
 });
 
 export default reducer;
