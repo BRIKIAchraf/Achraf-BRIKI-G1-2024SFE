@@ -1,22 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchPlannings, deletePlanning } from '../../store/planningSlice';
+import { fetchPlannings, deletePlanning, addPlanning } from '../../store/planningSlice';
 import {
   Card, CardHeader, CardContent, Divider, Grid, Typography, Table, TableHead,
   TableBody, TableRow, TableCell, Button, TableContainer, CircularProgress, Dialog, DialogActions,
-  DialogContent, DialogContentText, DialogTitle, IconButton
+  DialogContent, DialogContentText, DialogTitle, IconButton, TextField
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import AddIcon from '@mui/icons-material/Add';
 import Breadcrumb from 'component/Breadcrumb';
 import { gridSpacing } from 'config.js';
 
 const PlanningManagement = () => {
   const dispatch = useDispatch();
   const { plannings, status } = useSelector(state => state.planning);
-  const [openDialog, setOpenDialog] = React.useState(false);
-  const [deleteId, setDeleteId] = React.useState(null);
-  const [expandedId, setExpandedId] = React.useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
+  const [expandedId, setExpandedId] = useState(null);
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [newPlanning, setNewPlanning] = useState({ intitule: '' });
 
   useEffect(() => {
     dispatch(fetchPlannings());
@@ -34,10 +37,21 @@ const PlanningManagement = () => {
 
   const handleClose = () => {
     setOpenDialog(false);
+    setOpenAddDialog(false);
   };
 
   const toggleExpandRow = (id) => {
     setExpandedId(expandedId === id ? null : id);
+  };
+
+  const handleAddPlanning = () => {
+    dispatch(addPlanning(newPlanning));
+    setOpenAddDialog(false);
+    setNewPlanning({ intitule: '' });
+  };
+
+  const handleInputChange = (e) => {
+    setNewPlanning({ ...newPlanning, [e.target.name]: e.target.value });
   };
 
   return (
@@ -46,6 +60,13 @@ const PlanningManagement = () => {
         <Typography variant="subtitle2" color="inherit">Home</Typography>
         <Typography variant="subtitle2" color="primary">Planning Management</Typography>
       </Breadcrumb>
+      <Button
+        variant="contained"
+        startIcon={<AddIcon />}
+        onClick={() => setOpenAddDialog(true)}
+      >
+        Add Planning
+      </Button>
       <Grid container spacing={gridSpacing}>
         <Grid item xs={12}>
           <Card>
@@ -122,6 +143,28 @@ const PlanningManagement = () => {
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={confirmDelete} color="error" autoFocus>
             Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={openAddDialog} onClose={handleClose}>
+        <DialogTitle>Add New Planning</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="normal"
+            label="Intitule"
+            type="text"
+            fullWidth
+            variant="outlined"
+            name="intitule"
+            value={newPlanning.intitule}
+            onChange={handleInputChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleAddPlanning} color="primary">
+            Add
           </Button>
         </DialogActions>
       </Dialog>

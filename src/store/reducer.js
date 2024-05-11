@@ -9,6 +9,7 @@ import planningReducer from './planningSlice'; // Import the planning slice redu
 import employeeReducer from './employeeSlice'; // Import the employee slice reducer
 import searchReducer from './searchSlice'; // Import the search slice reducer
 import departementReducer from './departementSlice'; // Import the departement slice reducer
+import leaveReducer from './leaveSlice'; // Import the leave slice reducer
 // ==============================|| REDUCER ||============================== //
 
 const reducer = combineReducers({
@@ -19,6 +20,7 @@ const reducer = combineReducers({
   employees: employeeReducer,
   search: searchReducer,
   departements: departementReducer,
+  leave: leaveReducer
 
 });
 
