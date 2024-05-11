@@ -1,9 +1,23 @@
-// src/views/attendances/AttendanceManagement.js
 import React from 'react';
 import { Card, CardHeader, CardContent, Divider, Grid, Typography, Paper } from '@mui/material';
-import Breadcrumb from 'component/Breadcrumb'; // Check path correctness
-import { gridSpacing } from 'config.js'; // Check this definition
-import AttendanceCard from './AttendanceCard';
+import Breadcrumb from 'component/Breadcrumb';
+import { gridSpacing } from 'config.js';
+
+const AttendanceCard = ({ attendance }) => {
+  const punchStatus = attendance.punch === 0 ? "Missing" : "Completed";
+  const activeStatus = attendance.status === 1 ? "Active" : "Inactive";
+  const formattedDate = new Date(attendance.timestamp).toLocaleString(); // Formatting timestamp
+
+  return (
+    <Grid container spacing={2} alignItems="center" key={attendance.user_id}>
+      <Grid item><Typography>{attendance.user_id}</Typography></Grid>
+      <Grid item xs><Typography>{attendance.uid}</Typography></Grid>
+      <Grid item><Typography>{punchStatus}</Typography></Grid>
+      <Grid item><Typography>{activeStatus}</Typography></Grid>
+      <Grid item><Typography>{formattedDate}</Typography></Grid>
+    </Grid>
+  );
+};
 
 const AttendanceManagement = ({ attendances }) => {
   return (
@@ -20,18 +34,16 @@ const AttendanceManagement = ({ attendances }) => {
             <CardContent>
               <Paper style={{ padding: '16px', marginBottom: '16px' }}>
                 <Grid container spacing={2}>
-                  <Grid item><Typography variant="h6">Picture</Typography></Grid>
-                  <Grid item xs><Typography variant="h6">Name & Department</Typography></Grid>
+                  <Grid item><Typography variant="h6">User ID</Typography></Grid>
+                  <Grid item xs><Typography variant="h6">UID</Typography></Grid>
                   <Grid item><Typography variant="h6">Punch Status</Typography></Grid>
                   <Grid item><Typography variant="h6">Active Status</Typography></Grid>
                   <Grid item><Typography variant="h6">Timestamp</Typography></Grid>
                 </Grid>
               </Paper>
               <Grid container spacing={2}>
-                {attendances ? attendances.map((attendance) => (
-                  <Grid item xs={12} key={attendance._id.$oid}>
-                    <AttendanceCard attendance={attendance} />
-                  </Grid>
+                {attendances ? attendances.map(attendance => (
+                  <AttendanceCard attendance={attendance} key={attendance._id} />
                 )) : <Typography>No data available</Typography>}
               </Grid>
             </CardContent>

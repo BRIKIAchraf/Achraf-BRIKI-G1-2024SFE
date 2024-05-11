@@ -79,14 +79,14 @@ export default {
               id: 'add-leave-form',
               title: 'Ajouter un congé',
               type: 'item',
-              url: '/leavemanagement/add',
+              url: '/AddLeaveForm1',
               icon: icons.EventNoteOutlinedIcon,
             },
             {
               id: 'list-leave-form',
               title: 'Voir les conges',
               type: 'item',
-              url: '/leavemanagement/list',
+              url: '/LeaveManagement',
               icon: icons.EventNoteOutlinedIcon,
             }
           ]
@@ -101,14 +101,14 @@ export default {
               id: 'add-planning',
               title: 'Ajouter un Horraire',
               type: 'item',
-              url: '/planningmanagement/add',
+              url: 'AddPlanning',
               icon: icons.AccessTimeIcon,
             },
             {
               id: 'list-planning',
               title: 'Liste des Horraires',
               type: 'item',
-              url: '/planningmanagement/list',
+              url: 'PlanningManagement',
               icon: icons.AccessTimeIcon,
             }
           ]

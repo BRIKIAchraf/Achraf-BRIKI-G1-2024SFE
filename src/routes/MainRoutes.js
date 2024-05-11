@@ -28,7 +28,7 @@ const AddPlanning = Loadable(lazy(() => import('../views/addplanning/index')));
 
 const LoginPage = Loadable(lazy(() => import('../views/Login/loginpage')));
 
-const attendance = Loadable(lazy(() => import('../views/attendances/index')));
+const Attendance = Loadable(lazy(() => import('../views/attendances/index')));
 
 //const LoginMethods = Loadable(lazy(() => import('../views/login/index')));
 
@@ -66,11 +66,10 @@ const MainRoutes = {
     { path: '/sample-page', element:<SamplePage />},
     { path: '/LeaveManagement', element: <LeaveManagement/>}, 
     { path: '/PlanningManagement', element:<PlanningManagement/> },
-    { path: '/attendance', element: <attendance />},
+    { path: '/attendance', element: <Attendance />},
     { path: '/DeviceManagement', element: <DeviceManagement/>},
     { path: '/DepartmentManagement', element: <DepartmentManagement/>},
     { path: '/AddLeaveForm1', element: <AddLeaveForm1/>},
-    {path: '/leavemanagement/AddLeaveForm1', element: <AddLeaveForm1 />},
     { path: '/addplanning', element: <AddPlanning /> },
     //{ path: '/loginmethods', element: <LoginMethods /> },
     {path: '/AddLoginMethod', element: <AddLoginMethod />},
