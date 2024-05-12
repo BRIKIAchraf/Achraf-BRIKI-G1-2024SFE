@@ -35,6 +35,9 @@ const Attendance = Loadable(lazy(() => import('../views/attendances/index')));
 const AddLoginMethod = Loadable(lazy(() => import('../views/login/AddLoginMethod')));
 
 const LoginMethodsList = Loadable(lazy(() => import('../views/login/LoginMethodsList')));
+
+const EmployeeDetails = Loadable(lazy(() => import('../views/SamplePage/EmployeeDetails')));
+const LeaveDashboard = Loadable(lazy(() => import('../views/Conge/LeaveDashboard')));
 // ==============================|| MAIN ROUTES ||============================== //
 
 const ProtectedRoute = ({ children }) => {
@@ -73,7 +76,10 @@ const MainRoutes = {
     { path: '/addplanning', element: <AddPlanning /> },
     //{ path: '/loginmethods', element: <LoginMethods /> },
     {path: '/AddLoginMethod', element: <AddLoginMethod />},
-    {path: '/LoginMethodsList', element: <LoginMethodsList />}
+    {path: '/LoginMethodsList', element: <LoginMethodsList />},
+    { path: '/EmployeeDetails', element: <EmployeeDetails /> },
+    { path: '/LeaveDashboard', element: <LeaveDashboard /> },
+    
 
 
   ]

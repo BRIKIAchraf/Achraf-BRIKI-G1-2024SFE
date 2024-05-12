@@ -156,6 +156,20 @@ export default {
           url: '/departmentmanagement',
           icon: icons.BusinessOutlinedIcon
         },
+        {
+          id :'EmployeeDetails',
+          title: 'Employee Details',
+          type: 'item',
+          url: '/EmployeeDetails',
+          icon: icons.PersonOutlinedIcon
+        },
+        {
+          id :'LeaveDashboard',
+          title: 'Leave Dashboard',
+          type: 'item',
+          url: '/LeaveDashboard',
+          icon: icons.EventNoteOutlinedIcon
+        }
       ]
     },
   ]
