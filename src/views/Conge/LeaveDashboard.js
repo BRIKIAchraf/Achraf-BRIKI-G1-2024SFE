@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import {
-  Box, Card, CardContent, Chip, Grid, IconButton, List, ListItem, ListItemText, Typography, InputAdornment, Divider, Avatar,TextField
+  Box, Card, CardContent, Chip, Grid, IconButton, List, ListItem, ListItemText, Typography, InputAdornment, Divider, Avatar, TextField
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -9,28 +9,58 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { blue, green, red, yellow, grey } from '@mui/material/colors';
+import SaveIcon from '@mui/icons-material/Save';
+import { blue, green, red, yellow, grey, purple, orange } from '@mui/material/colors';
 
 const mockData = {
   employees: [
     { id: 1, name: "John Doe", department: "Marketing", leaveStart: "2021-09-10", leaveEnd: "2021-09-15", avatar: "https://via.placeholder.com/150" },
     { id: 2, name: "Jane Smith", department: "Sales", leaveStart: "2021-09-12", leaveEnd: "2021-09-16", avatar: "https://via.placeholder.com/150" },
     { id: 3, name: "Alice Johnson", department: "HR", leaveStart: "2021-09-11", leaveEnd: "2021-09-17", avatar: "https://via.placeholder.com/150" },
-    { id: 4, name: "Mark Brown", department: "Marketing", leaveStart: "2021-09-14", leaveEnd: "2021-09-18", avatar: "https://via.placeholder.com/150" }
+    { id: 4, name: "Mark Brown", department: "Operations", leaveStart: "2021-09-14", leaveEnd: "2021-09-18", avatar: "https://via.placeholder.com/150" }
   ],
   departmentLeaveCounts: {
     Marketing: 2,
     Sales: 1,
-    HR: 1
+    HR: 1,
+    Operations: 1
   }
+};
+
+// Define colors for each department
+const departmentColors = {
+  Marketing: purple[400],
+  Sales: orange[400],
+  HR: green[400],
+  Operations: blue[400]
 };
 
 export default function LeaveDetails() {
   const [filter, setFilter] = useState('');
   const [employees, setEmployees] = useState(mockData.employees);
+  const [editMode, setEditMode] = useState({});
 
   const handleDelete = (id) => {
     setEmployees(employees.filter(employee => employee.id !== id));
+  };
+
+  const handleEdit = (id) => {
+    setEditMode({ ...editMode, [id]: true });
+  };
+
+  const handleSave = (id) => {
+    const updatedEmployee = {
+      name: document.getElementById(`name-${id}`).value,
+      department: document.getElementById(`department-${id}`).value,
+      leaveStart: document.getElementById(`leaveStart-${id}`).value,
+      leaveEnd: document.getElementById(`leaveEnd-${id}`).value
+    };
+    setEmployees(
+      employees.map(employee =>
+        employee.id === id ? { ...employee, ...updatedEmployee } : employee
+      )
+    );
+    setEditMode({ ...editMode, [id]: false });
   };
 
   const filteredEmployees = useMemo(() => 
@@ -84,7 +114,7 @@ export default function LeaveDetails() {
             <BusinessIcon sx={{ color: red[500], mr: 1 }} />Department Leave Count
           </Typography>
           {Object.entries(filteredDepartmentCounts).map(([department, count], index) => (
-            <Chip key={index} label={`${department}: ${count} on leave`} sx={{ mr: 1, fontSize: '1rem', height: 'auto', padding: '10px 0', backgroundColor: red[400], color: 'white' }} icon={<PeopleIcon />} />
+            <Chip key={index} label={`${department}: ${count} on leave`} sx={{ mr: 1, fontSize: '1rem', height: 'auto', padding: '10px 0', backgroundColor: departmentColors[department], color: 'white' }} icon={<PeopleIcon />} />
           ))}
         </CardContent>
       </Card>
@@ -95,28 +125,61 @@ export default function LeaveDetails() {
               <CardContent>
                 <Typography variant="h6" gutterBottom sx={{ color: blue[800], fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
                   <PeopleIcon sx={{ mr: 1, color: blue[500] }} />{employee.name} - Leave Details
+                  <IconButton onClick={() => handleDelete(employee.id)} color="error" sx={{ marginLeft: 'auto' }}>
+                    <DeleteIcon />
+                  </IconButton>
+                  {!editMode[employee.id] && (
+                    <IconButton onClick={() => handleEdit(employee.id)} color="primary">
+                      <EditIcon />
+                    </IconButton>
+                  )}
                 </Typography>
                 <List sx={{ maxHeight: 300, overflow: 'auto', borderRadius: 2 }}>
                   <ListItem>
                     <Avatar alt={employee.name} src={employee.avatar} sx={{ width: 60, height: 60, marginRight: 2 }} />
-                    <ListItemText primary={<Typography variant="h5" color="primary">{employee.name}</Typography>} secondary={`Department: ${employee.department}`} />
-                    <ListItemText secondary={<Typography variant="subtitle1">From: {employee.leaveStart} <ArrowRightAltIcon /> To: {employee.leaveEnd}</Typography>} />
+                    {editMode[employee.id] ? (
+                      <ListItemText primary={<TextField id={`name-${employee.id}`} defaultValue={employee.name} />} secondary={<TextField id={`department-${employee.id}`} defaultValue={employee.department} />} />
+                    ) : (
+                      <ListItemText primary={<Typography variant="h5" color="primary">{employee.name}</Typography>} secondary={`Department: ${employee.department}`} />
+                    )}
+                    <ListItemText secondary={
+                      <>
+                        {editMode[employee.id] ? (
+                          <>
+                            <TextField id={`leaveStart-${employee.id}`} defaultValue={employee.leaveStart} />
+                            <ArrowRightAltIcon />
+                            <TextField id={`leaveEnd-${employee.id}`} defaultValue={employee.leaveEnd} />
+                          </>
+                        ) : (
+                          <Typography variant="subtitle1">From: {employee.leaveStart} <ArrowRightAltIcon /> To: {employee.leaveEnd}</Typography>
+                        )}
+                      </>
+                    } />
                   </ListItem>
                   <Divider />
                   <ListItem sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <AccessTimeIcon sx={{ color: yellow[800], mr: 1 }} />
-                      <Typography sx={{ fontSize: '1.2rem', fontWeight: 'medium', display: 'flex', alignItems: 'center' }}>
-                        {employee.name} - {employee.leaveStart} <ArrowRightAltIcon /> {employee.leaveEnd}
-                      </Typography>
+                      {editMode[employee.id] ? (
+                        <Typography sx={{ fontSize: '1.2rem', fontWeight: 'medium', display: 'flex', alignItems: 'center' }}>
+                          <TextField id={`name-${employee.id}`} defaultValue={employee.name} />
+                          <ArrowRightAltIcon />
+                          <TextField id={`leaveStart-${employee.id}`} defaultValue={employee.leaveStart} />
+                          <ArrowRightAltIcon />
+                          <TextField id={`leaveEnd-${employee.id}`} defaultValue={employee.leaveEnd} />
+                        </Typography>
+                      ) : (
+                        <Typography sx={{ fontSize: '1.2rem', fontWeight: 'medium', display: 'flex', alignItems: 'center' }}>
+                          {employee.name} - {employee.leaveStart} <ArrowRightAltIcon /> {employee.leaveEnd}
+                        </Typography>
+                      )}
                     </Box>
                     <Box>
-                      <IconButton onClick={() => handleDelete(employee.id)} color="error">
-                        <DeleteIcon />
-                      </IconButton>
-                      <IconButton color="primary">
-                        <EditIcon />
-                      </IconButton>
+                      {editMode[employee.id] && (
+                        <IconButton onClick={() => handleSave(employee.id)} color="primary">
+                          <SaveIcon />
+                        </IconButton>
+                      )}
                     </Box>
                   </ListItem>
                 </List>
