@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import {
-  Box, Card, CardContent, Chip, Grid, IconButton, List, ListItem, ListItemText, Typography, InputAdornment, Divider, Avatar, TextField
+  Box, Card, CardContent, Chip, Grid, IconButton, List, ListItem, ListItemText, Typography, InputAdornment, Divider, Avatar, TextField,Pagination
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -17,7 +17,13 @@ const mockData = {
     { id: 1, name: "John Doe", department: "Marketing", leaveStart: "2021-09-10", leaveEnd: "2021-09-15", avatar: "https://via.placeholder.com/150" },
     { id: 2, name: "Jane Smith", department: "Sales", leaveStart: "2021-09-12", leaveEnd: "2021-09-16", avatar: "https://via.placeholder.com/150" },
     { id: 3, name: "Alice Johnson", department: "HR", leaveStart: "2021-09-11", leaveEnd: "2021-09-17", avatar: "https://via.placeholder.com/150" },
-    { id: 4, name: "Mark Brown", department: "Operations", leaveStart: "2021-09-14", leaveEnd: "2021-09-18", avatar: "https://via.placeholder.com/150" }
+    { id: 4, name: "Mark Brown", department: "Operations", leaveStart: "2021-09-14", leaveEnd: "2021-09-18", avatar: "https://via.placeholder.com/150" },
+    { id: 4, name: "Mark Brown", department: "Operations", leaveStart: "2021-09-14", leaveEnd: "2021-09-18", avatar: "https://via.placeholder.com/150" },
+    { id: 4, name: "Mark Brown", department: "Operations", leaveStart: "2021-09-14", leaveEnd: "2021-09-18", avatar: "https://via.placeholder.com/150" },
+    { id: 4, name: "Mark Brown", department: "Operations", leaveStart: "2021-09-14", leaveEnd: "2021-09-18", avatar: "https://via.placeholder.com/150" },
+    { id: 4, name: "Mark Brown", department: "Operations", leaveStart: "2021-09-14", leaveEnd: "2021-09-18", avatar: "https://via.placeholder.com/150" },
+    
+
   ],
   departmentLeaveCounts: {
     Marketing: 2,
@@ -39,7 +45,8 @@ export default function LeaveDetails() {
   const [filter, setFilter] = useState('');
   const [employees, setEmployees] = useState(mockData.employees);
   const [editMode, setEditMode] = useState({});
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 3; // Number of entries per page
   const handleDelete = (id) => {
     setEmployees(employees.filter(employee => employee.id !== id));
   };
@@ -76,6 +83,12 @@ export default function LeaveDetails() {
     });
     return counts;
   }, [filteredEmployees]);
+
+  const totalPages = Math.ceil(employees.length / pageSize);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
 
   return (
     <Box sx={{ p: 3 }}>
@@ -188,6 +201,14 @@ export default function LeaveDetails() {
           </Grid>
         ))}
       </Grid>
+      {totalPages > 1 && (
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={handlePageChange}
+          sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}
+        />
+      )}
     </Box>
   );
 }
