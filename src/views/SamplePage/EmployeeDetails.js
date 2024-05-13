@@ -1,42 +1,22 @@
 import React from 'react';
-import { Box, Paper, Grid, Avatar, Typography, Tabs, Tab, AppBar } from '@mui/material';
-
-function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`tabpanel-${index}`}
-            aria-labelledby={`tab-${index}`}
-            {...other}
-        >
-            {value === index && (
-                <Box p={4}>
-                    <Typography>{children}</Typography>
-                </Box>
-            )}
-        </div>
-    );
-}
-
-function a11yProps(index) {
-    return {
-        id: `tab-${index}`,
-        'aria-controls': `tabpanel-${index}`,
-    };
-}
+import { Box, Paper, Grid, Avatar, Typography, Divider } from '@mui/material';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import PublicIcon from '@mui/icons-material/Public';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import WorkIcon from '@mui/icons-material/Work';
+import HistoryIcon from '@mui/icons-material/History';
+import { blue, red, deepPurple, green } from '@mui/material/colors';
 
 export default function EmployeeDetails() {
-    const [value, setValue] = React.useState(0);
-
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
-
-    // Mock data for history
-    const historyData = {
+    const employeeData = {
+        fullName: "Carol Santana",
+        birthdate: "22/04/1994",
+        nationality: "Brasileiro",
+        userID: "Unique User Identifier",
+        type: "Employee's Type",
+        planningID: "Associated Planning ID",
+        departmentID: "Associated Department ID",
+        loginMethod: "Login Method Used",
         previousDepartments: [
             { name: 'Marketing', dateFrom: 'January 2019', dateTo: 'December 2019' },
             { name: 'Sales', dateFrom: 'January 2020', dateTo: 'December 2020' }
@@ -49,60 +29,48 @@ export default function EmployeeDetails() {
 
     return (
         <Paper sx={{ maxWidth: 960, margin: 'auto', overflow: 'hidden', p: 4 }}>
-            <Grid container spacing={3} sx={{ p: 3, flexDirection: 'column', alignItems: 'center' }}>
-                <Grid item xs={12} sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            <Grid container spacing={2} sx={{ flexDirection: 'column', alignItems: 'center' }}>
+                <Grid item xs={12} sx={{ textAlign: 'center' }}>
                     <Avatar
                         sx={{
-                            width: 90,
-                            height: 90,
-                            margin: 'auto',
+                            width: 120,
+                            height: 120,
+                            mb: 2,
                             border: '3px solid',
                             borderColor: 'secondary.main'
                         }}
                         src="avatar.jpg"
                     />
-                    <Typography variant="h6" sx={{ mt: 1, color: 'primary.main' }}>Carol Santana</Typography>
-                    <Typography variant="subtitle1" sx={{ color: 'secondary.main' }}>Employee</Typography>
-                    <AppBar position="static" sx={{ mt: 2, width: '100%' }}>
-                        <Tabs value={value} onChange={handleChange} aria-label="Employee Details Tabs" variant="scrollable" scrollButtons="auto">
-                            <Tab label="Personal and contact data" {...a11yProps(0)} />
-                            <Tab label="Documents" {...a11yProps(1)} />
-                            <Tab label="Work data" {...a11yProps(2)} />
-                            <Tab label="History" {...a11yProps(3)} />
-                        </Tabs>
-                    </AppBar>
-                    <TabPanel value={value} index={0}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            <Typography variant="body1" sx={{ color: 'primary.dark' }}><strong>Full name:</strong> Carol Santana</Typography>
-                            <Typography variant="body1" sx={{ color: 'primary.dark' }}><strong>Birthdate:</strong> 22/04/1994</Typography>
-                            <Typography variant="body1" sx={{ color: 'primary.dark' }}><strong>Nationality:</strong> Brasileiro</Typography>
-                            <Typography variant="body1" sx={{ color: 'primary.dark' }}><strong>User ID:</strong> Unique User Identifier</Typography>
-                        </Box>
-                    </TabPanel>
-                    <TabPanel value={value} index={1}>
-                        <Typography variant="body2">Documents related content would be displayed here.</Typography>
-                    </TabPanel>
-                    <TabPanel value={value} index={2}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            <Typography variant="body2"><strong>Type:</strong> Employee's Type</Typography>
-                            <Typography variant="body2"><strong>Planning ID:</strong> Associated Planning ID</Typography>
-                            <Typography variant="body2"><strong>Department ID:</strong> Associated Department ID</Typography>
-                            <Typography variant="body2"><strong>Login Method:</strong> Login Method Used</Typography>
-                        </Box>
-                    </TabPanel>
-                    <TabPanel value={value} index={3}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            <Typography variant="body2"><strong>History of previous departments:</strong></Typography>
-                            {historyData.previousDepartments.map((dept, index) => (
-                                <Typography key={index} variant="body2">{dept.name} from {dept.dateFrom} to {dept.dateTo}</Typography>
-                            ))}
-                            <Typography variant="body2"><strong>History of previous plannings:</strong></Typography>
-                            {historyData.previousPlannings.map((plan, index) => (
-                                <Typography key={index} variant="body2">{plan.planName} from {plan.dateFrom} to {plan.dateTo}</Typography>
-                            ))}
-                        </Box>
-                    </TabPanel>
+                    <Typography variant="h5" sx={{ color: deepPurple[500] }} gutterBottom><AccountCircleIcon sx={{ verticalAlign: 'middle', mr: 1 }} />{employeeData.fullName}</Typography>
+                    <Divider sx={{ mb: 3 }} />
                 </Grid>
+                
+                <Paper sx={{ p: 2, mb: 2, width: '100%', bgcolor: blue[50] }}>
+                    <Typography variant="h6" sx={{ color: blue[800], mb: 1 }}><CalendarTodayIcon sx={{ verticalAlign: 'middle', mr: 1 }} />Personal Details</Typography>
+                    <Typography variant="subtitle1"><strong>Birthdate:</strong> {employeeData.birthdate}</Typography>
+                    <Typography variant="subtitle1"><strong>Nationality:</strong> {employeeData.nationality}</Typography>
+                    <Typography variant="subtitle1"><strong>User ID:</strong> {employeeData.userID}</Typography>
+                </Paper>
+
+                <Paper sx={{ p: 2, mb: 2, width: '100%', bgcolor: green[50] }}>
+                    <Typography variant="h6" sx={{ color: green[800], mb: 1 }}><WorkIcon sx={{ verticalAlign: 'middle', mr: 1 }} />Professional Details</Typography>
+                    <Typography variant="subtitle1"><strong>Type:</strong> {employeeData.type}</Typography>
+                    <Typography variant="subtitle1"><strong>Planning ID:</strong> {employeeData.planningID}</Typography>
+                    <Typography variant="subtitle1"><strong>Department ID:</strong> {employeeData.departmentID}</Typography>
+                    <Typography variant="subtitle1"><strong>Login Method:</strong> {employeeData.loginMethod}</Typography>
+                </Paper>
+
+                <Paper sx={{ p: 2, width: '100%', bgcolor: red[50] }}>
+                    <Typography variant="h6" sx={{ color: red[800], mb: 1 }}><HistoryIcon sx={{ verticalAlign: 'middle', mr: 1 }} />History</Typography>
+                    <Typography variant="subtitle1"><strong>Previous Departments:</strong></Typography>
+                    {employeeData.previousDepartments.map((dept, index) => (
+                        <Typography key={index} variant="subtitle1">{dept.name} from {dept.dateFrom} to {dept.dateTo}</Typography>
+                    ))}
+                    <Typography variant="subtitle1" sx={{ mt: 2 }}><strong>Previous Plannings:</strong></Typography>
+                    {employeeData.previousPlannings.map((plan, index) => (
+                        <Typography key={index} variant="subtitle1">{plan.planName} from {plan.dateFrom} to {plan.dateTo}</Typography>
+                    ))}
+                </Paper>
             </Grid>
         </Paper>
     );
