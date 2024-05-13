@@ -50,33 +50,34 @@ export default function LeaveDetails() {
   return (
     <Box sx={{ p: 3 }}>
       <TextField
-        fullWidth
-        label="Search by name or department"
-        variant="outlined"
-        value={filter}
-        onChange={(e) => setFilter(e.target.value)}
-        sx={{
-          mb: 3,
-          borderRadius: '50px',
-          boxShadow: 3,
-          backgroundColor: grey[50],
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-              borderColor: blue[500],
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: green[500],
-            },
-          }
-        }}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon sx={{ color: blue[500] }} />
-            </InputAdornment>
-          ),
-        }}
-      />
+  fullWidth
+  label="Search by name or department"
+  variant="outlined"
+  value={filter}
+  onChange={(e) => setFilter(e.target.value)}
+  sx={{
+    mb: 3,
+    borderRadius: '50px',
+    boxShadow: 3,
+    backgroundColor: grey[50],
+    '& .MuiOutlinedInput-root': {
+      border: 'none', // Disable border
+    },
+    '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
+      border: 'none', // Disable border on hover
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+      border: 'none', // Disable border when not focused
+    },
+  }}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <SearchIcon sx={{ color: blue[500] }} />
+      </InputAdornment>
+    ),
+  }}
+/>
       <Card sx={{ mb: 2, borderRadius: 2, boxShadow: 3 }}>
         <CardContent sx={{ display: 'flex', overflowX: 'auto', py: 1 }}>
           <Typography variant="h6" sx={{ color: red[800], fontWeight: 'bold', flexShrink: 0, mr: 2 }}>

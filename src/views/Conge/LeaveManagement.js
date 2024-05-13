@@ -6,6 +6,7 @@ import { gridSpacing } from 'config.js';
 import SearchIcon from '@mui/icons-material/Search';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import LeaveDetails from './LeaveDetails';
+import {LeaveDashboard} from './LeaveDashboard';
 
 const LeaveManagement = () => {
   const [leaves, setLeaves] = useState([]);

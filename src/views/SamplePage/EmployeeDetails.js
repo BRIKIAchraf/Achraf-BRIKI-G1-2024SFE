@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Paper, Grid, Avatar, Typography, Divider, Button } from '@mui/material';
+import React,{useState} from 'react';
+import { Box, Paper, Grid, Avatar, Typography, Divider, Button,IconButton,TextField,FormControl,InputLabel,MenuItem,Select } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PublicIcon from '@mui/icons-material/Public';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -8,9 +8,11 @@ import HistoryIcon from '@mui/icons-material/History';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { blue, red, deepPurple, green } from '@mui/material/colors';
 import { jsPDF } from 'jspdf';
-
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
 export default function EmployeeDetails() {
-    const employeeData = {
+    const [editMode, setEditMode] = useState(false);
+    const [employeeData, setEmployeeData] = useState({
         fullName: "Carol Santana",
         birthdate: "22/04/1994",
         nationality: "Brasileiro",
@@ -27,21 +29,33 @@ export default function EmployeeDetails() {
             { planName: 'Q1 Marketing Campaign', dateFrom: 'January 2019', dateTo: 'March 2019' },
             { planName: 'Sales Boost 2020', dateFrom: 'January 2020', dateTo: 'March 2020' }
         ]
+    });
+
+    const handleEditToggle = () => {
+        setEditMode(!editMode);
     };
 
-    const downloadPDF = () => {
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setEmployeeData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
+
+    const handleDownloadPDF = () => {
         const doc = new jsPDF();
 
         doc.setFontSize(12);
         doc.text(`Name: ${employeeData.fullName}`, 10, 10);
         doc.text(`Birthdate: ${employeeData.birthdate}`, 10, 20);
         doc.text(`Nationality: ${employeeData.nationality}`, 10, 30);
-        doc.text(`User ID: ${employeeData.userID}`, 10, 40);
+        doc.text(`User : ${employeeData.userID}`, 10, 40);
         doc.text(`Type: ${employeeData.type}`, 10, 50);
-        doc.text(`Planning ID: ${employeeData.planningID}`, 10, 60);
-        doc.text(`Department ID: ${employeeData.departmentID}`, 10, 70);
+        doc.text(`Planning : ${employeeData.planningID}`, 10, 60);
+        doc.text(`Department : ${employeeData.departmentID}`, 10, 70);
         doc.text(`Login Method: ${employeeData.loginMethod}`, 10, 80);
-
+        doc.save('EmployeeDetails.pdf');
         // Adding a new page for history
         doc.addPage();
         doc.text('Previous Departments:', 10, 10);
@@ -71,11 +85,13 @@ export default function EmployeeDetails() {
                             borderColor: 'secondary.main'
                         }}
                         src="avatar.jpg"
-                    />
-                    <Typography variant="h5" sx={{ color: deepPurple[500], mt: 2 }}><AccountCircleIcon sx={{ verticalAlign: 'middle', mr: 1 }} />{employeeData.fullName}</Typography>
-                    <Divider sx={{ mb: 3 }} />
+                    />{editMode ? (
+                        <TextField variant="outlined" value={employeeData.fullName} onChange={handleInputChange} name="fullName" sx={{ mt: 2 }} />
+                    ) : (
+                        <Typography variant="h5" sx={{ color: deepPurple[500], mt: 2 }}><AccountCircleIcon sx={{ verticalAlign: 'middle', mr: 1 }} />{employeeData.fullName}</Typography>
+                    )}
+                    <IconButton onClick={handleEditToggle} color="primary">{editMode ? <SaveIcon /> : <EditIcon />}</IconButton>
                 </Grid>
-                
                 <Paper sx={{ p: 2, mb: 2, width: '100%', bgcolor: blue[50] }}>
                     <Typography variant="h6" sx={{ color: blue[800], mb: 1 }}><CalendarTodayIcon sx={{ verticalAlign: 'middle', mr: 1 }} />Personal Details</Typography>
                     <Typography variant="subtitle1"><strong>Birthdate:</strong> {employeeData.birthdate}</Typography>
@@ -86,9 +102,27 @@ export default function EmployeeDetails() {
                 <Paper sx={{ p: 2, mb: 2, width: '100%', bgcolor: green[50] }}>
                     <Typography variant="h6" sx={{ color: green[800], mb: 1 }}><WorkIcon sx={{ verticalAlign: 'middle', mr: 1 }} />Professional Details</Typography>
                     <Typography variant="subtitle1"><strong>Type:</strong> {employeeData.type}</Typography>
-                    <Typography variant="subtitle1"><strong>Planning ID:</strong> {employeeData.planningID}</Typography>
-                    <Typography variant="subtitle1"><strong>Department ID:</strong> {employeeData.departmentID}</Typography>
-                    <Typography variant="subtitle1"><strong>Login Method:</strong> {employeeData.loginMethod}</Typography>
+                    <Typography variant="subtitle1"><strong>Planning :</strong> {employeeData.planningID}</Typography>
+                    <Typography variant="subtitle1"><strong>Department:</strong> {employeeData.departmentID}</Typography>
+                    {editMode ? (
+                    <Box sx={{ width: '100%', mt: 2, p: 2, bgcolor: blue[50] }}>
+                        <FormControl fullWidth>
+                            <InputLabel>Login Method</InputLabel>
+                            <Select
+                                value={employeeData.loginMethod}
+                                onChange={handleInputChange}
+                                label="Login Method"
+                                name="loginMethod"
+                            >
+                                <MenuItem value="Card">Card</MenuItem>
+                                <MenuItem value="Fingerprint">Fingerprint</MenuItem>
+                                <MenuItem value="Card and Password">Card and Password</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Box>
+                ) : (
+                    <Typography sx={{ mt: 2 }}>{`Login Method: ${employeeData.loginMethod}`}</Typography>
+                )}
                 </Paper>
 
                 <Paper sx={{ p: 2, width: '100%', bgcolor: red[50] }}>
@@ -106,7 +140,7 @@ export default function EmployeeDetails() {
                     startIcon={<PictureAsPdfIcon />}
                     variant="contained"
                     color="error"
-                    onClick={downloadPDF}
+                    onClick={handleDownloadPDF}
                     sx={{ mt: 2 }}
                 >
                     Download PDF
