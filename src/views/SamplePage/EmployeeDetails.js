@@ -1,11 +1,13 @@
 import React from 'react';
-import { Box, Paper, Grid, Avatar, Typography, Divider } from '@mui/material';
+import { Box, Paper, Grid, Avatar, Typography, Divider, Button } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PublicIcon from '@mui/icons-material/Public';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import WorkIcon from '@mui/icons-material/Work';
 import HistoryIcon from '@mui/icons-material/History';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { blue, red, deepPurple, green } from '@mui/material/colors';
+import { jsPDF } from 'jspdf';
 
 export default function EmployeeDetails() {
     const employeeData = {
@@ -27,6 +29,35 @@ export default function EmployeeDetails() {
         ]
     };
 
+    const downloadPDF = () => {
+        const doc = new jsPDF();
+
+        doc.setFontSize(12);
+        doc.text(`Name: ${employeeData.fullName}`, 10, 10);
+        doc.text(`Birthdate: ${employeeData.birthdate}`, 10, 20);
+        doc.text(`Nationality: ${employeeData.nationality}`, 10, 30);
+        doc.text(`User ID: ${employeeData.userID}`, 10, 40);
+        doc.text(`Type: ${employeeData.type}`, 10, 50);
+        doc.text(`Planning ID: ${employeeData.planningID}`, 10, 60);
+        doc.text(`Department ID: ${employeeData.departmentID}`, 10, 70);
+        doc.text(`Login Method: ${employeeData.loginMethod}`, 10, 80);
+
+        // Adding a new page for history
+        doc.addPage();
+        doc.text('Previous Departments:', 10, 10);
+        employeeData.previousDepartments.forEach((dept, index) => {
+            doc.text(`${dept.name} from ${dept.dateFrom} to ${dept.dateTo}`, 10, 20 + (10 * index));
+        });
+
+        doc.addPage();
+        doc.text('Previous Plannings:', 10, 10);
+        employeeData.previousPlannings.forEach((plan, index) => {
+            doc.text(`${plan.planName} from ${plan.dateFrom} to ${plan.dateTo}`, 10, 20 + (10 * index));
+        });
+
+        doc.save('EmployeeDetails.pdf');
+    };
+
     return (
         <Paper sx={{ maxWidth: 960, margin: 'auto', overflow: 'hidden', p: 4 }}>
             <Grid container spacing={2} sx={{ flexDirection: 'column', alignItems: 'center' }}>
@@ -41,7 +72,7 @@ export default function EmployeeDetails() {
                         }}
                         src="avatar.jpg"
                     />
-                    <Typography variant="h5" sx={{ color: deepPurple[500] }} gutterBottom><AccountCircleIcon sx={{ verticalAlign: 'middle', mr: 1 }} />{employeeData.fullName}</Typography>
+                    <Typography variant="h5" sx={{ color: deepPurple[500], mt: 2 }}><AccountCircleIcon sx={{ verticalAlign: 'middle', mr: 1 }} />{employeeData.fullName}</Typography>
                     <Divider sx={{ mb: 3 }} />
                 </Grid>
                 
@@ -71,6 +102,15 @@ export default function EmployeeDetails() {
                         <Typography key={index} variant="subtitle1">{plan.planName} from {plan.dateFrom} to {plan.dateTo}</Typography>
                     ))}
                 </Paper>
+                <Button
+                    startIcon={<PictureAsPdfIcon />}
+                    variant="contained"
+                    color="error"
+                    onClick={downloadPDF}
+                    sx={{ mt: 2 }}
+                >
+                    Download PDF
+                </Button>
             </Grid>
         </Paper>
     );
