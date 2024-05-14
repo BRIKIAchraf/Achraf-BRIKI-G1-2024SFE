@@ -1,6 +1,19 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import WorkIcon from '@mui/icons-material/Work';
+import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
+import ComputerIcon from '@mui/icons-material/Computer';
+import MarketingIcon from '@mui/icons-material/Assessment';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+
+// Define the icons
+const icons = {
+  HR: <BusinessCenterIcon style={{ fontSize: '80px' }} />,
+  Financial: <WorkIcon style={{ fontSize: '80px' }} />,
+  IT: <ComputerIcon style={{ fontSize: '80px' }} />,
+  Marketing: <MarketingIcon style={{ fontSize: '80px' }} />,
+  Administration: <AdminPanelSettingsIcon style={{ fontSize: '80px' }} />
+};
 
 // Thunks
 export const fetchDepartments = createAsyncThunk('departements/fetchDepartments', async (_, { rejectWithValue }) => {
@@ -11,7 +24,8 @@ export const fetchDepartments = createAsyncThunk('departements/fetchDepartments'
       return response.data.map(dept => ({
         id: dept._id,
         name: dept.name,
-        employees: dept.employees
+        employees: dept.employees || [],
+        icon: icons[dept.name] || <WorkIcon style={{ fontSize: '80px' }} />
       }));
     } else {
       throw new Error('No departments found');
@@ -23,7 +37,12 @@ export const fetchDepartments = createAsyncThunk('departements/fetchDepartments'
 
 export const addDepartment = createAsyncThunk('departements/addDepartment', async (department) => {
   const response = await axios.post('http://localhost:3001/api/departements', { name: department.name });
-  return {id: response.data._id, icon: <WorkIcon style={{ fontSize: '80px' }} />};
+  return {
+    id: response.data._id,
+    name: department.name,
+    icon: icons[department.name] || <WorkIcon style={{ fontSize: '80px' }} />,
+    employees: []
+  };
 });
 
 export const deleteDepartment = createAsyncThunk('departements/deleteDepartment', async (departmentId) => {
@@ -38,9 +57,12 @@ export const assignEmployeeToDepartment = createAsyncThunk('departements/assignE
 
 export const updateDepartment = createAsyncThunk('departements/updateDepartment', async ({ id, name }) => {
   const response = await axios.put(`http://localhost:3001/api/departements/${id}`, { name });
-  return { id, name, iconType: 'default' };  // Assuming your API response is limited to the updated data
+  return {
+    id,
+    name,
+    icon: icons[name] || <WorkIcon style={{ fontSize: '80px' }} /> // Update icon based on the new name
+  };
 });
-
 
 // Slice
 const departementSlice = createSlice({
@@ -55,12 +77,12 @@ const departementSlice = createSlice({
     builder
       .addCase(fetchDepartments.pending, (state) => { state.status = 'loading'; })
       .addCase(fetchDepartments.fulfilled, (state, action) => {
-        state.departments = action.payload.map(dept => ({...dept, icon: <WorkIcon style={{ fontSize: '80px' }}/>}));
+        state.departments = action.payload;
         state.status = 'succeeded';
       })
       .addCase(fetchDepartments.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error = action.payload || 'Failed to fetch departments';
       })
       .addCase(addDepartment.fulfilled, (state, action) => {
         state.departments.push(action.payload);
@@ -83,6 +105,5 @@ const departementSlice = createSlice({
       });
   }
 });
-
 
 export default departementSlice.reducer;
