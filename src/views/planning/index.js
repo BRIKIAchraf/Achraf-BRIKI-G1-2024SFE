@@ -4,10 +4,11 @@ import { fetchPlannings, deletePlanning, addPlanning } from '../../store/plannin
 import {
   Card, CardHeader, CardContent, Divider, Grid, Typography, Table, TableHead,
   TableBody, TableRow, TableCell, Button, TableContainer, CircularProgress, Dialog, DialogActions,
-  DialogContent, DialogContentText, DialogTitle, IconButton, TextField
+  DialogContent, DialogContentText, DialogTitle, IconButton, TextField, Checkbox, Toolbar, Alert, Snackbar
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import EditIcon from '@mui/icons-material/Edit';
+import ScheduleIcon from '@mui/icons-material/Schedule';
 import AddIcon from '@mui/icons-material/Add';
 import Breadcrumb from 'component/Breadcrumb';
 import { gridSpacing } from 'config.js';
@@ -17,9 +18,12 @@ const PlanningManagement = () => {
   const { plannings, status } = useSelector(state => state.planning);
   const [openDialog, setOpenDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const [expandedId, setExpandedId] = useState(null);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [newPlanning, setNewPlanning] = useState({ intitule: '' });
+  const [selectedPlannings, setSelectedPlannings] = useState([]);
+  const [filter, setFilter] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   useEffect(() => {
     dispatch(fetchPlannings());
@@ -32,6 +36,8 @@ const PlanningManagement = () => {
 
   const confirmDelete = () => {
     dispatch(deletePlanning(deleteId));
+    setSnackbarMessage('Planning deleted successfully!');
+    setSnackbarOpen(true);
     setOpenDialog(false);
   };
 
@@ -40,12 +46,10 @@ const PlanningManagement = () => {
     setOpenAddDialog(false);
   };
 
-  const toggleExpandRow = (id) => {
-    setExpandedId(expandedId === id ? null : id);
-  };
-
   const handleAddPlanning = () => {
     dispatch(addPlanning(newPlanning));
+    setSnackbarMessage('Planning added successfully!');
+    setSnackbarOpen(true);
     setOpenAddDialog(false);
     setNewPlanning({ intitule: '' });
   };
@@ -54,20 +58,93 @@ const PlanningManagement = () => {
     setNewPlanning({ ...newPlanning, [e.target.name]: e.target.value });
   };
 
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelected = plannings.map((n) => n._id);
+      setSelectedPlannings(newSelected);
+      return;
+    }
+    setSelectedPlannings([]);
+  };
+
+  const handleCheckboxClick = (event, id) => {
+    const selectedIndex = selectedPlannings.indexOf(id);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selectedPlannings, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selectedPlannings.slice(1));
+    } else if (selectedIndex === selectedPlannings.length - 1) {
+      newSelected = newSelected.concat(selectedPlannings.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selectedPlannings.slice(0, selectedIndex),
+        selectedPlannings.slice(selectedIndex + 1),
+      );
+    }
+
+    setSelectedPlannings(newSelected);
+  };
+
+  const handleDeleteSelected = () => {
+    selectedPlannings.forEach((id) => {
+      dispatch(deletePlanning(id));
+    });
+    setSnackbarMessage('Selected plannings deleted successfully!');
+    setSnackbarOpen(true);
+    setSelectedPlannings([]);
+  };
+
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value);
+  };
+
+  const filteredPlannings = (plannings || []).filter(planning =>
+    planning.intitule.toLowerCase().includes(filter.toLowerCase())
+  );
+
+  const isSelected = (id) => selectedPlannings.indexOf(id) !== -1;
+
   return (
     <>
       <Breadcrumb title="Planning Management">
         <Typography variant="subtitle2" color="inherit">Home</Typography>
         <Typography variant="subtitle2" color="primary">Planning Management</Typography>
       </Breadcrumb>
-      <Button
-        variant="contained"
-        startIcon={<AddIcon />}
-        onClick={() => setOpenAddDialog(true)}
-      >
-        Add Planning
-      </Button>
       <Grid container spacing={gridSpacing}>
+        <Grid item xs={12}>
+          <Toolbar style={{ backgroundColor: '#f5f5f5', borderRadius: '4px' }}>
+            <Typography variant="h6" style={{ color: '#1976d2', marginRight: 'auto' }}>
+              Planning Management
+            </Typography>
+            <TextField
+              variant="outlined"
+              label="Filter by Intitule"
+              value={filter}
+              onChange={handleFilterChange}
+              style={{ marginRight: '16px' }}
+            />
+            <Button
+              variant="contained"
+              color="secondary"
+              startIcon={<AddIcon />}
+              onClick={() => setOpenAddDialog(true)}
+            >
+              Add Planning
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<DeleteIcon />}
+              onClick={handleDeleteSelected}
+              disabled={selectedPlannings.length === 0}
+              style={{ marginLeft: '16px' }}
+            >
+              Delete Selected
+            </Button>
+          </Toolbar>
+        </Grid>
         <Grid item xs={12}>
           <Card>
             <CardHeader title={<Typography variant="h4">Planning List</Typography>} />
@@ -80,24 +157,64 @@ const PlanningManagement = () => {
                   <Table>
                     <TableHead>
                       <TableRow>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            indeterminate={selectedPlannings.length > 0 && selectedPlannings.length < plannings.length}
+                            checked={plannings.length > 0 && selectedPlannings.length === plannings.length}
+                            onChange={handleSelectAllClick}
+                            color="primary"
+                          />
+                        </TableCell>
                         <TableCell>ID</TableCell>
                         <TableCell>Intitule</TableCell>
                         <TableCell>Details</TableCell>
+                        <TableCell>Employees</TableCell>
                         <TableCell>Action</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {plannings.map((planning) => (
-                        <>
-                          <TableRow key={planning._id}>
+                      {filteredPlannings.map((planning) => (
+                        <React.Fragment key={planning._id}>
+                          <TableRow selected={isSelected(planning._id)}>
+                            <TableCell padding="checkbox">
+                              <Checkbox
+                                checked={isSelected(planning._id)}
+                                onChange={(event) => handleCheckboxClick(event, planning._id)}
+                                color="primary"
+                              />
+                            </TableCell>
                             <TableCell>{planning._id}</TableCell>
                             <TableCell>{planning.intitule}</TableCell>
                             <TableCell>
-                              <IconButton onClick={() => toggleExpandRow(planning._id)}>
-                                <ExpandMoreIcon />
-                              </IconButton>
+                              <div>
+                                {planning.jours && planning.jours.map((jour) => (
+                                  <div key={jour._id} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                                    <ScheduleIcon style={{ marginRight: '8px' }} />
+                                    <div>
+                                      <strong>Day {jour._id}:</strong><br />
+                                      Morning: {new Date(jour.h_entree1).toLocaleTimeString()} - {new Date(jour.h_sortie1).toLocaleTimeString()}<br />
+                                      Afternoon: {new Date(jour.h_entree2).toLocaleTimeString()} - {new Date(jour.h_sortie2).toLocaleTimeString()}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
                             </TableCell>
                             <TableCell>
+                              {planning.employees && planning.employees.map((employee) => (
+                                <div key={employee._id}>
+                                  {employee.name}
+                                </div>
+                              ))}
+                            </TableCell>
+                            <TableCell>
+                              <Button
+                                variant="contained"
+                                color="primary"
+                                startIcon={<EditIcon />}
+                                style={{ marginBottom: '8px' }}
+                              >
+                                Edit
+                              </Button>
                               <Button
                                 variant="contained"
                                 color="error"
@@ -108,16 +225,7 @@ const PlanningManagement = () => {
                               </Button>
                             </TableCell>
                           </TableRow>
-                          {expandedId === planning._id && planning.jours.map((jour) => (
-                            <TableRow key={jour._id}>
-                              <TableCell style={{ paddingLeft: 40 }}>Day Entry: {jour._id}</TableCell>
-                              <TableCell colSpan={3}>
-                                Morning: {new Date(jour.h_entree1).toLocaleTimeString()} - {new Date(jour.h_sortie1).toLocaleTimeString()},
-                                Afternoon: {new Date(jour.h_entree2).toLocaleTimeString()} - {new Date(jour.h_sortie2).toLocaleTimeString()}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </>
+                        </React.Fragment>
                       ))}
                     </TableBody>
                   </Table>
@@ -168,6 +276,15 @@ const PlanningManagement = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

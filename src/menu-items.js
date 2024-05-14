@@ -176,6 +176,13 @@ export default {
           type: 'item',
           url: '/AddEmployee',
           icon: icons.PersonOutlinedIcon
+        },
+        {
+          id: 'edit-planning',
+          title: 'Modifier un horraire',
+          type: 'item',
+          url: '/EditPlanning',
+          icon: icons.AccessTimeIcon
         }
       ]
     },
