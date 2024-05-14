@@ -169,6 +169,13 @@ export default {
           type: 'item',
           url: '/LeaveDashboard',
           icon: icons.EventNoteOutlinedIcon
+        },
+        {
+          id: 'add-employee',
+          title: 'Ajouter un employe',
+          type: 'item',
+          url: '/AddEmployee',
+          icon: icons.PersonOutlinedIcon
         }
       ]
     },

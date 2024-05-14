@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Avatar, Button, FormControl, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Stepper, Step, StepContent, StepLabel, TextField, Typography, Box              
-} from '@mui/material';
+import { Avatar, Button, FormControl, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Typography, Box, TextField } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import WorkIcon from '@mui/icons-material/Work';
@@ -32,7 +31,6 @@ const historySteps = [
 
 export default function EmployeeDetails() {
   const [editMode, setEditMode] = useState(false);
-  const [activeStep, setActiveStep] = useState(0);
   const [employeeData, setEmployeeData] = useState({
     fullName: "Carol Santana",
     birthdate: "22/04/1994",
@@ -57,14 +55,6 @@ export default function EmployeeDetails() {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEmployeeData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleNext = () => {
-    setActiveStep(prev => Math.min(prev + 1, historySteps.length - 1));
-  };
-
-  const handleBack = () => {
-    setActiveStep(prev => Math.max(prev - 1, 0));
   };
 
   const handleDownloadPDF = () => {
@@ -205,37 +195,6 @@ export default function EmployeeDetails() {
             <Typography sx={{ mt: 2 }}>{`Login Method: ${employeeData.loginMethod}`}</Typography>
           )}
         </Paper>
-
-        <Stepper activeStep={activeStep} orientation="vertical">
-          {historySteps.map((step, index) => (
-            <Step key={step.label}>
-              <StepLabel>{step.label}</StepLabel>
-              <StepContent>
-                <Typography>{step.description}</Typography>
-                <Box sx={{ mb: 2 }}>
-                  <div>
-                    <Button
-                      variant="contained"
-                      onClick={handleNext}
-                      sx={{ mt: 1, mr: 1 }}
-                      disabled={index === historySteps.length - 1}
-                    >
-                      Next Event
-                    </Button>
-                    <Button
-                      disabled={index === 0}
-                      variant="outlined"
-                      onClick={handleBack}
-                      sx={{ mt: 1 }}
-                    >
-                      Previous Event
-                    </Button>
-                  </div>
-                </Box>
-              </StepContent>
-            </Step>
-          ))}
-        </Stepper>
 
         <Paper sx={{ p: 2, mb: 2, width: '100%', bgcolor: red[50] }}>
           <Typography variant="h6" sx={{ color: red[800], mb: 1, fontWeight: 'bold' }}>
