@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
   Card, CardHeader, CardContent, Divider, Grid, Typography, Table, TableHead, TableBody,
   TableRow, TableCell, Checkbox, IconButton, TextField, MenuItem, Button, Box, Dialog,
   DialogTitle, DialogContent, DialogContentText, DialogActions, Pagination, Select,
-  FormControl, InputLabel, InputAdornment, Avatar
+  FormControl, InputLabel, InputAdornment, Avatar, Snackbar, Alert, Toolbar
 } from '@mui/material';
 import Breadcrumbs from '@mui/material/Breadcrumbs';
 import HomeIcon from '@mui/icons-material/Home';
@@ -15,32 +15,64 @@ import EditIcon from '@mui/icons-material/Edit';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
-import { styled } from '@mui/system';
 import { fetchAllEmployees, createEmployee, deleteEmployee } from '../../store/employeeSlice';
 
-const primaryColor = '#1976d2';
+const primaryColor = '#388e3c';
+
+// Mock data
+const mockEmployees = [
+  {
+    id: 1,
+    nom: 'Doe',
+    prenom: 'John',
+    date_naissance: '1990-01-01',
+    login_method: 'Card',
+    department: 'Sales',
+    picture: 'https://via.placeholder.com/150'
+  },
+  {
+    id: 2,
+    nom: 'Smith',
+    prenom: 'Jane',
+    date_naissance: '1985-05-15',
+    login_method: 'PassOrFingerOrCard',
+    department: 'Marketing',
+    picture: 'https://via.placeholder.com/150'
+  },
+  // Add more mock employees here
+];
 
 const SamplePage = () => {
   const dispatch = useDispatch();
-  const employees = useSelector(state => state.employees.employees);
+  const employees = mockEmployees;
   const [searchTerm, setSearchTerm] = useState('');
+  const [searchDepartment, setSearchDepartment] = useState('');
+  const [searchLoginMethod, setSearchLoginMethod] = useState('');
   const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [deleteEmployeeIds, setDeleteEmployeeIds] = useState([]);
   const [newEmployee, setNewEmployee] = useState({
     nom: '',
     prenom: '',
     date_naissance: '',
     login_method: '',
-    type: ''
+    department: '',
+    picture: ''
   });
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
-
-  useEffect(() => {
-    dispatch(fetchAllEmployees());
-  }, [dispatch]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
+  };
+
+  const handleSearchDepartmentChange = (event) => {
+    setSearchDepartment(event.target.value);
+  };
+
+  const handleSearchLoginMethodChange = (event) => {
+    setSearchLoginMethod(event.target.value);
   };
 
   const handleFieldChange = (event) => {
@@ -51,15 +83,30 @@ const SamplePage = () => {
   const handleAddEmployee = () => {
     dispatch(createEmployee(newEmployee));
     setOpenAddDialog(false);
+    setSnackbarOpen(true);
   };
 
-  const handleDeleteSelected = (id) => {
-    dispatch(deleteEmployee(id));
+  const handleSelectEmployee = (id) => {
+    setDeleteEmployeeIds(prev => prev.includes(id) ? prev.filter(empId => empId !== id) : [...prev, id]);
+  };
+
+  const handleDeleteSelected = () => {
+    setOpenDeleteDialog(true);
+  };
+
+  const confirmDeleteEmployee = () => {
+    deleteEmployeeIds.forEach(id => {
+      dispatch(deleteEmployee(id));
+    });
+    setOpenDeleteDialog(false);
+    setSnackbarOpen(true);
   };
 
   const filteredEmployees = employees.filter(employee =>
-    employee.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    employee.prenom.toLowerCase().includes(searchTerm.toLowerCase())
+    (employee.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      employee.prenom.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (searchDepartment ? employee.department === searchDepartment : true) &&
+    (searchLoginMethod ? employee.login_method === searchLoginMethod : true)
   );
 
   const handlePageChange = (event, value) => {
@@ -68,7 +115,7 @@ const SamplePage = () => {
 
   const handleItemsPerPageChange = (event) => {
     setItemsPerPage(event.target.value);
-    setPage(1); // Reset page to 1 when changing items per page
+    setPage(1);
   };
 
   return (
@@ -87,11 +134,19 @@ const SamplePage = () => {
       </Box>
 
       <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Toolbar sx={{ justifyContent: 'space-between', backgroundColor: primaryColor, borderRadius: '4px', color: 'white' }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Employee Management</Typography>
+            <Button variant="contained" startIcon={<DeleteIcon />} onClick={handleDeleteSelected} sx={{ backgroundColor: 'white', color: primaryColor, '&:hover': { backgroundColor: '#f0f0f0' }, ml: 2 }}>
+              Delete Selected
+            </Button>
+          </Toolbar>
+        </Grid>
         <Grid item xs={12} sm={6}>
           <TextField
             fullWidth
             variant="outlined"
-            label="Search"
+            label="Search by Name"
             value={searchTerm}
             onChange={handleSearch}
             InputProps={{
@@ -101,54 +156,100 @@ const SamplePage = () => {
                 </InputAdornment>
               )
             }}
+            sx={{ backgroundColor: 'white', borderRadius: '4px', '& .MuiOutlinedInput-root': { '& fieldset': { borderColor: primaryColor }, '&:hover fieldset': { borderColor: primaryColor }, '&.Mui-focused fieldset': { borderColor: primaryColor } } }}
           />
         </Grid>
-        <Grid item xs={12} sm={6} display="flex" justifyContent="flex-end">
-          <Button variant="contained" startIcon={<AddIcon />} onClick={() => setOpenAddDialog(true)}>
-            Add New Employee
-          </Button>
-          <Button variant="contained" startIcon={<DeleteIcon />} sx={{ ml: 2 }} onClick={() => handleDeleteSelected()}>
-            Delete Selected
-          </Button>
+        <Grid item xs={12} sm={3}>
+          <FormControl fullWidth>
+            <InputLabel>Department</InputLabel>
+            <Select
+              value={searchDepartment}
+              onChange={handleSearchDepartmentChange}
+              label="Department"
+              sx={{ backgroundColor: 'white', borderRadius: '4px' }}
+            >
+              <MenuItem value=""><em>None</em></MenuItem>
+              <MenuItem value="Sales">Sales</MenuItem>
+              <MenuItem value="Marketing">Marketing</MenuItem>
+              <MenuItem value="HR">HR</MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={12} sm={3}>
+          <FormControl fullWidth>
+            <InputLabel>Login Method</InputLabel>
+            <Select
+              value={searchLoginMethod}
+              onChange={handleSearchLoginMethodChange}
+              label="Login Method"
+              sx={{ backgroundColor: 'white', borderRadius: '4px' }}
+            >
+              <MenuItem value=""><em>None</em></MenuItem>
+              <MenuItem value="PassOrFingerOrCard">PassOrFingerOrCard</MenuItem>
+              <MenuItem value="Card">Card</MenuItem>
+              <MenuItem value="FingerAndPass">FingerAndPass</MenuItem>
+            </Select>
+          </FormControl>
         </Grid>
 
         <Grid item xs={12}>
           <Card>
-            <CardHeader title="Employee List" />
+            <CardHeader title="Employee List" sx={{ backgroundColor: primaryColor, color: 'white' }} />
             <Divider />
             <CardContent>
               <Table>
                 <TableHead>
                   <TableRow>
-                    <TableCell>Name</TableCell>
+                    <TableCell padding="checkbox">
+                      <Checkbox
+                        indeterminate={deleteEmployeeIds.length > 0 && deleteEmployeeIds.length < filteredEmployees.length}
+                        checked={filteredEmployees.length > 0 && deleteEmployeeIds.length === filteredEmployees.length}
+                        onChange={(event) => setDeleteEmployeeIds(event.target.checked ? filteredEmployees.map((employee) => employee.id) : [])}
+                        color="primary"
+                      />
+                    </TableCell>
+                    <TableCell>Picture</TableCell>
                     <TableCell>First Name</TableCell>
+                    <TableCell>Last Name</TableCell>
                     <TableCell>Date of Birth</TableCell>
                     <TableCell>Login Method</TableCell>
-                    <TableCell>Type</TableCell>
+                    <TableCell>Department</TableCell>
                     <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {filteredEmployees.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((employee) => (
                     <TableRow key={employee.id}>
-                      <TableCell>{employee.nom}</TableCell>
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={deleteEmployeeIds.includes(employee.id)}
+                          onChange={() => handleSelectEmployee(employee.id)}
+                          color="primary"
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Avatar src={employee.picture} alt={employee.prenom} />
+                      </TableCell>
                       <TableCell>{employee.prenom}</TableCell>
+                      <TableCell>{employee.nom}</TableCell>
                       <TableCell>{employee.date_naissance}</TableCell>
                       <TableCell>{employee.login_method}</TableCell>
-                      <TableCell>{employee.type}</TableCell>
+                      <TableCell>{employee.department}</TableCell>
                       <TableCell>
-                        <IconButton onClick={() => handleDeleteSelected(employee.id)}>
-                          <DeleteIcon />
-                        </IconButton>
-                        <IconButton>
+                        <IconButton color="primary">
                           <EditIcon />
                         </IconButton>
-                        <IconButton>
+                        <IconButton color="primary">
                           <PictureAsPdfIcon />
                         </IconButton>
                       </TableCell>
                     </TableRow>
                   ))}
+                  {filteredEmployees.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={8} align="center">No employees found</TableCell>
+                    </TableRow>
+                  )}
                 </TableBody>
               </Table>
             </CardContent>
@@ -159,6 +260,7 @@ const SamplePage = () => {
             onChange={handlePageChange}
             color="primary"
             shape="rounded"
+            sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}
           />
         </Grid>
       </Grid>
@@ -166,24 +268,57 @@ const SamplePage = () => {
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
         <DialogTitle>Add New Employee</DialogTitle>
         <DialogContent>
-          <TextField autoFocus margin="dense" name="nom" label="Nom" type="text" fullWidth value={newEmployee.nom} onChange={handleFieldChange} />
-          <TextField margin="dense" name="prenom" label="Prénom" type="text" fullWidth value={newEmployee.prenom} onChange={handleFieldChange} />
-          <TextField margin="dense" name="date_naissance" label="Date de Naissance" type="date" fullWidth value={newEmployee.date_naissance} onChange={handleFieldChange} />
-          <TextField select margin="dense" name="login_method" label="Méthode de Connexion" fullWidth value={newEmployee.login_method} onChange={handleFieldChange}>
+          <TextField autoFocus margin="dense" name="nom" label="Nom" type="text" fullWidth value={newEmployee.nom} onChange={handleFieldChange} sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '4px' } }} />
+          <TextField margin="dense" name="prenom" label="Prénom" type="text" fullWidth value={newEmployee.prenom} onChange={handleFieldChange} sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '4px' } }} />
+          <TextField margin="dense" name="date_naissance" label="Date de Naissance" type="date" fullWidth value={newEmployee.date_naissance} onChange={handleFieldChange} sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '4px' } }} />
+          <TextField select margin="dense" name="login_method" label="Méthode de Connexion" fullWidth value={newEmployee.login_method} onChange={handleFieldChange} sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '4px' } }}>
             <MenuItem value="PassOrFingerOrCard">PassOrFingerOrCard</MenuItem>
             <MenuItem value="Card">Card</MenuItem>
             <MenuItem value="FingerAndPass">FingerAndPass</MenuItem>
           </TextField>
-          <TextField margin="dense" name="type" label="Type" type="text" fullWidth value={newEmployee.type} onChange={handleFieldChange} />
+          <TextField margin="dense" name="department" label="Department" type="text" fullWidth value={newEmployee.department} onChange={handleFieldChange} sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '4px' } }} />
+          <TextField margin="dense" name="picture" label="Picture URL" type="text" fullWidth value={newEmployee.picture} onChange={handleFieldChange} sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '4px' } }} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenAddDialog(false)}>Cancel</Button>
-          <Button onClick={handleAddEmployee}>Add</Button>
+          <Button onClick={() => setOpenAddDialog(false)} color="primary">Cancel</Button>
+          <Button onClick={handleAddEmployee} color="primary">Add</Button>
         </DialogActions>
       </Dialog>
+
+      <Dialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete the selected employee(s)?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDeleteDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmDeleteEmployee} color="primary" autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: '100%' }}>
+          Action completed successfully!
+        </Alert>
+      </Snackbar>
     </>
   );
 };
 
 export default SamplePage;
-

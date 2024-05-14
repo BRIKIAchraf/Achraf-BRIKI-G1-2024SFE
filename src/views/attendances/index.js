@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardContent, Divider, Grid, Typography, Paper, TextField, MenuItem, Button, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TablePagination } from '@mui/material';
+import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import {
+  Card, CardHeader, CardContent, Divider, Grid, Typography, Paper, TextField, MenuItem, Button, TableContainer, Table,
+  TableHead, TableRow, TableCell, TableBody, TablePagination, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormControl, InputLabel
+} from '@mui/material';
 import Breadcrumb from 'component/Breadcrumb';
 import { gridSpacing } from 'config.js';
-import { TimePicker, DatePicker } from '@mui/lab';
-
 
 const AttendanceCard = ({ attendance }) => {
   const punchStatus = attendance.punch === 0 ? "Missing" : "Completed";
@@ -12,8 +15,10 @@ const AttendanceCard = ({ attendance }) => {
 
   return (
     <TableRow key={attendance.user_id}>
-      <TableCell>{attendance.user_id}</TableCell>
-      <TableCell>{attendance.uid}</TableCell>
+      <TableCell>{attendance.firstName}</TableCell>
+      <TableCell>{attendance.lastName}</TableCell>
+      <TableCell>{attendance.login_method}</TableCell>
+      <TableCell>{attendance.department}</TableCell>
       <TableCell>{punchStatus}</TableCell>
       <TableCell>{activeStatus}</TableCell>
       <TableCell>{formattedDate}</TableCell>
@@ -29,8 +34,10 @@ const AttendanceManagement = ({ attendances }) => {
   const [searchName, setSearchName] = useState('');
   const [searchTime, setSearchTime] = useState(null); // Using null for the time state
   const [searchDepartment, setSearchDepartment] = useState('');
-  const [searchPeriod, setSearchPeriod] = useState(null); // Using null for the period state
+  const [searchStartDate, setSearchStartDate] = useState(null); // Using null for the start date state
+  const [searchEndDate, setSearchEndDate] = useState(null); // Using null for the end date state
   const [filteredAttendances, setFilteredAttendances] = useState([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -42,7 +49,7 @@ const AttendanceManagement = ({ attendances }) => {
   };
 
   const handleSearch = () => {
-    filterAttendances(searchName, searchTime, searchDepartment, searchPeriod);
+    filterAttendances(searchName, searchTime, searchDepartment, searchStartDate, searchEndDate);
   };
 
   const handleSearchNameChange = (event) => {
@@ -57,32 +64,62 @@ const AttendanceManagement = ({ attendances }) => {
     setSearchDepartment(event.target.value);
   };
 
-  const handleSearchPeriodChange = (date) => {
-    setSearchPeriod(date);
+  const handleSearchStartDateChange = (date) => {
+    setSearchStartDate(date);
   };
 
-  const handleDeleteAttendanceForPeriod = (period) => {
+  const handleSearchEndDateChange = (date) => {
+    setSearchEndDate(date);
+  };
+
+  const handleDeleteAttendanceForPeriod = (startDate, endDate) => {
+    // Show confirmation dialog
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteAttendanceForPeriod = () => {
     // Write your logic to delete attendances for the specified period
     // This could involve making an API call to your backend server
-    console.log(`Deleting attendances for period: ${period}`);
+    console.log(`Deleting attendances from ${searchStartDate} to ${searchEndDate}`);
+    setDeleteDialogOpen(false);
   };
 
-  const filterAttendances = (name, time, department, period) => {
+  const deleteAttendancesForCurrentMonth = () => {
+    const now = new Date();
+    const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    setSearchStartDate(startDate);
+    setSearchEndDate(endDate);
+    handleDeleteAttendanceForPeriod(startDate, endDate);
+  };
+
+  const deleteAttendancesForCurrentYear = () => {
+    const now = new Date();
+    const startDate = new Date(now.getFullYear(), 0, 1);
+    const endDate = new Date(now.getFullYear(), 11, 31);
+
+    setSearchStartDate(startDate);
+    setSearchEndDate(endDate);
+    handleDeleteAttendanceForPeriod(startDate, endDate);
+  };
+
+  const filterAttendances = (name, time, department, startDate, endDate) => {
     let filtered = attendances.filter(attendance => {
+      const attendanceDate = new Date(attendance.timestamp);
       return (
-        attendance.user_id.toLowerCase().includes(name.toLowerCase()) &&
-        attendance.department.toLowerCase().includes(department.toLowerCase())
-        // Add additional conditions for time and period if necessary
-        // For example:
-        // attendance.timestamp.includes(time) &&
-        // attendance.period.includes(period)
+        (attendance.firstName.toLowerCase().includes(name.toLowerCase()) ||
+          attendance.lastName.toLowerCase().includes(name.toLowerCase())) &&
+        attendance.department.toLowerCase().includes(department.toLowerCase()) &&
+        (!startDate || attendanceDate >= startDate) &&
+        (!endDate || attendanceDate <= endDate)
       );
     });
     setFilteredAttendances(filtered);
   };
 
   return (
-    <>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Breadcrumb title="Attendance Management" sx={{ bgcolor: 'primary.main', color: 'white', padding: '12px' }}>
         <Typography variant="subtitle2" color="inherit">Home</Typography>
         <Typography variant="subtitle2" color="inherit">Attendance Management</Typography>
@@ -104,14 +141,12 @@ const AttendanceManagement = ({ attendances }) => {
                   />
                 </Grid>
                 <Grid item xs={12} md={3}>
-                <TimePicker
-  label="Search by Time"
-  variant="outlined"
-  fullWidth
-  value={searchTime}
-  onChange={handleSearchTimeChange}
-/>
-
+                  <TimePicker
+                    label="Search by Time"
+                    value={searchTime}
+                    onChange={handleSearchTimeChange}
+                    renderInput={(params) => <TextField {...params} variant="outlined" fullWidth />}
+                  />
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <TextField
@@ -131,12 +166,18 @@ const AttendanceManagement = ({ attendances }) => {
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <DatePicker
-                    label="Search by Period"
-                    variant="outlined"
-                    fullWidth
-                    value={searchPeriod}
-                    onChange={handleSearchPeriodChange}
-                    renderInput={(params) => <TextField {...params} />}
+                    label="Search Start Date"
+                    value={searchStartDate}
+                    onChange={handleSearchStartDateChange}
+                    renderInput={(params) => <TextField {...params} variant="outlined" fullWidth />}
+                  />
+                </Grid>
+                <Grid item xs={12} md={3}>
+                  <DatePicker
+                    label="Search End Date"
+                    value={searchEndDate}
+                    onChange={handleSearchEndDateChange}
+                    renderInput={(params) => <TextField {...params} variant="outlined" fullWidth />}
                   />
                 </Grid>
               </Grid>
@@ -151,17 +192,27 @@ const AttendanceManagement = ({ attendances }) => {
               <Button
                 variant="contained"
                 color="secondary"
-                onClick={() => handleDeleteAttendanceForPeriod(searchPeriod)}
+                onClick={deleteAttendancesForCurrentMonth}
                 style={{ marginTop: '16px', marginLeft: '16px' }}
               >
-                Delete Attendances for Period
+                Delete Attendances for Current Month
+              </Button>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={deleteAttendancesForCurrentYear}
+                style={{ marginTop: '16px', marginLeft: '16px' }}
+              >
+                Delete Attendances for Current Year
               </Button>
               <TableContainer component={Paper} style={{ marginTop: '16px' }}>
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>User ID</TableCell>
-                      <TableCell>UID</TableCell>
+                      <TableCell>First Name</TableCell>
+                      <TableCell>Last Name</TableCell>
+                      <TableCell>Login Method</TableCell>
+                      <TableCell>Department</TableCell>
                       <TableCell>Punch Status</TableCell>
                       <TableCell>Active Status</TableCell>
                       <TableCell>Timestamp</TableCell>
@@ -187,7 +238,27 @@ const AttendanceManagement = ({ attendances }) => {
           </Card>
         </Grid>
       </Grid>
-    </>
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete the attendances for the selected period?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={confirmDeleteAttendanceForPeriod} color="primary">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </LocalizationProvider>
   );
 };
 
