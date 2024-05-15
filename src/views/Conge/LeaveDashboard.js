@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import {
-  Box, Card, CardContent, Chip, Grid, IconButton, List, ListItem, ListItemText, Typography, InputAdornment, Divider, Avatar, TextField,Pagination
+  Box, Card, CardContent, Chip, Grid, IconButton, List, ListItem, ListItemText, Typography, InputAdornment, Divider, Avatar, TextField, Pagination
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -12,28 +13,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import { blue, green, red, yellow, grey, purple, orange } from '@mui/material/colors';
 
-const mockData = {
-  employees: [
-    { id: 1, name: "John Doe", department: "Marketing", leaveStart: "2021-09-10", leaveEnd: "2021-09-15", avatar: "https://via.placeholder.com/150" },
-    { id: 2, name: "Jane Smith", department: "Sales", leaveStart: "2021-09-12", leaveEnd: "2021-09-16", avatar: "https://via.placeholder.com/150" },
-    { id: 3, name: "Alice Johnson", department: "HR", leaveStart: "2021-09-11", leaveEnd: "2021-09-17", avatar: "https://via.placeholder.com/150" },
-    { id: 4, name: "Mark Brown", department: "Operations", leaveStart: "2021-09-14", leaveEnd: "2021-09-18", avatar: "https://via.placeholder.com/150" },
-    { id: 4, name: "Mark Brown", department: "Operations", leaveStart: "2021-09-14", leaveEnd: "2021-09-18", avatar: "https://via.placeholder.com/150" },
-    { id: 4, name: "Mark Brown", department: "Operations", leaveStart: "2021-09-14", leaveEnd: "2021-09-18", avatar: "https://via.placeholder.com/150" },
-    { id: 4, name: "Mark Brown", department: "Operations", leaveStart: "2021-09-14", leaveEnd: "2021-09-18", avatar: "https://via.placeholder.com/150" },
-    { id: 4, name: "Mark Brown", department: "Operations", leaveStart: "2021-09-14", leaveEnd: "2021-09-18", avatar: "https://via.placeholder.com/150" },
-    
-
-  ],
-  departmentLeaveCounts: {
-    Marketing: 2,
-    Sales: 1,
-    HR: 1,
-    Operations: 1
-  }
-};
-
-// Define colors for each department
 const departmentColors = {
   Marketing: purple[400],
   Sales: orange[400],
@@ -41,12 +20,23 @@ const departmentColors = {
   Operations: blue[400]
 };
 
-export default function LeaveDetails() {
+export default function LeaveDetails({ leaves }) {
+  const { leaveId } = useParams();
+  const [leave, setLeave] = useState(null);
   const [filter, setFilter] = useState('');
-  const [employees, setEmployees] = useState(mockData.employees);
+  const [employees, setEmployees] = useState([]);
   const [editMode, setEditMode] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 3; // Number of entries per page
+  const pageSize = 3;
+
+  useEffect(() => {
+    const selectedLeave = leaves.find(leave => leave.id === parseInt(leaveId));
+    setLeave(selectedLeave);
+    if (selectedLeave) {
+      setEmployees(selectedLeave.employees);
+    }
+  }, [leaveId, leaves]);
+
   const handleDelete = (id) => {
     setEmployees(employees.filter(employee => employee.id !== id));
   };
@@ -84,7 +74,7 @@ export default function LeaveDetails() {
     return counts;
   }, [filteredEmployees]);
 
-  const totalPages = Math.ceil(employees.length / pageSize);
+  const totalPages = Math.ceil(filteredEmployees.length / pageSize);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
@@ -104,13 +94,13 @@ export default function LeaveDetails() {
           boxShadow: 3,
           backgroundColor: grey[50],
           '& .MuiOutlinedInput-root': {
-            border: 'none', // Disable border
+            border: 'none',
           },
           '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
-            border: 'none', // Disable border on hover
+            border: 'none',
           },
           '& .MuiOutlinedInput-notchedOutline': {
-            border: 'none', // Disable border when not focused
+            border: 'none',
           },
         }}
         InputProps={{
@@ -132,7 +122,7 @@ export default function LeaveDetails() {
         </CardContent>
       </Card>
       <Grid container spacing={2}>
-        {filteredEmployees.map((employee, index) => (
+        {filteredEmployees.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((employee, index) => (
           <Grid key={employee.id} item xs={12} md={6}>
             <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
               <CardContent>

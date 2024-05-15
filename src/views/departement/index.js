@@ -4,7 +4,7 @@ import { Typography, TextField, Button, MenuItem, Box, Paper, IconButton, Dialog
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchDepartments, addDepartment, deleteDepartment, updateDepartment } from '../../store/departementSlice';
-import { fetchAllEmployees, modifyEmployee } from '../../store/employeeSlice';
+//import { fetchAllEmployees, modifyEmployee } from '../../store/employeeSlice';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import WorkIcon from '@mui/icons-material/Work';
 import ComputerIcon from '@mui/icons-material/Computer';
@@ -27,7 +27,7 @@ const DepartmentManagement = () => {
   useEffect(() => {
     if (status === 'idle') {
       dispatch(fetchDepartments());
-      dispatch(fetchAllEmployees());
+//      dispatch(fetchAllEmployees());
     }
   }, [status, dispatch]);
 
@@ -56,7 +56,7 @@ const DepartmentManagement = () => {
 
   const handleAssignEmployee = () => {
     if (selectedEmployee && selectedDepartment) {
-      dispatch(modifyEmployee({ id: selectedEmployee, departmentId: selectedDepartment }));
+    //  dispatch(modifyEmployee({ id: selectedEmployee, departmentId: selectedDepartment }));
       setSelectedEmployee('');
       setSelectedDepartment('');
       setSnackbarMessage('Employee assigned successfully!');

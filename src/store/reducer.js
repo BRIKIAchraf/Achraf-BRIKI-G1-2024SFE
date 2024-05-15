@@ -17,10 +17,10 @@ const reducer = combineReducers({
   dashboard: dashboardReducer ,// Add the dashboard slice reducer to the root reducer
   attendance: attendanceReducer,
   planning: planningReducer,
-  employees: employeeReducer,
   search: searchReducer,
   departements: departementReducer,
-  leave: leaveReducer
+  leave: leaveReducer,
+  employees: employeeReducer, // Add the employee slice reducer to the root reducer
 
 });
 

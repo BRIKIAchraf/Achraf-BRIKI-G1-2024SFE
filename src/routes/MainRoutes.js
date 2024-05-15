@@ -15,13 +15,12 @@ const AddLeaveForm1 = Loadable(lazy(() => import('../views/Conge/AddLeaveForm'))
 const AddPlanning = Loadable(lazy(() => import('../views/addplanning/index')));
 const LoginPage = Loadable(lazy(() => import('../views/Login/loginpage')));
 const Attendance = Loadable(lazy(() => import('../views/attendances/index')));
-//const LoginMethods = Loadable(lazy(() => import('../views/login/index')));
-const AddLoginMethod = Loadable(lazy(() => import('../views/login/AddLoginMethod')));
-const LoginMethodsList = Loadable(lazy(() => import('../views/login/LoginMethodsList')));
+const LoginMethods = Loadable(lazy(() => import('../views/login/index')));
 const EmployeeDetails = Loadable(lazy(() => import('../views/SamplePage/EmployeeDetails')));
 const LeaveDashboard = Loadable(lazy(() => import('../views/Conge/LeaveDashboard')));
 const AddEmployee = Loadable(lazy(() => import('../views/SamplePage/AddEmployee')));
 const EditPlanning = Loadable(lazy(() => import('../views/planning/EditPlanning')));
+
 // ==============================|| MAIN ROUTES ||============================== //
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth0();
@@ -52,13 +51,12 @@ const MainRoutes = {
     { path: '/DepartmentManagement', element: <DepartmentManagement/>},
     { path: '/AddLeaveForm1', element: <AddLeaveForm1/>},
     { path: '/addplanning', element: <AddPlanning /> },
-    //{ path: '/loginmethods', element: <LoginMethods /> },
-    {path: '/AddLoginMethod', element: <AddLoginMethod />},
-    {path: '/LoginMethodsList', element: <LoginMethodsList />},
-    { path: '/EmployeeDetails', element: <EmployeeDetails /> },
-    { path: '/LeaveDashboard', element: <LeaveDashboard /> },
+    { path: '/LoginMethods', element: <LoginMethods /> },
+    { path: '/employee-details/:id', element: <EmployeeDetails /> },
+    { path: '/LeaveDashboard/:id', element: <LeaveDashboard /> },
     {path: '/AddEmployee', element: <AddEmployee />},
     {path: '/EditPlanning', element: <EditPlanning />},
+    
   ]
 };
 export default MainRoutes;

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Avatar, Button, FormControl, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Typography, Box, TextField } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -10,36 +11,18 @@ import SaveIcon from '@mui/icons-material/Save';
 import { blue, deepPurple, green, red, yellow } from '@mui/material/colors';
 import { jsPDF } from 'jspdf';
 
-const historySteps = [
+// Mock data (replace with your actual data fetching logic)
+const mockEmployees = [
   {
-    label: 'Account Created',
-    description: 'The account was created on January 1, 2022.'
-  },
-  {
-    label: 'First Login',
-    description: 'First logged in on January 5, 2022.'
-  },
-  {
-    label: 'First Purchase',
-    description: 'Made the first purchase on January 10, 2022.'
-  },
-  {
-    label: 'Membership Upgrade',
-    description: 'Upgraded to premium membership on February 1, 2022.'
-  }
-];
-
-export default function EmployeeDetails() {
-  const [editMode, setEditMode] = useState(false);
-  const [employeeData, setEmployeeData] = useState({
-    fullName: "Carol Santana",
-    birthdate: "22/04/1994",
-    nationality: "Brasileiro",
-    userID: "Unique User Identifier",
-    type: "Employee's Type",
-    planningID: "Associated Planning ID",
-    departmentID: "Associated Department ID",
-    loginMethod: "Login Method Used",
+    id: 1,
+    fullName: 'John Doe',
+    birthdate: '1990-01-01',
+    nationality: 'American',
+    userID: 'user123',
+    type: 'Full-time',
+    planningID: 'plan123',
+    departmentID: 'dept123',
+    loginMethod: 'Card',
     previousDepartments: [
       { name: 'Marketing', dateFrom: 'January 2019', dateTo: 'December 2019' },
       { name: 'Sales', dateFrom: 'January 2020', dateTo: 'December 2020' }
@@ -47,8 +30,21 @@ export default function EmployeeDetails() {
     previousPlannings: [
       { planName: 'Q1 Marketing Campaign', dateFrom: 'January 2019', dateTo: 'March 2019' },
       { planName: 'Sales Boost 2020', dateFrom: 'January 2020', dateTo: 'March 2020' }
-    ]
-  });
+    ],
+    picture: 'https://via.placeholder.com/150'
+  },
+  // Add more mock employees here
+];
+
+export default function EmployeeDetails() {
+  const { id } = useParams();
+  const [employeeData, setEmployeeData] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+
+  useEffect(() => {
+    const employee = mockEmployees.find(emp => emp.id === parseInt(id));
+    setEmployeeData(employee);
+  }, [id]);
 
   const handleEditToggle = () => setEditMode(!editMode);
 
@@ -81,6 +77,10 @@ export default function EmployeeDetails() {
     doc.save('EmployeeDetails.pdf');
   };
 
+  if (!employeeData) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Paper sx={{ maxWidth: 960, margin: 'auto', overflow: 'hidden', p: 4, bgcolor: yellow[50] }}>
       <Grid container spacing={2} sx={{ flexDirection: 'column', alignItems: 'center' }}>
@@ -93,7 +93,7 @@ export default function EmployeeDetails() {
               border: '3px solid',
               borderColor: deepPurple[500]
             }}
-            src="avatar.jpg"
+            src={employeeData.picture}
           />
           {editMode ? (
             <TextField variant="outlined" value={employeeData.fullName} onChange={handleInputChange} name="fullName" sx={{ mt: 2 }} />

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Card, CardHeader, CardContent, Divider, Grid, Typography, Table, TableHead, TableBody,
   TableRow, TableCell, Checkbox, IconButton, TextField, MenuItem, Button, Box, Dialog,
@@ -15,36 +15,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
-import { fetchAllEmployees, createEmployee, deleteEmployee } from '../../store/employeeSlice';
+import { fetchEmployees, createEmployee, deleteEmployee } from '../../store/employeeSlice'; // Updated import
 
 const primaryColor = '#388e3c';
 
-// Mock data
-const mockEmployees = [
-  {
-    id: 1,
-    nom: 'Doe',
-    prenom: 'John',
-    date_naissance: '1990-01-01',
-    login_method: 'Card',
-    department: 'Sales',
-    picture: 'https://via.placeholder.com/150'
-  },
-  {
-    id: 2,
-    nom: 'Smith',
-    prenom: 'Jane',
-    date_naissance: '1985-05-15',
-    login_method: 'PassOrFingerOrCard',
-    department: 'Marketing',
-    picture: 'https://via.placeholder.com/150'
-  },
-  // Add more mock employees here
-];
-
 const SamplePage = () => {
   const dispatch = useDispatch();
-  const employees = mockEmployees;
+  const navigate = useNavigate();
+  const { employees, status, error } = useSelector((state) => state.employees);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchDepartment, setSearchDepartment] = useState('');
   const [searchLoginMethod, setSearchLoginMethod] = useState('');
@@ -62,6 +40,16 @@ const SamplePage = () => {
   const [page, setPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchEmployees());
+  }, [dispatch]);
+
+  useEffect(() => {
+    console.log("Employees:", employees);
+    console.log("Status:", status);
+    console.log("Error:", error);
+  }, [employees, status, error]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -102,12 +90,14 @@ const SamplePage = () => {
     setSnackbarOpen(true);
   };
 
-  const filteredEmployees = employees.filter(employee =>
+  const filteredEmployees = Array.isArray(employees.employees) ? employees.employees.filter(employee =>
     (employee.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
       employee.prenom.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (searchDepartment ? employee.department === searchDepartment : true) &&
+    (searchDepartment ? employee.id_departement?.name === searchDepartment : true) &&
     (searchLoginMethod ? employee.login_method === searchLoginMethod : true)
-  );
+  ) : [];
+
+  console.log("Filtered Employees:", filteredEmployees);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -204,7 +194,7 @@ const SamplePage = () => {
                       <Checkbox
                         indeterminate={deleteEmployeeIds.length > 0 && deleteEmployeeIds.length < filteredEmployees.length}
                         checked={filteredEmployees.length > 0 && deleteEmployeeIds.length === filteredEmployees.length}
-                        onChange={(event) => setDeleteEmployeeIds(event.target.checked ? filteredEmployees.map((employee) => employee.id) : [])}
+                        onChange={(event) => setDeleteEmployeeIds(event.target.checked ? filteredEmployees.map((employee) => employee._id) : [])}
                         color="primary"
                       />
                     </TableCell>
@@ -218,34 +208,35 @@ const SamplePage = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {filteredEmployees.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((employee) => (
-                    <TableRow key={employee.id}>
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          checked={deleteEmployeeIds.includes(employee.id)}
-                          onChange={() => handleSelectEmployee(employee.id)}
-                          color="primary"
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Avatar src={employee.picture} alt={employee.prenom} />
-                      </TableCell>
-                      <TableCell>{employee.prenom}</TableCell>
-                      <TableCell>{employee.nom}</TableCell>
-                      <TableCell>{employee.date_naissance}</TableCell>
-                      <TableCell>{employee.login_method}</TableCell>
-                      <TableCell>{employee.department}</TableCell>
-                      <TableCell>
-                        <IconButton color="primary">
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton color="primary">
-                          <PictureAsPdfIcon />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {filteredEmployees.length === 0 && (
+                  {filteredEmployees.length > 0 ? (
+                    filteredEmployees.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((employee) => (
+                      <TableRow key={employee._id} hover onClick={() => navigate(`/employee-details/${employee._id}`)} style={{ cursor: 'pointer' }}>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            checked={deleteEmployeeIds.includes(employee._id)}
+                            onChange={() => handleSelectEmployee(employee._id)}
+                            color="primary"
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Avatar src={employee.picture} alt={`${employee.prenom} ${employee.nom}`} />
+                        </TableCell>
+                        <TableCell>{employee.prenom}</TableCell>
+                        <TableCell>{employee.nom}</TableCell>
+                        <TableCell>{employee.date_naissance}</TableCell>
+                        <TableCell>{employee.login_method}</TableCell>
+                        <TableCell>{employee.id_departement?.name}</TableCell>
+                        <TableCell>
+                          <IconButton color="primary">
+                            <EditIcon />
+                          </IconButton>
+                          <IconButton color="primary">
+                            <PictureAsPdfIcon />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
                     <TableRow>
                       <TableCell colSpan={8} align="center">No employees found</TableCell>
                     </TableRow>

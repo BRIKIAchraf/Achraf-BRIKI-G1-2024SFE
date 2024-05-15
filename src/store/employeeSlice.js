@@ -1,112 +1,99 @@
+// src/features/employees/employeeSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// Fetch all employees
-export const fetchAllEmployees = createAsyncThunk(
-  'employees/fetchAll',
-  async () => {
-    const response = await axios.get('http://localhost:3001/api/employes');
-    return response.data;
-  }
-);
+const BASE_URL = 'http://localhost:3001/api/employes';
 
-// Fetch employee by ID
-export const fetchEmployeeById = createAsyncThunk(
-  'employees/fetchById',
-  async (id) => {
-    const response = await fetch(`/api/employes/${id}`);
-    return response.json();
-  }
-);
+export const fetchEmployees = createAsyncThunk('employees/fetchEmployees', async () => {
+  const response = await axios.get(BASE_URL);
+  console.log("fetchEmployees response:", response.data);
+  return response.data;
+});
 
-// Create an employee
-export const createEmployee = createAsyncThunk(
-  'employees/create',
-  async (employeeData) => {
-    const response = await fetch('/api/employes', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(employeeData)
-    });
-    return response.json();
-  }
-);
+export const fetchEmployeeById = createAsyncThunk('employees/fetchEmployeeById', async (id) => {
+  const response = await axios.get(`${BASE_URL}/${id}`);
+  console.log("fetchEmployeeById response:", response.data);
+  return response.data;
+});
 
-// Modify an employee
-export const modifyEmployee = createAsyncThunk(
-  'employees/modify',
-  async ({ id, employeeData }) => {
-    const response = await fetch(`/api/employes/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(employeeData)
-    });
-    return response.json();
-  }
-);
+export const createEmployee = createAsyncThunk('employees/createEmployee', async (employee) => {
+  const response = await axios.post(BASE_URL, employee);
+  console.log("createEmployee response:", response.data);
+  return response.data;
+});
 
-// Delete an employee
-export const deleteEmployee = createAsyncThunk(
-  'employees/delete',
-  async (id) => {
-    await fetch(`/api/employes/${id}`, {
-      method: 'DELETE'
-    });
-    return id;
-  }
-);
+export const updateEmployee = createAsyncThunk('employees/updateEmployee', async ({ id, employee }) => {
+  const response = await axios.put(`${BASE_URL}/${id}`, employee);
+  console.log("updateEmployee response:", response.data);
+  return response.data;
+});
 
-// Generate employee report
-export const generateEmployeeReport = createAsyncThunk(
-  'employees/generateReport',
-  async (id) => {
-    const response = await fetch(`/api/employes/${id}/generate-report`);
-    return response.json();
-  }
-);
+export const deleteEmployee = createAsyncThunk('employees/deleteEmployee', async (id) => {
+  await axios.delete(`${BASE_URL}/${id}`);
+  console.log("deleteEmployee id:", id);
+  return id;
+});
+
+export const modifyEmployee = createAsyncThunk('employees/modifyEmployee', async ({ id, updatedEmployee }) => {
+  const response = await axios.put(`${BASE_URL}/${id}`, updatedEmployee);
+  console.log("modifyEmployee response:", response.data);
+  return response.data;
+});
 
 const employeeSlice = createSlice({
   name: 'employees',
   initialState: {
     employees: [],
+    employee: null,
     status: 'idle',
-    error: null
+    error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAllEmployees.fulfilled, (state, action) => {
+      .addCase(fetchEmployees.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(fetchEmployees.fulfilled, (state, action) => {
+        state.status = 'succeeded';
         state.employees = action.payload;
+        console.log("State after fetchEmployees:", state);
+      })
+      .addCase(fetchEmployees.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
+        console.error("fetchEmployees error:", action.error.message);
+      })
+      .addCase(fetchEmployeeById.pending, (state) => {
+        state.status = 'loading';
       })
       .addCase(fetchEmployeeById.fulfilled, (state, action) => {
-        // This assumes you want to add or replace the fetched employee in the state
-        const index = state.employees.findIndex(emp => emp.id === action.payload.id);
-        if (index !== -1) {
-          state.employees[index] = action.payload;
-        } else {
-          state.employees.push(action.payload);
-        }
+        state.status = 'succeeded';
+        state.employee = action.payload;
+      })
+      .addCase(fetchEmployeeById.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
       })
       .addCase(createEmployee.fulfilled, (state, action) => {
-        state.employees.push(action.payload); // Add new employee to state
+        state.employees.push(action.payload);
       })
-      .addCase(modifyEmployee.fulfilled, (state, action) => {
-        const index = state.employees.findIndex(emp => emp.id === action.payload.id);
+      .addCase(updateEmployee.fulfilled, (state, action) => {
+        const index = state.employees.findIndex((emp) => emp._id === action.payload._id);
         if (index !== -1) {
           state.employees[index] = action.payload;
         }
       })
       .addCase(deleteEmployee.fulfilled, (state, action) => {
-        state.employees = state.employees.filter(emp => emp.id !== action.payload);
+        state.employees = state.employees.filter((employee) => employee._id !== action.payload);
       })
-      .addCase(generateEmployeeReport.fulfilled, (state, action) => {
-        // How to handle the report data can be customized based on your needs
+      .addCase(modifyEmployee.fulfilled, (state, action) => {
+        const index = state.employees.findIndex((emp) => emp._id === action.payload._id);
+        if (index !== -1) {
+          state.employees[index] = action.payload;
+        }
       });
-  }
+  },
 });
 
 export default employeeSlice.reducer;

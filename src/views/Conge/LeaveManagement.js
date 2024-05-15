@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardContent, Divider, Grid, Typography, TextField, MenuItem, AvatarGroup, Avatar, InputAdornment, Stack, Pagination } from '@mui/material';
 import Breadcrumb from 'component/Breadcrumb';
 import { gridSpacing } from 'config.js';
 import SearchIcon from '@mui/icons-material/Search';
 import ScheduleIcon from '@mui/icons-material/Schedule';
-import LeaveDetails from './LeaveDetails';
-import {LeaveDashboard} from './LeaveDashboard';
 
 const LeaveManagement = () => {
   const [leaves, setLeaves] = useState([]);
@@ -140,13 +138,13 @@ const LeaveManagement = () => {
         </Grid>
         {paginatedLeaves.length > 0 ? (
           paginatedLeaves.map((leave) => (
-            <Grid key={leave.id} item xs={12} sm={6} md={4} lg={3} onClick={() => navigate(`/leave/${leave.id}`)}>
+            <Grid key={leave.id} item xs={12} sm={6} md={4} lg={3} onClick={() => navigate(`/leave/${leave.id}`)} style={{ cursor: 'pointer' }}>
               <Card>
                 <CardHeader
                   title={<Typography component="div" variant="h6" sx={{ textAlign: 'center' }}>{leave.type}</Typography>}
                   subheader={leave.employees.map(e => e.name).join(', ')}
                   avatar={<ScheduleIcon />}
-                  titleTypographyProps={{ align: 'center' }} // Center the title text
+                  titleTypographyProps={{ align: 'center' }}
                 />
                 <Divider />
                 <CardContent>
@@ -174,12 +172,6 @@ const LeaveManagement = () => {
           color="primary"
         />
       </Stack>
-      
-      <Routes>
-        <Route path="/leave/:leaveId" element={<LeaveDetails leaves={leaves} />} />
-      </Routes>
-    
-
     </>
   );
 };

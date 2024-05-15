@@ -65,9 +65,25 @@ export default {
         {
           id: 'sample-page',
           title: 'Employe',
-          type: 'item',
-          url: '/sample-page',
-          icon: icons.PersonOutlinedIcon
+          type: 'collapse',
+         // url: '/sample-page',
+          icon: icons.PersonOutlinedIcon,
+          children:[
+            {
+              id: 'add-employee',
+              title: 'Ajouter un employe',
+              type: 'item',
+              url: '/AddEmployee',
+              icon: icons.PersonOutlinedIcon
+            },
+            {
+              id :'EmployeeDetails',
+              title: 'Liste des employes',
+              type: 'item',
+              url: '/sample-page',
+              icon: icons.PersonOutlinedIcon
+            }
+          ]
         },
         {
           id: 'leave-management',
@@ -129,25 +145,10 @@ export default {
         },
         {
           id: 'login-methods',
-          title: 'Methode de pointage',
-          type: 'collapse',
+          title: 'Methodepointage',
+          type: 'item',
+          url : '/LoginMethods',
           icon: icons.LockOpenIcon,
-          children: [
-            {
-              id: 'add-login-method',
-              title: 'Ajouter une methode de pointage',
-              type: 'item',
-              url: 'AddLoginMethod',
-              icon: icons.AddCircleOutlineIcon,
-            },
-            {
-              id: 'list-login-method',
-              title: 'Liste des methode de pointage',
-              type: 'item',
-              url: 'LoginMethodsList',
-              icon: icons.LockOpenIcon,
-            }
-          ]
         },
         {
           id: 'department-management',
@@ -157,25 +158,11 @@ export default {
           icon: icons.BusinessOutlinedIcon
         },
         {
-          id :'EmployeeDetails',
-          title: 'Employee Details',
-          type: 'item',
-          url: '/EmployeeDetails',
-          icon: icons.PersonOutlinedIcon
-        },
-        {
           id :'LeaveDashboard',
           title: 'Leave Dashboard',
           type: 'item',
           url: '/LeaveDashboard',
           icon: icons.EventNoteOutlinedIcon
-        },
-        {
-          id: 'add-employee',
-          title: 'Ajouter un employe',
-          type: 'item',
-          url: '/AddEmployee',
-          icon: icons.PersonOutlinedIcon
         },
         {
           id: 'edit-planning',
