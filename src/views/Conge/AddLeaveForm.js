@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TextField, Button, Grid, Avatar, Typography, MenuItem, Card, CardContent, CardHeader, Divider } from '@mui/material';
 import { LocalizationProvider, DateRangePicker } from '@mui/x-date-pickers-pro';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
+import axios from 'axios';
 
 const AddLeaveForm = () => {
   const [leaveName, setLeaveName] = useState('');
@@ -13,16 +13,21 @@ const AddLeaveForm = () => {
   const [employees, setEmployees] = useState([]); // All available employees
   const [successMessage, setSuccessMessage] = useState('');
 
-  // Mock data for employees
-  const mockEmployees = [
-    { _id: '1', name: 'John Doe', department: 'HR', avatar: 'https://i.pravatar.cc/150?img=1' },
-    { _id: '2', name: 'Jane Smith', department: 'Engineering', avatar: 'https://i.pravatar.cc/150?img=2' },
-    { _id: '3', name: 'Alice Johnson', department: 'Marketing', avatar: 'https://i.pravatar.cc/150?img=3' }
-  ];
-
   useEffect(() => {
-    // Simulate fetching data
-    setEmployees(mockEmployees);
+    const fetchEmployees = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/employes');
+        console.log('Fetched employees:', response.data); // Log the fetched employees
+        if (Array.isArray(response.data.employees)) {
+          setEmployees(response.data.employees);
+        } else {
+          setEmployees([]);
+        }
+      } catch (error) {
+        console.error('Error fetching employees:', error);
+      }
+    };
+    fetchEmployees();
   }, []);
 
   const handleEmployeeSelect = (event) => {
@@ -43,14 +48,18 @@ const AddLeaveForm = () => {
       type: leaveType,
       status
     };
-    // Simulate success for demonstration
-    console.log("Form Submitted", leaveData);
-    setSuccessMessage('Leave added successfully!');
-    setLeaveName('');
-    setDateRange([null, null]);
-    setSelectedEmployees([]);
-    setLeaveType('');
-    setStatus('pending');
+    console.log('Submitting leave data:', leaveData); // Log the data being submitted
+    try {
+      await axios.post('http://localhost:3001/api/leave/assign', leaveData);
+      setSuccessMessage('Leave added successfully!');
+      setLeaveName('');
+      setDateRange([null, null]);
+      setSelectedEmployees([]);
+      setLeaveType('');
+      setStatus('pending');
+    } catch (error) {
+      console.error('Error adding leave:', error);
+    }
   };
 
   return (
@@ -84,11 +93,11 @@ const AddLeaveForm = () => {
                   endText="End Date"
                   value={dateRange}
                   onChange={(newValue) => setDateRange(newValue)}
-                  renderInput={(startProps, endProps) => (
+                  textField={(params) => (
                     <>
-                      <TextField {...startProps} sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }} />
+                      <TextField {...params[0]} sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }} />
                       <Grid sx={{ mx: 2 }}> to </Grid>
-                      <TextField {...endProps} sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }} />
+                      <TextField {...params[1]} sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }} />
                     </>
                   )}
                 />
@@ -105,7 +114,7 @@ const AddLeaveForm = () => {
               >
                 {employees.map((employee) => (
                   <MenuItem key={employee._id} value={employee._id}>
-                    {employee.name}
+                    {employee.nom} {employee.prenom}
                   </MenuItem>
                 ))}
               </TextField>
@@ -143,8 +152,8 @@ const AddLeaveForm = () => {
             </Grid>
             {selectedEmployees.map((employee, index) => (
               <Grid key={index} item xs={6}>
-                <Avatar src={employee.avatar} alt={employee.name} />
-                <Typography>{employee.name}</Typography>
+                <Avatar src={employee.picture} alt={employee.nom} />
+                <Typography>{employee.nom} {employee.prenom}</Typography>
                 <Typography>{employee.department}</Typography>
               </Grid>
             ))}
