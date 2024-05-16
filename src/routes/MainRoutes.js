@@ -56,6 +56,7 @@ const MainRoutes = {
     { path: '/LeaveDashboard/:id', element: <LeaveDashboard /> },
     {path: '/AddEmployee', element: <AddEmployee />},
     {path: '/EditPlanning', element: <EditPlanning />},
+
     
   ]
 };

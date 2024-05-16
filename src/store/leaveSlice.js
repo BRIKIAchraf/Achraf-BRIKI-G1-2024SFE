@@ -1,57 +1,57 @@
-// src/store/leaveSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const baseURL = 'http://localhost:3001/api/leave';
-
-export const fetchLeaves = createAsyncThunk('leave/fetchLeaves', async () => {
-  const response = await axios.get(`${baseURL}/list`);
-  return response.data;
+// Thunks
+export const fetchLeaves = createAsyncThunk('leaves/fetchLeaves', async (_, { rejectWithValue }) => {
+  try {
+    console.log("Fetching leaves...");
+    const response = await axios.get('http://localhost:3001/api/leave/list');
+    console.log("Fetch leaves response:", response.data);
+    return response.data.leaves; // Extract the leaves array from the response
+  } catch (error) {
+    console.log("Error fetching leaves:", error.response ? error.response.data : error);
+    return rejectWithValue(error.response ? error.response.data : 'Error fetching leaves');
+  }
 });
 
-export const assignLeave = createAsyncThunk('leave/assignLeave', async (leaveData) => {
-  const response = await axios.post(`${baseURL}/assign`, leaveData);
-  return response.data;
-});
-
-export const modifyLeave = createAsyncThunk('leave/modifyLeave', async ({ leaveId, leaveData }) => {
-  const response = await axios.put(`${baseURL}/modify/${leaveId}`, leaveData);
-  return response.data;
-});
-
-export const revokeLeave = createAsyncThunk('leave/revokeLeave', async (leaveId) => {
-  await axios.delete(`${baseURL}/revoke/${leaveId}`);
-  return leaveId;
+export const revokeLeave = createAsyncThunk('leaves/revokeLeave', async (leaveId, { rejectWithValue }) => {
+  try {
+    await axios.delete(`http://localhost:3001/api/leave/revoke/${leaveId}`);
+    return leaveId;
+  } catch (error) {
+    return rejectWithValue(error.response ? error.response.data : 'Error revoking leave');
+  }
 });
 
 const leaveSlice = createSlice({
-  name: 'leave',
+  name: 'leaves',
   initialState: {
     leaves: [],
     status: 'idle',
     error: null,
-    totalCount: 0
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchLeaves.pending, (state) => {
+        state.status = 'loading';
+      })
       .addCase(fetchLeaves.fulfilled, (state, action) => {
-        state.leaves = action.payload.leaves;
-        state.totalCount = action.payload.totalCount;
+        console.log("Fetch leaves fulfilled:", action.payload);
+        state.leaves = Array.isArray(action.payload) ? action.payload : [];
+        state.status = 'succeeded';
       })
-      .addCase(assignLeave.fulfilled, (state, action) => {
-        state.leaves.push(action.payload);
-      })
-      .addCase(modifyLeave.fulfilled, (state, action) => {
-        const index = state.leaves.findIndex(leave => leave._id === action.payload._id);
-        if (index !== -1) {
-          state.leaves[index] = action.payload;
-        }
+      .addCase(fetchLeaves.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload || 'Failed to fetch leaves';
       })
       .addCase(revokeLeave.fulfilled, (state, action) => {
-        state.leaves = state.leaves.filter(leave => leave._id !== action.payload);
+        state.leaves = state.leaves.filter((leave) => leave._id !== action.payload);
+      })
+      .addCase(revokeLeave.rejected, (state, action) => {
+        state.error = action.payload || 'Failed to revoke leave';
       });
-  }
+  },
 });
 
 export default leaveSlice.reducer;

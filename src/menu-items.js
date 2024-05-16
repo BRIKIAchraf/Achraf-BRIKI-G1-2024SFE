@@ -170,7 +170,7 @@ export default {
           type: 'item',
           url: '/EditPlanning',
           icon: icons.AccessTimeIcon
-        }
+        },
       ]
     },
   ]

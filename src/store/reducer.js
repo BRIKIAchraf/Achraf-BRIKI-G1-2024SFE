@@ -15,11 +15,11 @@ import leaveReducer from './leaveSlice'; // Import the leave slice reducer
 const reducer = combineReducers({
   customization: customizationReducer,
   dashboard: dashboardReducer ,// Add the dashboard slice reducer to the root reducer
-  attendance: attendanceReducer,
+  attendances: attendanceReducer,
   planning: planningReducer,
   search: searchReducer,
   departements: departementReducer,
-  leave: leaveReducer,
+  leaves: leaveReducer,
   employees: employeeReducer, // Add the employee slice reducer to the root reducer
 
 });

@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import {
   Box, Card, CardContent, Grid, Typography, TextField, MenuItem, Button, Avatar, Stepper, Step, StepLabel, FormControl, InputLabel, Select, Snackbar, Alert
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { blue, green, grey } from '@mui/material/colors';
+import { createEmployee } from '../../store/employeeSlice';
 
 const AddEmployee = () => {
+  const dispatch = useDispatch();
   const [employeeData, setEmployeeData] = useState({
     nom: '',
     prenom: '',
@@ -13,7 +16,8 @@ const AddEmployee = () => {
     type: '',
     login_method: '',
     id_planning: '',
-    id_departement: ''
+    id_departement: '',
+    picture: '' // added picture field
   });
   const [imagePreview, setImagePreview] = useState(null);
   const [activeStep, setActiveStep] = useState(0);
@@ -30,6 +34,7 @@ const AddEmployee = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
+        setEmployeeData((prev) => ({ ...prev, picture: reader.result }));
       };
       reader.readAsDataURL(file);
     } else {
@@ -47,8 +52,21 @@ const AddEmployee = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Employee Data:', employeeData);
-    setSnackbarOpen(true);
+    dispatch(createEmployee(employeeData)).then(() => {
+      setSnackbarOpen(true);
+      setEmployeeData({
+        nom: '',
+        prenom: '',
+        date_naissance: '',
+        type: '',
+        login_method: '',
+        id_planning: '',
+        id_departement: '',
+        picture: ''
+      });
+      setImagePreview(null);
+      setActiveStep(0);
+    });
   };
 
   const handleSnackbarClose = (event, reason) => {

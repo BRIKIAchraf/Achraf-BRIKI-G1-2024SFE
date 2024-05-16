@@ -1,31 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import WorkIcon from '@mui/icons-material/Work';
-import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
-import ComputerIcon from '@mui/icons-material/Computer';
-import MarketingIcon from '@mui/icons-material/Assessment';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-
-// Define the icons
-const icons = {
-  HR: <BusinessCenterIcon style={{ fontSize: '80px' }} />,
-  Financial: <WorkIcon style={{ fontSize: '80px' }} />,
-  IT: <ComputerIcon style={{ fontSize: '80px' }} />,
-  Marketing: <MarketingIcon style={{ fontSize: '80px' }} />,
-  Administration: <AdminPanelSettingsIcon style={{ fontSize: '80px' }} />
-};
 
 // Thunks
 export const fetchDepartments = createAsyncThunk('departements/fetchDepartments', async (_, { rejectWithValue }) => {
   try {
     const response = await axios.get('http://localhost:3001/api/departements');
     if (response.data) {
-      // Map "_id" to "id" for compatibility with frontend conventions
       return response.data.map(dept => ({
         id: dept._id,
         name: dept.name,
-        employees: dept.employees || [],
-        icon: icons[dept.name] || <WorkIcon style={{ fontSize: '80px' }} />
+        employees: dept.employees || []
       }));
     } else {
       throw new Error('No departments found');
@@ -40,7 +24,6 @@ export const addDepartment = createAsyncThunk('departements/addDepartment', asyn
   return {
     id: response.data._id,
     name: department.name,
-    icon: icons[department.name] || <WorkIcon style={{ fontSize: '80px' }} />,
     employees: []
   };
 });
@@ -59,8 +42,7 @@ export const updateDepartment = createAsyncThunk('departements/updateDepartment'
   const response = await axios.put(`http://localhost:3001/api/departements/${id}`, { name });
   return {
     id,
-    name,
-    icon: icons[name] || <WorkIcon style={{ fontSize: '80px' }} /> // Update icon based on the new name
+    name
   };
 });
 

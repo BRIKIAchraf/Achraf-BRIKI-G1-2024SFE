@@ -3,33 +3,44 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Typography, TextField, Button, MenuItem, Box, Paper, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Container, Grid, Snackbar, Alert, Stack, Pagination } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { fetchDepartments, addDepartment, deleteDepartment, updateDepartment } from '../../store/departementSlice';
-//import { fetchAllEmployees, modifyEmployee } from '../../store/employeeSlice';
+import { fetchDepartments, addDepartment, deleteDepartment, updateDepartment, assignEmployeeToDepartment } from '../../store/departementSlice';
+import { fetchEmployees } from '../../store/employeeSlice';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
 import WorkIcon from '@mui/icons-material/Work';
 import ComputerIcon from '@mui/icons-material/Computer';
 import MarketingIcon from '@mui/icons-material/Assessment';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
-const icons = {
-  HR: <BusinessCenterIcon style={{ fontSize: '80px', color: '#1976d2' }} />,
-  Financial: <WorkIcon style={{ fontSize: '80px', color: '#388e3c' }} />,
-  IT: <ComputerIcon style={{ fontSize: '80px', color: '#0288d1' }} />,
-  Marketing: <MarketingIcon style={{ fontSize: '80px', color: '#f57c00' }} />,
-  Administration: <AdminPanelSettingsIcon style={{ fontSize: '80px', color: '#d32f2f' }} />
+const getIcon = (name) => {
+  switch (name) {
+    case 'HR':
+      return <BusinessCenterIcon style={{ fontSize: '80px', color: '#1976d2' }} />;
+    case 'Financial':
+      return <WorkIcon style={{ fontSize: '80px', color: '#388e3c' }} />;
+    case 'IT':
+      return <ComputerIcon style={{ fontSize: '80px', color: '#0288d1' }} />;
+    case 'Marketing':
+      return <MarketingIcon style={{ fontSize: '80px', color: '#f57c00' }} />;
+    case 'Administration':
+      return <AdminPanelSettingsIcon style={{ fontSize: '80px', color: '#d32f2f' }} />;
+    default:
+      return <WorkIcon style={{ fontSize: '80px' }} />;
+  }
 };
 
 const DepartmentManagement = () => {
   const dispatch = useDispatch();
   const { departments, status, error } = useSelector(state => state.departements);
-  const { employees } = useSelector(state => state.employees);
+  const { employees, status: employeeStatus } = useSelector(state => state.employees);
 
   useEffect(() => {
     if (status === 'idle') {
       dispatch(fetchDepartments());
-//      dispatch(fetchAllEmployees());
     }
-  }, [status, dispatch]);
+    if (employeeStatus === 'idle') {
+      dispatch(fetchEmployees());
+    }
+  }, [status, employeeStatus, dispatch]);
 
   const [newDepartmentName, setNewDepartmentName] = useState('');
   const [selectedEmployee, setSelectedEmployee] = useState('');
@@ -49,14 +60,14 @@ const DepartmentManagement = () => {
 
   const handleAddDepartment = () => {
     if (newDepartmentName) {
-      dispatch(addDepartment({ name: newDepartmentName, icon: icons[newDepartmentName] || <WorkIcon style={{ fontSize: '80px' }} /> }));
+      dispatch(addDepartment({ name: newDepartmentName }));
       setNewDepartmentName('');
     }
   };
 
   const handleAssignEmployee = () => {
     if (selectedEmployee && selectedDepartment) {
-    //  dispatch(modifyEmployee({ id: selectedEmployee, departmentId: selectedDepartment }));
+      dispatch(assignEmployeeToDepartment({ departmentId: selectedDepartment, employeeId: selectedEmployee }));
       setSelectedEmployee('');
       setSelectedDepartment('');
       setSnackbarMessage('Employee assigned successfully!');
@@ -122,9 +133,9 @@ const DepartmentManagement = () => {
     <Box display="flex" flexDirection="row" justifyContent="flex-start" flexWrap="wrap" gap={4}>
       {paginatedDepartments.map((department) => (
         <Paper key={department.id} style={{ padding: '20px', width: '220px', textAlign: 'center', position: 'relative' }}>
-          {department.icon}
+          {getIcon(department.name)}
           <Typography variant="h6" style={{ marginTop: '10px' }}>{department.name}</Typography>
-          <Typography variant="body2">{`Employees: ${department.employeeCount || 0}`}</Typography>
+          <Typography variant="body2">{`Employees: ${department.employees.length}`}</Typography>
           <Box style={{ position: 'absolute', top: '10px', right: '10px' }}>
             <IconButton onClick={() => openEditDialog(department)} color="primary">
               <EditIcon />
@@ -153,12 +164,12 @@ const DepartmentManagement = () => {
           value={editableDepartment ? editableDepartment.name : ''}
           onChange={handleNameChange}
         />
-        {editableDepartment && editableDepartment.employees && editableDepartment.employees.length > 0 && (
+        {editableDepartment && Array.isArray(editableDepartment.employees) && editableDepartment.employees.length > 0 && (
           <Box mt={2}>
             <Typography variant="h6">Employees</Typography>
             {editableDepartment.employees.map(employee => (
               <Box key={employee} display="flex" alignItems="center" justifyContent="space-between">
-                <Typography>{employees.find(emp => emp.id === employee)?.firstName} {employees.find(emp => emp.id === employee)?.lastName}</Typography>
+                <Typography>{Array.isArray(employees) && employees.find(emp => emp._id === employee)?.firstName} {Array.isArray(employees) && employees.find(emp => emp._id === employee)?.lastName}</Typography>
                 <IconButton color="error" onClick={() => handleRemoveEmployee(employee)}>
                   <DeleteIcon />
                 </IconButton>
@@ -219,8 +230,8 @@ const DepartmentManagement = () => {
               fullWidth
               margin="normal"
             >
-              {employees.filter(employee => employee.firstName.toLowerCase().includes(filterEmployee.toLowerCase()) || employee.lastName.toLowerCase().includes(filterEmployee.toLowerCase())).map((employee) => (
-                <MenuItem key={employee.id} value={employee.id}>
+              {Array.isArray(employees) && employees.map((employee) => (
+                <MenuItem key={employee._id} value={employee._id}>
                   {`${employee.firstName} ${employee.lastName}`}
                 </MenuItem>
               ))}

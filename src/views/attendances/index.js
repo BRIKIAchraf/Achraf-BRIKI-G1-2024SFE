@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAttendances } from '../../store/attendanceSlice';
 import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {
   Card, CardHeader, CardContent, Divider, Grid, Typography, Paper, TextField, MenuItem, Button, TableContainer, Table,
-  TableHead, TableRow, TableCell, TableBody, TablePagination, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, FormControl, InputLabel
+  TableHead, TableRow, TableCell, TableBody, TablePagination, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
 } from '@mui/material';
 import Breadcrumb from 'component/Breadcrumb';
 import { gridSpacing } from 'config.js';
@@ -11,10 +13,10 @@ import { gridSpacing } from 'config.js';
 const AttendanceCard = ({ attendance }) => {
   const punchStatus = attendance.punch === 0 ? "Missing" : "Completed";
   const activeStatus = attendance.status === 1 ? "Active" : "Inactive";
-  const formattedDate = new Date(attendance.timestamp).toLocaleString(); // Formatting timestamp
+  const formattedDate = new Date(attendance.timestamp).toLocaleString();
 
   return (
-    <TableRow key={attendance.user_id}>
+    <TableRow key={attendance._id}>
       <TableCell>{attendance.firstName}</TableCell>
       <TableCell>{attendance.lastName}</TableCell>
       <TableCell>{attendance.login_method}</TableCell>
@@ -26,18 +28,31 @@ const AttendanceCard = ({ attendance }) => {
   );
 };
 
-const departments = ['Department A', 'Department B', 'Department C']; // Sample department list
+const departments = ['Department A', 'Department B', 'Department C'];
 
-const AttendanceManagement = ({ attendances }) => {
+const AttendanceManagement = () => {
+  const dispatch = useDispatch();
+  const { attendances, status, error } = useSelector((state) => state.attendances);
+
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchName, setSearchName] = useState('');
-  const [searchTime, setSearchTime] = useState(null); // Using null for the time state
+  const [searchTime, setSearchTime] = useState(null);
   const [searchDepartment, setSearchDepartment] = useState('');
-  const [searchStartDate, setSearchStartDate] = useState(null); // Using null for the start date state
-  const [searchEndDate, setSearchEndDate] = useState(null); // Using null for the end date state
+  const [searchStartDate, setSearchStartDate] = useState(null);
+  const [searchEndDate, setSearchEndDate] = useState(null);
   const [filteredAttendances, setFilteredAttendances] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchAttendances());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (status === 'succeeded') {
+      setFilteredAttendances(attendances);
+    }
+  }, [attendances, status]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -73,13 +88,10 @@ const AttendanceManagement = ({ attendances }) => {
   };
 
   const handleDeleteAttendanceForPeriod = (startDate, endDate) => {
-    // Show confirmation dialog
     setDeleteDialogOpen(true);
   };
 
   const confirmDeleteAttendanceForPeriod = () => {
-    // Write your logic to delete attendances for the specified period
-    // This could involve making an API call to your backend server
     console.log(`Deleting attendances from ${searchStartDate} to ${searchEndDate}`);
     setDeleteDialogOpen(false);
   };
