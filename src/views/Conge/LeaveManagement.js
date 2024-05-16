@@ -49,7 +49,11 @@ const LeaveManagement = () => {
 
   const filteredLeaves = leaves.filter(leave =>
     (leave.type.toLowerCase().includes(leaveTypeFilter.toLowerCase())) &&
-    (leave.employee ? leave.employee.toLowerCase().includes(searchTerm.toLowerCase()) : true)
+    (
+      leave.employee
+        ? `${leave.employee.nom} ${leave.employee.prenom}`.toLowerCase().includes(searchTerm.toLowerCase())
+        : true
+    )
   );
 
   console.log('Filtered leaves:', filteredLeaves);
@@ -100,7 +104,7 @@ const LeaveManagement = () => {
               <Card>
                 <CardHeader
                   title={<Typography component="div" variant="h6" sx={{ textAlign: 'center' }}>{leave.type}</Typography>}
-                  subheader={leave.employee || 'No employee assigned'}
+                  subheader={leave.employee ? `${leave.employee.nom} ${leave.employee.prenom}` : 'No employee assigned'}
                   avatar={<ScheduleIcon />}
                   titleTypographyProps={{ align: 'center' }}
                   action={

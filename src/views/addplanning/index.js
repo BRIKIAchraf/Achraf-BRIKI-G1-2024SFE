@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addPlanning } from '../../store/planningSlice';
+import { fetchEmployees } from '../../store/employeeSlice';
 import { TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, IconButton, List, ListItem, ListItemText, Typography, styled } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
-import WbSunnyOutlinedIcon from '@mui/icons-material/WbSunnyOutlined'; // Morning icon
-import NightsStayOutlinedIcon from '@mui/icons-material/NightsStayOutlined'; // Afternoon icon
-import axios from 'axios';
 import dayjs from 'dayjs';
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
@@ -28,33 +28,20 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
   }
 }));
 
-const CustomIcon = styled(({ icon: IconComponent, ...other }) => (
-  <IconComponent {...other} />
-))({
-  color: 'blue',
-  marginRight: 8,
-  verticalAlign: 'bottom',
-});
-
 const AddPlanningForm = () => {
+  const dispatch = useDispatch();
+  const { employees, status: employeesStatus } = useSelector(state => state.employees);
+
   const [intitule, setIntitule] = useState('');
   const [planningStartDate, setPlanningStartDate] = useState(null);
   const [planningEndDate, setPlanningEndDate] = useState(null);
   const [jours, setJours] = useState([{ h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
-  const [employees, setEmployees] = useState([]);
 
   useEffect(() => {
-    fetchEmployees();
-  }, []);
-
-  const fetchEmployees = async () => {
-    try {
-      const response = await axios.get('/api/employees');
-      setEmployees(response.data);
-    } catch (error) {
-      console.error('Error fetching employees:', error);
+    if (employeesStatus === 'idle') {
+      dispatch(fetchEmployees());
     }
-  };
+  }, [dispatch, employeesStatus]);
 
   const handleJourChange = (index, field, value) => {
     const newJours = [...jours];
@@ -76,19 +63,19 @@ const AddPlanningForm = () => {
     setJours(jours.filter((_, idx) => idx !== index));
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     const planningData = { intitule, planningStartDate, planningEndDate, jours };
-    try {
-      const response = await axios.post('/api/plannings', planningData);
-      console.log('New planning created:', response.data);
-      setIntitule('');
-      setPlanningStartDate(null);
-      setPlanningEndDate(null);
-      setJours([{ h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
-    } catch (error) {
-      console.error('Error creating new planning:', error);
-    }
+    dispatch(addPlanning(planningData))
+      .then(() => {
+        setIntitule('');
+        setPlanningStartDate(null);
+        setPlanningEndDate(null);
+        setJours([{ h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
+      })
+      .catch(error => {
+        console.error('Error creating new planning:', error);
+      });
   };
 
   return (
@@ -108,7 +95,7 @@ const AddPlanningForm = () => {
               label="Planning Start Date"
               value={planningStartDate}
               onChange={setPlanningStartDate}
-              renderInput={(params) => <CustomTextField {...params} />}
+              textField={(params) => <CustomTextField {...params} />}
             />
           </Grid>
           <Grid item xs={6}>
@@ -116,7 +103,7 @@ const AddPlanningForm = () => {
               label="Planning End Date"
               value={planningEndDate}
               onChange={setPlanningEndDate}
-              renderInput={(params) => <CustomTextField {...params} />}
+              textField={(params) => <CustomTextField {...params} />}
             />
           </Grid>
           {jours.map((jour, index) => (
@@ -160,7 +147,7 @@ const AddPlanningForm = () => {
                       </List>
                     )}
                   >
-                    {employees.map(emp => (
+                    {Array.isArray(employees) && employees.map(emp => (
                       <MenuItem key={emp._id} value={emp._id}>
                         {emp.nom} {emp.prenom}
                       </MenuItem>

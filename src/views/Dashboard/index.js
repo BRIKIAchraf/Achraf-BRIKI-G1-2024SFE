@@ -94,6 +94,24 @@ const Default = () => {
                   iconFooter={TrendingUpIcon}
                 />
               </Grid>
+              <Grid item lg={3} sm={6} xs={12}>
+                <ReportCard
+                  primary={stats.employeesOnLeave ? stats.employeesOnLeave.toString() : 'N/A'}
+                  secondary="Employees On Leave"
+                  color={theme.palette.secondary.main}
+                  iconPrimary={EventNoteTwoTone}
+                  iconFooter={TrendingUpIcon}
+                />
+              </Grid>
+              <Grid item lg={3} sm={6} xs={12}>
+                <ReportCard
+                  primary={stats.averageAge ? stats.averageAge.toFixed(1).toString() : 'N/A'}
+                  secondary="Average Age"
+                  color={theme.palette.info.main}
+                  iconPrimary={EventNoteTwoTone}
+                  iconFooter={TrendingUpIcon}
+                />
+              </Grid>
             </>
           )}
         </Grid>
@@ -219,7 +237,7 @@ const Default = () => {
                       </Grid>
                       <Grid item xs={12}>
                         <LinearProgress variant="determinate" aria-label="Referral" value={20} color="primary" />
-                      </Grid>
+                      </Grid                    >
                     </Grid>
                   </Grid>
                   <Grid item xs={12}>
