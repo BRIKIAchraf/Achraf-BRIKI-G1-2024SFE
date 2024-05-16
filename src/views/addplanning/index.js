@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { addPlanning } from '../../store/planningSlice';
-import { fetchEmployees } from '../../store/employeeSlice';
-import { TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, IconButton, List, ListItem, ListItemText, Typography, styled } from '@mui/material';
+import axios from 'axios';
+import { TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, IconButton, List, ListItem, ListItemText, styled, Typography } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
-import dayjs from 'dayjs';
 
 const CustomTextField = styled(TextField)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
@@ -29,53 +26,73 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
 }));
 
 const AddPlanningForm = () => {
-  const dispatch = useDispatch();
-  const { employees, status: employeesStatus } = useSelector(state => state.employees);
-
   const [intitule, setIntitule] = useState('');
   const [planningStartDate, setPlanningStartDate] = useState(null);
   const [planningEndDate, setPlanningEndDate] = useState(null);
   const [jours, setJours] = useState([{ h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
+  const [employees, setEmployees] = useState([]); // All available employees
+  const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
-    if (employeesStatus === 'idle') {
-      dispatch(fetchEmployees());
-    }
-  }, [dispatch, employeesStatus]);
+    const fetchEmployees = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/employes');
+        console.log('Fetched employees:', response.data); // Log the fetched employees
+        if (Array.isArray(response.data.employees)) {
+          setEmployees(response.data.employees);
+        } else {
+          setEmployees([]);
+        }
+      } catch (error) {
+        console.error('Error fetching employees:', error);
+      }
+    };
+    fetchEmployees();
+  }, []);
+
+  useEffect(() => {
+    console.log('Updated employees state:', employees);
+  }, [employees]);
 
   const handleJourChange = (index, field, value) => {
+    console.log(`Changing day ${index}, field ${field} to ${value}`);
     const newJours = [...jours];
     newJours[index][field] = value;
     setJours(newJours);
   };
 
   const handleEmployeeChange = (index, value) => {
+    console.log(`Changing employees for day ${index} to ${value}`);
     const newJours = [...jours];
     newJours[index].employees = value;
     setJours(newJours);
   };
 
   const addJour = () => {
+    console.log('Adding a new day');
     setJours([...jours, { h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
   };
 
   const removeJour = (index) => {
+    console.log(`Removing day ${index}`);
     setJours(jours.filter((_, idx) => idx !== index));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const planningData = { intitule, planningStartDate, planningEndDate, jours };
-    dispatch(addPlanning(planningData))
-      .then(() => {
-        setIntitule('');
-        setPlanningStartDate(null);
-        setPlanningEndDate(null);
-        setJours([{ h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
-      })
-      .catch(error => {
-        console.error('Error creating new planning:', error);
-      });
+    console.log('Submitting planning data:', planningData); // Log the data being submitted
+    try {
+      await axios.post('http://localhost:3001/api/planning', planningData);
+      console.log('Planning added successfully');
+      setSuccessMessage('Planning added successfully!');
+      setIntitule('');
+      setPlanningStartDate(null);
+      setPlanningEndDate(null);
+      setJours([{ h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
+    } catch (error) {
+      console.error('Error adding planning:', error);
+    }
   };
 
   return (
@@ -95,7 +112,7 @@ const AddPlanningForm = () => {
               label="Planning Start Date"
               value={planningStartDate}
               onChange={setPlanningStartDate}
-              textField={(params) => <CustomTextField {...params} />}
+              renderInput={(params) => <CustomTextField {...params} />}
             />
           </Grid>
           <Grid item xs={6}>
@@ -103,7 +120,7 @@ const AddPlanningForm = () => {
               label="Planning End Date"
               value={planningEndDate}
               onChange={setPlanningEndDate}
-              textField={(params) => <CustomTextField {...params} />}
+              renderInput={(params) => <CustomTextField {...params} />}
             />
           </Grid>
           {jours.map((jour, index) => (
@@ -170,6 +187,11 @@ const AddPlanningForm = () => {
           <Grid item xs={12}>
             <Button type="submit" variant="contained" color="primary">Create Planning</Button>
           </Grid>
+          {successMessage && (
+            <Grid item xs={12}>
+              <Typography color="green">{successMessage}</Typography>
+            </Grid>
+          )}
         </Grid>
       </form>
     </LocalizationProvider>
