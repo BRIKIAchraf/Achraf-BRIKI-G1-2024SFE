@@ -1,201 +1,316 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, IconButton, List, ListItem, ListItemText, styled, Typography } from '@mui/material';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import DeleteIcon from '@mui/icons-material/Delete';
-
-const CustomTextField = styled(TextField)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    '& fieldset': {
-      borderRadius: '25px',
-      borderColor: 'rgba(0, 0, 0, 0.23)',
-    },
-    '&:hover fieldset': {
-      borderColor: 'blue',
-    },
-    '&.Mui-focused fieldset': {
-      borderColor: theme.palette.primary.main,
-    },
-    '& input': {
-      fontWeight: 'bold',
-    },
-    margin: theme.spacing(1, 0),
-  }
-}));
-
-const AddPlanningForm = () => {
-  const [intitule, setIntitule] = useState('');
-  const [planningStartDate, setPlanningStartDate] = useState(null);
-  const [planningEndDate, setPlanningEndDate] = useState(null);
-  const [jours, setJours] = useState([{ h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
-  const [employees, setEmployees] = useState([]); // All available employees
-  const [successMessage, setSuccessMessage] = useState('');
+import {
+  Box, Card, CardContent, Grid, Typography, TextField, MenuItem, Button, Avatar, Stepper, Step, StepLabel, FormControl, InputLabel, Select, Snackbar, Alert
+} from '@mui/material';
+import SaveIcon from '@mui/icons-material/Save';
+import { blue, green, grey } from '@mui/material/colors';
+const AddEmployee = () => {
+  const [employeeData, setEmployeeData] = useState({
+    nom: '',
+    prenom: '',
+    date_naissance: '',
+    type: '',
+    login_method: '',
+    id_planning: '',
+    id_departement: '',
+    picture: ''
+  });
+  const [imagePreview, setImagePreview] = useState(null);
+  const [activeStep, setActiveStep] = useState(0);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [plannings, setPlannings] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [loginMethods, setLoginMethods] = useState([]);
 
   useEffect(() => {
-    const fetchEmployees = async () => {
+    const fetchPlannings = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/employes');
-        console.log('Fetched employees:', response.data); // Log the fetched employees
-        if (Array.isArray(response.data.employees)) {
-          setEmployees(response.data.employees);
-        } else {
-          setEmployees([]);
-        }
+        const response = await axios.get('http://localhost:3001/api/plannings');
+        setPlannings(response.data);
+        console.log('Fetched plannings:', response.data);
       } catch (error) {
-        console.error('Error fetching employees:', error);
+        console.error('Error fetching plannings:', error);
       }
     };
-    fetchEmployees();
+
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/departements');
+        setDepartments(response.data);
+        console.log('Fetched departments:', response.data);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+      }
+    };
+
+    const fetchLoginMethods = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/loginMethods');
+        setLoginMethods(response.data);
+        console.log('Fetched login methods:', response.data);
+      } catch (error) {
+        console.error('Error fetching login methods:', error);
+      }
+    };
+
+    fetchPlannings();
+    fetchDepartments();
+    fetchLoginMethods();
   }, []);
 
-  useEffect(() => {
-    console.log('Updated employees state:', employees);
-  }, [employees]);
-
-  const handleJourChange = (index, field, value) => {
-    console.log(`Changing day ${index}, field ${field} to ${value}`);
-    const newJours = [...jours];
-    newJours[index][field] = value;
-    setJours(newJours);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEmployeeData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleEmployeeChange = (index, value) => {
-    console.log(`Changing employees for day ${index} to ${value}`);
-    const newJours = [...jours];
-    newJours[index].employees = value;
-    setJours(newJours);
-  };
-
-  const addJour = () => {
-    console.log('Adding a new day');
-    setJours([...jours, { h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
-  };
-
-  const removeJour = (index) => {
-    console.log(`Removing day ${index}`);
-    setJours(jours.filter((_, idx) => idx !== index));
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const planningData = { intitule, planningStartDate, planningEndDate, jours };
-    console.log('Submitting planning data:', planningData); // Log the data being submitted
-    try {
-      await axios.post('http://localhost:3001/api/planning', planningData);
-      console.log('Planning added successfully');
-      setSuccessMessage('Planning added successfully!');
-      setIntitule('');
-      setPlanningStartDate(null);
-      setPlanningEndDate(null);
-      setJours([{ h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
-    } catch (error) {
-      console.error('Error adding planning:', error);
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setEmployeeData((prev) => ({ ...prev, picture: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setImagePreview(null);
     }
   };
 
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post('http://localhost:3001/api/employes', employeeData);
+      setSnackbarOpen(true);
+      setEmployeeData({
+        nom: '',
+        prenom: '',
+        date_naissance: '',
+        type: '',
+        login_method: '',
+        id_planning: '',
+        id_departement: '',
+        picture: ''
+      });
+      setImagePreview(null);
+      setActiveStep(0);
+    } catch (error) {
+      console.error('Error creating employee:', error);
+    }
+  };
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbarOpen(false);
+  };
+
+  const steps = ['Personal Information', 'Professional Details', 'Upload Picture'];
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
+    <Box sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
       <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <CustomTextField
-              fullWidth
-              label="Title"
-              value={intitule}
-              onChange={(e) => setIntitule(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <DatePicker
-              label="Planning Start Date"
-              value={planningStartDate}
-              onChange={setPlanningStartDate}
-              renderInput={(params) => <CustomTextField {...params} />}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <DatePicker
-              label="Planning End Date"
-              value={planningEndDate}
-              onChange={setPlanningEndDate}
-              renderInput={(params) => <CustomTextField {...params} />}
-            />
-          </Grid>
-          {jours.map((jour, index) => (
-            <React.Fragment key={index}>
-              {['Morning', 'Afternoon'].map((period, pIndex) => (
-                <React.Fragment key={period}>
-                  <Grid item xs={3}>
-                    <CustomTextField
-                      type="time"
-                      label={`Heure Entrée ${pIndex + 1} (${period})`}
-                      value={jour[`h_entree${pIndex + 1}`]}
-                      onChange={(e) => handleJourChange(index, `h_entree${pIndex + 1}`, e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  </Grid>
-                  <Grid item xs={3}>
-                    <CustomTextField
-                      type="time"
-                      label={`Heure Sortie ${pIndex + 1} (${period})`}
-                      value={jour[`h_sortie${pIndex + 1}`]}
-                      onChange={(e) => handleJourChange(index, `h_sortie${pIndex + 1}`, e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  </Grid>
-                </React.Fragment>
+        <Card sx={{ p: 4, borderRadius: 3, boxShadow: 5, backgroundColor: grey[50], maxWidth: 900 }}>
+          <CardContent>
+            <Typography variant="h4" sx={{ color: blue[800], mb: 4, fontWeight: 'bold' }}>
+              Add New Employee
+            </Typography>
+            <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
+              {steps.map((label) => (
+                <Step key={label}>
+                  <StepLabel>{label}</StepLabel>
+                </Step>
               ))}
-              <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel>Assign Employees</InputLabel>
-                  <Select
-                    multiple
-                    value={jour.employees}
-                    onChange={(e) => handleEmployeeChange(index, e.target.value)}
-                    renderValue={(selected) => (
-                      <List dense>
-                        {selected.map((id) => (
-                          <ListItem key={id}>
-                            <ListItemText primary={employees.find(emp => emp._id === id)?.nom} />
-                          </ListItem>
-                        ))}
-                      </List>
-                    )}
+            </Stepper>
+            {activeStep === 0 && (
+              <Grid container spacing={3} justifyContent="center">
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="First Name"
+                    variant="outlined"
+                    name="prenom"
+                    value={employeeData.prenom}
+                    onChange={handleInputChange}
+                    sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Last Name"
+                    variant="outlined"
+                    name="nom"
+                    value={employeeData.nom}
+                    onChange={handleInputChange}
+                    sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}
+                  />
+                  <TextField
+                    fullWidth
+                    label="Date of Birth"
+                    type="date"
+                    InputLabelProps={{ shrink: true }}
+                    variant="outlined"
+                    name="date_naissance"
+                    value={employeeData.date_naissance}
+                    onChange={handleInputChange}
+                    sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}
+                  />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleNext}
+                    sx={{ backgroundColor: blue[500], color: 'white', '&:hover': { backgroundColor: blue[700] }, height: 64, width: '100%' }}
                   >
-                    {Array.isArray(employees) && employees.map(emp => (
-                      <MenuItem key={emp._id} value={emp._id}>
-                        {emp.nom} {emp.prenom}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                    Next
+                  </Button>
+                </Grid>
               </Grid>
-              <Grid item xs={1} style={{ display: 'flex', alignItems: 'flex-end' }}>
-                <IconButton onClick={() => removeJour(index)} color="error">
-                  <DeleteIcon />
-                </IconButton>
+            )}
+            {activeStep === 1 && (
+              <Grid container spacing={3} justifyContent="center">
+                <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="Type"
+                    variant="outlined"
+                    name="type"
+                    value={employeeData.type}
+                    onChange={handleInputChange}
+                    sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}
+                  />
+                  <FormControl fullWidth sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}>
+                    <InputLabel>Login Method</InputLabel>
+                    <Select
+                      label="Login Method"
+                      name="login_method"
+                      value={employeeData.login_method}
+                      onChange={handleInputChange}
+                      sx={{ borderRadius: '8px', height: 64 }}
+                    >
+                      {loginMethods.map((method) => (
+                        <MenuItem key={method._id} value={method._id}>
+                          {method.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl fullWidth sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}>
+                    <InputLabel>Planning</InputLabel>
+                    <Select
+                      label="Planning"
+                      name="id_planning"
+                      value={employeeData.id_planning}
+                      onChange={handleInputChange}
+                      sx={{ borderRadius: '8px', height: 64 }}
+                    >
+                      {plannings.map((planning) => (
+                        <MenuItem key={planning._id} value={planning._id}>
+                          {planning.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl fullWidth sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}>
+                    <InputLabel>Department</InputLabel>
+                    <Select
+                      label="Department"
+                      name="id_departement"
+                      value={employeeData.id_departement}
+                      onChange={handleInputChange}
+                      sx={{ borderRadius: '8px', height: 64 }}
+                    >
+                      {departments.map((department) => (
+                        <MenuItem key={department._id} value={department._id}>
+                          {department.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleNext}
+                    sx={{ backgroundColor: blue[500], color: 'white', '&:hover': { backgroundColor: blue[700] }, height: 64, width: '100%' }}
+                  >
+                    Next
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleBack}
+                    sx={{ mt: 2, backgroundColor: grey[500], color: 'white', '&:hover': { backgroundColor: grey[700] }, height: 64, width: '100%' }}
+                  >
+                    Back
+                  </Button>
+                </Grid>
               </Grid>
-            </React.Fragment>
-          ))}
-          <Grid item xs={12}>
-            <Button startIcon={<AddCircleOutlineIcon />} onClick={addJour} variant="outlined">
-              Add Day
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            <Button type="submit" variant="contained" color="primary">Create Planning</Button>
-          </Grid>
-          {successMessage && (
-            <Grid item xs={12}>
-              <Typography color="green">{successMessage}</Typography>
-            </Grid>
-          )}
-        </Grid>
+            )}
+            {activeStep === 2 && (
+              <Grid container spacing={3} justifyContent="center">
+                <Grid item xs={12}>
+                  <Button
+                    variant="contained"
+                    component="label"
+                    sx={{ mb: 3, backgroundColor: blue[500], color: 'white', '&:hover': { backgroundColor: blue[700] }, height: 64, width: '100%' }}
+                  >
+                    Upload Picture
+                    <input
+                      type="file"
+                      hidden
+                      onChange={handleImageChange}
+                    />
+                  </Button>
+                  {imagePreview && (
+                    <Avatar
+                      alt="Employee Picture"
+                      src={imagePreview}
+                      sx={{ width: 200, height: 200, mb: 3 }}
+                    />
+                  )}
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    type="submit"
+                    startIcon={<SaveIcon />}
+                    sx={{ backgroundColor: green[500], color: 'white', '&:hover': { backgroundColor: green[700] }, height: 64, width: '100%' }}
+                  >
+                    Save Employee
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleBack}
+                    sx={{ mt: 2, backgroundColor: grey[500], color: 'white', '&:hover': { backgroundColor: grey[700] }, height: 64, width: '100%' }}
+                  >
+                    Back
+                  </Button>
+                </Grid>
+              </Grid>
+            )}
+          </CardContent>
+        </Card>
       </form>
-    </LocalizationProvider>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
+          Employee added successfully!
+        </Alert>
+      </Snackbar>
+    </Box>
   );
 };
 
-export default AddPlanningForm;
+export default AddEmployee;

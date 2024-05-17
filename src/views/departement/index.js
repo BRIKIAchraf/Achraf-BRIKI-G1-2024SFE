@@ -30,17 +30,21 @@ const getIcon = (name) => {
 
 const DepartmentManagement = () => {
   const dispatch = useDispatch();
-  const { departments, status, error } = useSelector(state => state.departements);
+  const { departments, status: departmentStatus, error } = useSelector(state => state.departements);
   const { employees, status: employeeStatus } = useSelector(state => state.employees);
 
   useEffect(() => {
-    if (status === 'idle') {
+    if (departmentStatus === 'idle') {
       dispatch(fetchDepartments());
     }
     if (employeeStatus === 'idle') {
       dispatch(fetchEmployees());
     }
-  }, [status, employeeStatus, dispatch]);
+  }, [departmentStatus, employeeStatus, dispatch]);
+
+  useEffect(() => {
+    console.log('Fetched employees:', employees);
+  }, [employees]);
 
   const [newDepartmentName, setNewDepartmentName] = useState('');
   const [selectedEmployee, setSelectedEmployee] = useState('');
@@ -62,6 +66,7 @@ const DepartmentManagement = () => {
     if (newDepartmentName) {
       dispatch(addDepartment({ name: newDepartmentName }));
       setNewDepartmentName('');
+      console.log('Added department:', newDepartmentName);
     }
   };
 
@@ -72,6 +77,7 @@ const DepartmentManagement = () => {
       setSelectedDepartment('');
       setSnackbarMessage('Employee assigned successfully!');
       setSnackbarOpen(true);
+      console.log('Assigned employee:', selectedEmployee, 'to department:', selectedDepartment);
     }
   };
 
@@ -80,6 +86,7 @@ const DepartmentManagement = () => {
       dispatch(deleteDepartment(departmentId));
       setSnackbarMessage('Department deleted successfully!');
       setSnackbarOpen(true);
+      console.log('Deleted department:', departmentId);
     } else {
       console.error("No department ID provided for deletion.");
     }
@@ -92,23 +99,27 @@ const DepartmentManagement = () => {
       setEditableDepartment(null);
       setSnackbarMessage('Department updated successfully!');
       setSnackbarOpen(true);
+      console.log('Updated department:', editableDepartment);
     }
   };
 
   const openEditDialog = (department) => {
     setEditableDepartment(department);
     setEditDialogOpen(true);
+    console.log('Editing department:', department);
   };
 
   const handleNameChange = (event) => {
     if (editableDepartment) {
       setEditableDepartment({ ...editableDepartment, name: event.target.value });
+      console.log('Changed name to:', event.target.value);
     }
   };
 
   const handleRemoveEmployee = (employeeId) => {
     setEmployeeToRemove(employeeId);
     setConfirmDialogOpen(true);
+    console.log('Set to remove employee:', employeeId);
   };
 
   const confirmRemoveEmployee = () => {
@@ -119,11 +130,13 @@ const DepartmentManagement = () => {
       setEmployeeToRemove(null);
       setSnackbarMessage('Employee removed successfully!');
       setSnackbarOpen(true);
+      console.log('Removed employee:', employeeToRemove, 'from department:', editableDepartment.id);
     }
   };
 
   const handlePageChange = (event, value) => {
     setPage(value);
+    console.log('Changed page to:', value);
   };
 
   const filteredDepartments = departments.filter(department => department.name.toLowerCase().includes(filterDepartment.toLowerCase()));
@@ -169,7 +182,7 @@ const DepartmentManagement = () => {
             <Typography variant="h6">Employees</Typography>
             {editableDepartment.employees.map(employee => (
               <Box key={employee} display="flex" alignItems="center" justifyContent="space-between">
-                <Typography>{Array.isArray(employees) && employees.find(emp => emp._id === employee)?.firstName} {Array.isArray(employees) && employees.find(emp => emp._id === employee)?.lastName}</Typography>
+                <Typography>{Array.isArray(employees) && employees.find(emp => emp._id === employee)?.nom} {Array.isArray(employees) && employees.find(emp => emp._id === employee)?.prenom}</Typography>
                 <IconButton color="error" onClick={() => handleRemoveEmployee(employee)}>
                   <DeleteIcon />
                 </IconButton>
@@ -230,11 +243,15 @@ const DepartmentManagement = () => {
               fullWidth
               margin="normal"
             >
-              {Array.isArray(employees) && employees.map((employee) => (
-                <MenuItem key={employee._id} value={employee._id}>
-                  {`${employee.firstName} ${employee.lastName}`}
-                </MenuItem>
-              ))}
+              {Array.isArray(employees?.employees) && employees.employees.length > 0 ? (
+                employees.employees.map((employee) => (
+                  <MenuItem key={employee._id} value={employee._id}>
+                    {`${employee.nom} ${employee.prenom}`}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled>No employees available</MenuItem>
+              )}
             </TextField>
             <TextField
               label="Filter Employees"
