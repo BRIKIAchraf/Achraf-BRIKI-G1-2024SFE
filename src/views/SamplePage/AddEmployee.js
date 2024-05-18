@@ -157,9 +157,7 @@ const AddEmployee = () => {
                       onChange={handleInputChange}
                       sx={{ borderRadius: '8px', height: 64 }}
                     >
-                      <MenuItem value="PassOrFingerOrCard">PassOrFingerOrCard</MenuItem>
-                      <MenuItem value="Card">Card</MenuItem>
-                      <MenuItem value="FingerAndPass">FingerAndPass</MenuItem>
+                      <MenuItem value=""></MenuItem>
                     </Select>
                   </FormControl>
                   <FormControl fullWidth sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}>
@@ -171,9 +169,7 @@ const AddEmployee = () => {
                       onChange={handleInputChange}
                       sx={{ borderRadius: '8px', height: 64 }}
                     >
-                      <MenuItem value="Planning1">Planning1</MenuItem>
-                      <MenuItem value="Planning2">Planning2</MenuItem>
-                      <MenuItem value="Planning3">Planning3</MenuItem>
+                      <MenuItem value=""></MenuItem>
                     </Select>
                   </FormControl>
                   <FormControl fullWidth sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}>
@@ -185,9 +181,7 @@ const AddEmployee = () => {
                       onChange={handleInputChange}
                       sx={{ borderRadius: '8px', height: 64 }}
                     >
-                      <MenuItem value="Department1">Department1</MenuItem>
-                      <MenuItem value="Department2">Department2</MenuItem>
-                      <MenuItem value="Department3">Department3</MenuItem>
+                      <MenuItem value=""></MenuItem>
                     </Select>
                   </FormControl>
                   <Button

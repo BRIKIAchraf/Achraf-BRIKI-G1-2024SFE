@@ -1,112 +1,44 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
 
-// Fetch all plannings
-export const fetchPlannings = createAsyncThunk(
-  'planning/fetchPlannings',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await fetch('http://localhost:3001/api/plannings');
-      if (!response.ok) throw new Error('Network response was not ok');
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
+export const fetchPlannings = createAsyncThunk('planning/fetchPlannings', async () => {
+  const response = await axios.get('http://localhost:3001/api/plannings');
+  return response.data;
+});
 
-// Fetch planning by ID
-export const fetchPlanningById = createAsyncThunk(
-  'planning/fetchPlanningById',
-  async (id, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`http://localhost:3001/api/plannings/${id}`);
-      if (!response.ok) throw new Error('Network response was not ok');
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
+export const deletePlanning = createAsyncThunk('planning/deletePlanning', async (id) => {
+  await axios.delete(`http://localhost:3001/api/plannings${id}`);
+  return id;
+});
 
-// Update planning
-export const updatePlanning = createAsyncThunk(
-  'planning/updatePlanning',
-  async ({ id, data }, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`http://localhost:3001/api/plannings/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      if (!response.ok) throw new Error('Network response was not ok');
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-// Delete planning
-export const deletePlanning = createAsyncThunk(
-  'planning/deletePlanning',
-  async (id, { rejectWithValue }) => {
-    try {
-      const response = await fetch(`http://localhost:3001/api/plannings/${id}`, {
-        method: 'DELETE'
-      });
-      if (!response.ok) throw new Error('Network response was not ok');
-      return id; // Return id to remove it from the state
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-// Add planning
-export const addPlanning = createAsyncThunk(
-  'planning/addPlanning',
-  async (planningData, { rejectWithValue }) => {
-    try {
-      const response = await fetch('http://localhost:3001/api/plannings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(planningData)
-      });
-      if (!response.ok) throw new Error('Failed to create planning');
-      return await response.json();
-    } catch (error) {
-      return rejectWithValue(error.toString());
-    }
-  }
-);
+export const addPlanning = createAsyncThunk('planning/addPlanning', async (planning) => {
+  const response = await axios.post('http://localhost:3001/api/plannings', planning);
+  return response.data;
+});
 
 const planningSlice = createSlice({
   name: 'planning',
   initialState: {
     plannings: [],
-    currentPlanning: null,
-    status: 'idle', // 'idle', 'loading', 'succeeded', 'failed'
+    status: 'idle',
     error: null
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(fetchPlannings.pending, (state) => {
+        state.status = 'loading';
+      })
       .addCase(fetchPlannings.fulfilled, (state, action) => {
+        state.status = 'succeeded';
         state.plannings = action.payload;
       })
-      .addCase(fetchPlanningById.fulfilled, (state, action) => {
-        state.currentPlanning = action.payload;
-      })
-      .addCase(updatePlanning.fulfilled, (state, action) => {
-        const index = state.plannings.findIndex(planning => planning.id === action.payload.id);
-        state.plannings[index] = action.payload;
+      .addCase(fetchPlannings.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.error.message;
       })
       .addCase(deletePlanning.fulfilled, (state, action) => {
-        state.plannings = state.plannings.filter(planning => planning.id !== action.payload);
+        state.plannings = state.plannings.filter(planning => planning._id !== action.payload);
       })
       .addCase(addPlanning.fulfilled, (state, action) => {
         state.plannings.push(action.payload);

@@ -164,13 +164,13 @@ export default {
           url: '/LeaveDashboard',
           icon: icons.EventNoteOutlinedIcon
         },
-        {
+        /*{
           id: 'edit-planning',
           title: 'Modifier un horraire',
           type: 'item',
           url: '/EditPlanning',
           icon: icons.AccessTimeIcon
-        },
+        },*/
       ]
     },
   ]

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Card, CardHeader, CardContent, Divider, Grid, Typography, TextField, Button, Snackbar, Alert, IconButton, Box
 } from '@mui/material';
@@ -27,10 +27,17 @@ const mockPlanningData = {
 };
 
 const EditPlanning = () => {
+  const { planningId } = useParams(); // Get the planning ID from the route params
   const navigate = useNavigate();
   const [updatedPlanning, setUpdatedPlanning] = useState(mockPlanningData);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+
+  useEffect(() => {
+    // Fetch the planning data based on planningId and update the state
+    // This mock data is used for demonstration. Replace it with actual API call
+    setUpdatedPlanning(mockPlanningData);
+  }, [planningId]);
 
   const handleInputChange = (e) => {
     setUpdatedPlanning({ ...updatedPlanning, [e.target.name]: e.target.value });

@@ -10,6 +10,7 @@ import employeeReducer from './employeeSlice'; // Import the employee slice redu
 import searchReducer from './searchSlice'; // Import the search slice reducer
 import departementReducer from './departementSlice'; // Import the departement slice reducer
 import leaveReducer from './leaveSlice'; // Import the leave slice reducer
+import loginMethodsReducer from './loginMethodsSlice'; // Import the leave slice reducer
 // ==============================|| REDUCER ||============================== //
 
 const reducer = combineReducers({
@@ -21,6 +22,7 @@ const reducer = combineReducers({
   departements: departementReducer,
   leaves: leaveReducer,
   employees: employeeReducer, // Add the employee slice reducer to the root reducer
+  loginMethods: loginMethodsReducer // Add the loginMethods slice reducer to the root reducer
 
 });
 

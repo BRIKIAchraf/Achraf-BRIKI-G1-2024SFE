@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchLoginMethods } from '../../store/loginMethodsSlice';
 import { Typography, Grid, TextField, MenuItem, Button, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, Alert, Stack, Pagination } from '@mui/material';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
@@ -7,6 +9,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
 const LoginMethods = () => {
+  const dispatch = useDispatch();
+  const { loginMethods, totalCount, status, error } = useSelector(state => state.loginMethods);
+
+  useEffect(() => {
+    if (status === 'idle') {
+      dispatch(fetchLoginMethods());
+    }
+  }, [status, dispatch]);
+
   const [selectedMethod, setSelectedMethod] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');

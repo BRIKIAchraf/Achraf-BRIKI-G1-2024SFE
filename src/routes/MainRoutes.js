@@ -55,7 +55,7 @@ const MainRoutes = {
     { path: '/employee-details/:id', element: <EmployeeDetails /> },
     { path: '/LeaveDashboard/:id', element: <LeaveDashboard /> },
     {path: '/AddEmployee', element: <AddEmployee />},
-    {path: '/EditPlanning', element: <EditPlanning />},
+    {path: '/edit-planning/:planningId', element: <EditPlanning />},
 
     
   ]

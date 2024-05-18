@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { fetchPlannings, deletePlanning, addPlanning } from '../../store/planningSlice';
 import {
   Card, CardHeader, CardContent, Divider, Grid, Typography, Table, TableHead,
@@ -15,6 +16,7 @@ import { gridSpacing } from 'config.js';
 
 const PlanningManagement = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { plannings, status } = useSelector(state => state.planning);
   const [openDialog, setOpenDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
@@ -106,6 +108,10 @@ const PlanningManagement = () => {
 
   const isSelected = (id) => selectedPlannings.indexOf(id) !== -1;
 
+  const handleEditClick = (id) => {
+    navigate(`/edit-planning/${id}`);
+  };
+
   return (
     <>
       <Breadcrumb title="Planning Management">
@@ -174,58 +180,57 @@ const PlanningManagement = () => {
                     </TableHead>
                     <TableBody>
                       {filteredPlannings.map((planning) => (
-                        <React.Fragment key={planning._id}>
-                          <TableRow selected={isSelected(planning._id)}>
-                            <TableCell padding="checkbox">
-                              <Checkbox
-                                checked={isSelected(planning._id)}
-                                onChange={(event) => handleCheckboxClick(event, planning._id)}
-                                color="primary"
-                              />
-                            </TableCell>
-                            <TableCell>{planning._id}</TableCell>
-                            <TableCell>{planning.intitule}</TableCell>
-                            <TableCell>
-                              <div>
-                                {planning.jours && planning.jours.map((jour) => (
-                                  <div key={jour._id} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-                                    <ScheduleIcon style={{ marginRight: '8px' }} />
-                                    <div>
-                                      <strong>Day {jour._id}:</strong><br />
-                                      Morning: {new Date(jour.h_entree1).toLocaleTimeString()} - {new Date(jour.h_sortie1).toLocaleTimeString()}<br />
-                                      Afternoon: {new Date(jour.h_entree2).toLocaleTimeString()} - {new Date(jour.h_sortie2).toLocaleTimeString()}
-                                    </div>
+                        <TableRow key={planning._id} selected={isSelected(planning._id)}>
+                          <TableCell padding="checkbox">
+                            <Checkbox
+                              checked={isSelected(planning._id)}
+                              onChange={(event) => handleCheckboxClick(event, planning._id)}
+                              color="primary"
+                            />
+                          </TableCell>
+                          <TableCell>{planning._id}</TableCell>
+                          <TableCell>{planning.intitule}</TableCell>
+                          <TableCell>
+                            <div>
+                              {planning.jours && planning.jours.map((jour) => (
+                                <div key={jour._id} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+                                  <ScheduleIcon style={{ marginRight: '8px' }} />
+                                  <div>
+                                    <strong>Day {jour._id}:</strong><br />
+                                    Morning: {new Date(jour.h_entree1).toLocaleTimeString()} - {new Date(jour.h_sortie1).toLocaleTimeString()}<br />
+                                    Afternoon: {new Date(jour.h_entree2).toLocaleTimeString()} - {new Date(jour.h_sortie2).toLocaleTimeString()}
                                   </div>
-                                ))}
-                              </div>
-                            </TableCell>
-                            <TableCell>
-                              {planning.employees && planning.employees.map((employee) => (
-                                <div key={employee._id}>
-                                  {employee.name}
                                 </div>
                               ))}
-                            </TableCell>
-                            <TableCell>
-                              <Button
-                                variant="contained"
-                                color="primary"
-                                startIcon={<EditIcon />}
-                                style={{ marginBottom: '8px' }}
-                              >
-                                Edit
-                              </Button>
-                              <Button
-                                variant="contained"
-                                color="error"
-                                startIcon={<DeleteIcon />}
-                                onClick={() => handleDeleteClick(planning._id)}
-                              >
-                                Delete
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        </React.Fragment>
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            {planning.employees && planning.employees.map((employee) => (
+                              <div key={employee._id}>
+                                {employee.name}
+                              </div>
+                            ))}
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              startIcon={<EditIcon />}
+                              style={{ marginBottom: '8px' }}
+                              onClick={() => handleEditClick(planning._id)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="contained"
+                              color="error"
+                              startIcon={<DeleteIcon />}
+                              onClick={() => handleDeleteClick(planning._id)}
+                            >
+                              Delete
+                            </Button>
+                          </TableCell>
+                        </TableRow>
                       ))}
                     </TableBody>
                   </Table>
