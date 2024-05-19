@@ -30,15 +30,17 @@ const getIcon = (name) => {
 
 const DepartmentManagement = () => {
   const dispatch = useDispatch();
-  const { departments, status: departmentStatus, error } = useSelector(state => state.departements);
-  const employees = useSelector(state => state.employees?.employees || []); // Ensure employees is always an array
+  const { departments, status, error } = useSelector(state => state.departements);
+  const { employees, status: employeeStatus } = useSelector(state => state.employees);
 
   useEffect(() => {
-    if (departmentStatus === 'idle') {
+    if (status === 'idle') {
       dispatch(fetchDepartments());
     }
-    dispatch(fetchEmployees());
-  }, [departmentStatus, dispatch]);
+    if (employeeStatus === 'idle') {
+      dispatch(fetchEmployees());
+    }
+  }, [status, employeeStatus, dispatch]);
 
   const [newDepartmentName, setNewDepartmentName] = useState('');
   const [selectedEmployee, setSelectedEmployee] = useState('');
@@ -56,99 +58,72 @@ const DepartmentManagement = () => {
   const [page, setPage] = useState(1);
   const rowsPerPage = 5;
 
-  const handleAddDepartment = async () => {
+  const handleAddDepartment = () => {
     if (newDepartmentName) {
-      try {
-        await dispatch(addDepartment({ name: newDepartmentName })).unwrap();
-        setNewDepartmentName('');
-        console.log('Added department:', newDepartmentName);
-      } catch (error) {
-        console.error('Error adding department:', error);
-      }
+      dispatch(addDepartment({ name: newDepartmentName }));
+      setNewDepartmentName('');
     }
   };
 
-  const handleAssignEmployee = async () => {
+  const handleAssignEmployee = () => {
     if (selectedEmployee && selectedDepartment) {
-      try {
-        await dispatch(assignEmployeeToDepartment({ departmentId: selectedDepartment, employeeId: selectedEmployee })).unwrap();
-        setSelectedEmployee('');
-        setSelectedDepartment('');
-        setSnackbarMessage('Employee assigned successfully!');
-        setSnackbarOpen(true);
-        console.log('Assigned employee:', selectedEmployee, 'to department:', selectedDepartment);
-      } catch (error) {
-        console.error('Error assigning employee:', error);
-      }
+      dispatch(assignEmployeeToDepartment({ departmentId: selectedDepartment, employeeId: selectedEmployee }));
+      setSelectedEmployee('');
+      setSelectedDepartment('');
+      setSnackbarMessage('Employee assigned successfully!');
+      setSnackbarOpen(true);
     }
   };
 
-  const handleDeleteDepartment = async (departmentId) => {
+  const handleDeleteDepartment = (departmentId) => {
     if (departmentId) {
-      try {
-        await dispatch(deleteDepartment(departmentId)).unwrap();
-        setSnackbarMessage('Department deleted successfully!');
-        setSnackbarOpen(true);
-        console.log('Deleted department:', departmentId);
-      } catch (error) {
-        console.error("Error deleting department:", error);
-      }
+      dispatch(deleteDepartment(departmentId));
+      setSnackbarMessage('Department deleted successfully!');
+      setSnackbarOpen(true);
+    } else {
+      console.error("No department ID provided for deletion.");
     }
   };
 
-  const handleUpdateDepartment = async () => {
+  const handleUpdateDepartment = () => {
     if (editableDepartment) {
-      try {
-        await dispatch(updateDepartment({ id: editableDepartment.id, name: editableDepartment.name })).unwrap();
-        setEditDialogOpen(false);
-        setEditableDepartment(null);
-        setSnackbarMessage('Department updated successfully!');
-        setSnackbarOpen(true);
-        console.log('Updated department:', editableDepartment);
-      } catch (error) {
-        console.error('Error updating department:', error);
-      }
+      dispatch(updateDepartment({ id: editableDepartment.id, name: editableDepartment.name }));
+      setEditDialogOpen(false);
+      setEditableDepartment(null);
+      setSnackbarMessage('Department updated successfully!');
+      setSnackbarOpen(true);
     }
   };
 
   const openEditDialog = (department) => {
     setEditableDepartment(department);
     setEditDialogOpen(true);
-    console.log('Editing department:', department);
   };
 
   const handleNameChange = (event) => {
     if (editableDepartment) {
       setEditableDepartment({ ...editableDepartment, name: event.target.value });
-      console.log('Changed name to:', event.target.value);
     }
   };
 
   const handleRemoveEmployee = (employeeId) => {
     setEmployeeToRemove(employeeId);
     setConfirmDialogOpen(true);
-    console.log('Set to remove employee:', employeeId);
   };
 
-  const confirmRemoveEmployee = async () => {
+  const confirmRemoveEmployee = () => {
     if (editableDepartment && employeeToRemove) {
-      try {
-        const updatedEmployees = editableDepartment.employees.filter(emp => emp !== employeeToRemove);
-        await dispatch(updateDepartment({ id: editableDepartment.id, name: editableDepartment.name, employees: updatedEmployees })).unwrap();
-        setConfirmDialogOpen(false);
-        setEmployeeToRemove(null);
-        setSnackbarMessage('Employee removed successfully!');
-        setSnackbarOpen(true);
-        console.log('Removed employee:', employeeToRemove, 'from department:', editableDepartment.id);
-      } catch (error) {
-        console.error('Error removing employee:', error);
-      }
+      const updatedEmployees = editableDepartment.employees.filter(emp => emp !== employeeToRemove);
+      dispatch(updateDepartment({ id: editableDepartment.id, name: editableDepartment.name, employees: updatedEmployees }));
+      setConfirmDialogOpen(false);
+      setEmployeeToRemove(null);
+      setSnackbarMessage('Employee removed successfully!');
+      setSnackbarOpen(true);
     }
   };
 
   const handlePageChange = (event, value) => {
     setPage(value);
-    console.log('Changed page to:', value);
   };
 
   const filteredDepartments = departments.filter(department => department.name.toLowerCase().includes(filterDepartment.toLowerCase()));
@@ -194,7 +169,7 @@ const DepartmentManagement = () => {
             <Typography variant="h6">Employees</Typography>
             {editableDepartment.employees.map(employee => (
               <Box key={employee} display="flex" alignItems="center" justifyContent="space-between">
-                <Typography>{employees.find(emp => emp._id === employee)?.nom} {employees.find(emp => emp._id === employee)?.prenom}</Typography>
+                <Typography>{Array.isArray(employees) && employees.find(emp => emp._id === employee)?.firstName} {Array.isArray(employees) && employees.find(emp => emp._id === employee)?.lastName}</Typography>
                 <IconButton color="error" onClick={() => handleRemoveEmployee(employee)}>
                   <DeleteIcon />
                 </IconButton>
@@ -255,9 +230,9 @@ const DepartmentManagement = () => {
               fullWidth
               margin="normal"
             >
-              {employees.map((employee) => (
+              {Array.isArray(employees) && employees.map((employee) => (
                 <MenuItem key={employee._id} value={employee._id}>
-                  {employee.nom + " " + employee.prenom}
+                  {`${employee.firstName} ${employee.lastName}`}
                 </MenuItem>
               ))}
             </TextField>

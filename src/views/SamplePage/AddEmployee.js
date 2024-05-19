@@ -1,14 +1,11 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import {
   Box, Card, CardContent, Grid, Typography, TextField, MenuItem, Button, Avatar, Stepper, Step, StepLabel, FormControl, InputLabel, Select, Snackbar, Alert
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { blue, green, grey } from '@mui/material/colors';
-import { createEmployee } from '../../store/employeeSlice';
-
 const AddEmployee = () => {
-  const dispatch = useDispatch();
   const [employeeData, setEmployeeData] = useState({
     nom: '',
     prenom: '',
@@ -17,11 +14,50 @@ const AddEmployee = () => {
     login_method: '',
     id_planning: '',
     id_departement: '',
-    picture: '' // added picture field
+    picture: ''
   });
   const [imagePreview, setImagePreview] = useState(null);
   const [activeStep, setActiveStep] = useState(0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [plannings, setPlannings] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [loginMethods, setLoginMethods] = useState([]);
+
+  useEffect(() => {
+    const fetchPlannings = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/plannings');
+        setPlannings(response.data);
+        console.log('Fetched plannings:', response.data);
+      } catch (error) {
+        console.error('Error fetching plannings:', error);
+      }
+    };
+
+    const fetchDepartments = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/departements');
+        setDepartments(response.data);
+        console.log('Fetched departments:', response.data);
+      } catch (error) {
+        console.error('Error fetching departments:', error);
+      }
+    };
+
+    const fetchLoginMethods = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/api/loginMethods');
+        setLoginMethods(response.data);
+        console.log('Fetched login methods:', response.data);
+      } catch (error) {
+        console.error('Error fetching login methods:', error);
+      }
+    };
+
+    fetchPlannings();
+    fetchDepartments();
+    fetchLoginMethods();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -50,9 +86,10 @@ const AddEmployee = () => {
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(createEmployee(employeeData)).then(() => {
+    try {
+      await axios.post('http://localhost:3001/api/employes', employeeData);
       setSnackbarOpen(true);
       setEmployeeData({
         nom: '',
@@ -66,7 +103,9 @@ const AddEmployee = () => {
       });
       setImagePreview(null);
       setActiveStep(0);
-    });
+    } catch (error) {
+      console.error('Error creating employee:', error);
+    }
   };
 
   const handleSnackbarClose = (event, reason) => {
@@ -87,7 +126,7 @@ const AddEmployee = () => {
               Add New Employee
             </Typography>
             <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
-              {steps.map((label, index) => (
+              {steps.map((label) => (
                 <Step key={label}>
                   <StepLabel>{label}</StepLabel>
                 </Step>
@@ -157,7 +196,11 @@ const AddEmployee = () => {
                       onChange={handleInputChange}
                       sx={{ borderRadius: '8px', height: 64 }}
                     >
-                      <MenuItem value=""></MenuItem>
+                      {loginMethods.map((method) => (
+                        <MenuItem key={method._id} value={method._id}>
+                          {method.name}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                   <FormControl fullWidth sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}>
@@ -169,7 +212,11 @@ const AddEmployee = () => {
                       onChange={handleInputChange}
                       sx={{ borderRadius: '8px', height: 64 }}
                     >
-                      <MenuItem value=""></MenuItem>
+                      {plannings.map((planning) => (
+                        <MenuItem key={planning._id} value={planning._id}>
+                          {planning.intitule}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                   <FormControl fullWidth sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}>
@@ -181,7 +228,11 @@ const AddEmployee = () => {
                       onChange={handleInputChange}
                       sx={{ borderRadius: '8px', height: 64 }}
                     >
-                      <MenuItem value=""></MenuItem>
+                      {departments.map((department) => (
+                        <MenuItem key={department._id} value={department._id}>
+                          {department.name}
+                        </MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                   <Button
@@ -263,3 +314,7 @@ const AddEmployee = () => {
 };
 
 export default AddEmployee;
+
+
+
+

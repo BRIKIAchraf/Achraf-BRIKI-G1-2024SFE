@@ -10,40 +10,24 @@ import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import { blue, deepPurple, green, red, yellow } from '@mui/material/colors';
 import { jsPDF } from 'jspdf';
+import axios from 'axios'; // Import axios for API calls
 
-// Mock data (replace with your actual data fetching logic)
-const mockEmployees = [
-  {
-    id: 1,
-    fullName: 'John Doe',
-    birthdate: '1990-01-01',
-    nationality: 'American',
-    userID: 'user123',
-    type: 'Full-time',
-    planningID: 'plan123',
-    departmentID: 'dept123',
-    loginMethod: 'Card',
-    previousDepartments: [
-      { name: 'Marketing', dateFrom: 'January 2019', dateTo: 'December 2019' },
-      { name: 'Sales', dateFrom: 'January 2020', dateTo: 'December 2020' }
-    ],
-    previousPlannings: [
-      { planName: 'Q1 Marketing Campaign', dateFrom: 'January 2019', dateTo: 'March 2019' },
-      { planName: 'Sales Boost 2020', dateFrom: 'January 2020', dateTo: 'March 2020' }
-    ],
-    picture: 'https://via.placeholder.com/150'
-  },
-  // Add more mock employees here
-];
-
-export default function EmployeeDetails() {
-  const { id } = useParams();
+const EmployeeDetails = () => {
+  const { id } = useParams(); // Get the employee ID from the route params
   const [employeeData, setEmployeeData] = useState(null);
   const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
-    const employee = mockEmployees.find(emp => emp.id === parseInt(id));
-    setEmployeeData(employee);
+    const fetchEmployeeData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/api/employes/${id}`); // Replace with your actual API endpoint
+        setEmployeeData(response.data);
+      } catch (error) {
+        console.error('Error fetching employee data:', error);
+      }
+    };
+
+    fetchEmployeeData();
   }, [id]);
 
   const handleEditToggle = () => setEditMode(!editMode);
@@ -56,22 +40,19 @@ export default function EmployeeDetails() {
   const handleDownloadPDF = () => {
     const doc = new jsPDF();
     doc.setFontSize(12);
-    doc.text(`Name: ${employeeData.fullName}`, 10, 10);
-    doc.text(`Birthdate: ${employeeData.birthdate}`, 10, 20);
-    doc.text(`Nationality: ${employeeData.nationality}`, 10, 30);
-    doc.text(`User ID: ${employeeData.userID}`, 10, 40);
-    doc.text(`Type: ${employeeData.type}`, 10, 50);
-    doc.text(`Planning ID: ${employeeData.planningID}`, 10, 60);
-    doc.text(`Department ID: ${employeeData.departmentID}`, 10, 70);
-    doc.text(`Login Method: ${employeeData.loginMethod}`, 10, 80);
+    doc.text(`Name: ${employeeData.nom} ${employeeData.prenom}`, 10, 10);
+    doc.text(`Birthdate: ${employeeData.date_naissance}`, 10, 20);
+    doc.text(`Login Method: ${employeeData.login_method}`, 10, 30);
+    doc.text(`Department: ${employeeData.id_departement?.name}`, 10, 40);
+    doc.text(`Planning: ${employeeData.id_planning?.name}`, 10, 50);
     doc.addPage();
     doc.text('Previous Departments:', 10, 10);
-    employeeData.previousDepartments.forEach((dept, index) => {
+    employeeData.previousDepartments?.forEach((dept, index) => {
       doc.text(`${dept.name} from ${dept.dateFrom} to ${dept.dateTo}`, 10, 20 + (10 * index));
     });
     doc.addPage();
     doc.text('Previous Plannings:', 10, 10);
-    employeeData.previousPlannings.forEach((plan, index) => {
+    employeeData.previousPlannings?.forEach((plan, index) => {
       doc.text(`${plan.planName} from ${plan.dateFrom} to ${plan.dateTo}`, 10, 20 + (10 * index));
     });
     doc.save('EmployeeDetails.pdf');
@@ -96,10 +77,10 @@ export default function EmployeeDetails() {
             src={employeeData.picture}
           />
           {editMode ? (
-            <TextField variant="outlined" value={employeeData.fullName} onChange={handleInputChange} name="fullName" sx={{ mt: 2 }} />
+            <TextField variant="outlined" value={employeeData.nom} onChange={handleInputChange} name="nom" sx={{ mt: 2 }} />
           ) : (
             <Typography variant="h5" sx={{ color: deepPurple[500], mt: 2, fontWeight: 'bold' }}>
-              <AccountCircleIcon sx={{ verticalAlign: 'middle', mr: 1 }} />{employeeData.fullName}
+              <AccountCircleIcon sx={{ verticalAlign: 'middle', mr: 1 }} />{employeeData.nom} {employeeData.prenom}
             </Typography>
           )}
           <IconButton onClick={handleEditToggle} color="primary">{editMode ? <SaveIcon /> : <EditIcon />}</IconButton>
@@ -115,8 +96,8 @@ export default function EmployeeDetails() {
                 label="Birthdate"
                 variant="outlined"
                 fullWidth
-                name="birthdate"
-                value={employeeData.birthdate}
+                name="date_naissance"
+                value={employeeData.date_naissance}
                 onChange={handleInputChange}
                 sx={{ mb: 2 }}
               />
@@ -131,7 +112,7 @@ export default function EmployeeDetails() {
             </>
           ) : (
             <>
-              <Typography variant="subtitle1"><strong>Birthdate:</strong> {employeeData.birthdate}</Typography>
+              <Typography variant="subtitle1"><strong>Birthdate:</strong> {employeeData.date_naissance}</Typography>
               <Typography variant="subtitle1"><strong>Nationality:</strong> {employeeData.nationality}</Typography>
             </>
           )}
@@ -156,8 +137,8 @@ export default function EmployeeDetails() {
                 label="Planning ID"
                 variant="outlined"
                 fullWidth
-                name="planningID"
-                value={employeeData.planningID}
+                name="id_planning"
+                value={employeeData.id_planning?.name}
                 onChange={handleInputChange}
                 sx={{ mb: 2 }}
               />
@@ -165,26 +146,26 @@ export default function EmployeeDetails() {
                 label="Department ID"
                 variant="outlined"
                 fullWidth
-                name="departmentID"
-                value={employeeData.departmentID}
+                name="id_departement"
+                value={employeeData.id_departement?.name}
                 onChange={handleInputChange}
               />
             </>
           ) : (
             <>
               <Typography variant="subtitle1"><strong>Type:</strong> {employeeData.type}</Typography>
-              <Typography variant="subtitle1"><strong>Planning ID:</strong> {employeeData.planningID}</Typography>
-              <Typography variant="subtitle1"><strong>Department ID:</strong> {employeeData.departmentID}</Typography>
+              <Typography variant="subtitle1"><strong>Planning ID:</strong> {employeeData.id_planning?.name}</Typography>
+              <Typography variant="subtitle1"><strong>Department ID:</strong> {employeeData.id_departement?.name}</Typography>
             </>
           )}
           {editMode ? (
             <FormControl fullWidth sx={{ mt: 2 }}>
               <InputLabel>Login Method</InputLabel>
               <Select
-                value={employeeData.loginMethod}
+                value={employeeData.login_method}
                 onChange={handleInputChange}
                 label="Login Method"
-                name="loginMethod"
+                name="login_method"
               >
                 <MenuItem value="Card">Card</MenuItem>
                 <MenuItem value="Fingerprint">Fingerprint</MenuItem>
@@ -192,7 +173,7 @@ export default function EmployeeDetails() {
               </Select>
             </FormControl>
           ) : (
-            <Typography sx={{ mt: 2 }}>{`Login Method: ${employeeData.loginMethod}`}</Typography>
+            <Typography sx={{ mt: 2 }}>{`Login Method: ${employeeData.login_method}`}</Typography>
           )}
         </Paper>
 
@@ -201,7 +182,7 @@ export default function EmployeeDetails() {
             <HistoryIcon sx={{ verticalAlign: 'middle', mr: 1 }} />Work History
           </Typography>
           <Grid container spacing={2}>
-            {employeeData.previousDepartments.map((dept, index) => (
+            {employeeData.previousDepartments?.map((dept, index) => (
               <Grid item xs={12} md={6} key={index}>
                 <Typography variant="subtitle1">
                   <strong>{dept.name}:</strong> {dept.dateFrom} to {dept.dateTo}
@@ -216,7 +197,7 @@ export default function EmployeeDetails() {
             <HistoryIcon sx={{ verticalAlign: 'middle', mr: 1 }} />Previous Plannings
           </Typography>
           <Grid container spacing={2}>
-            {employeeData.previousPlannings.map((plan, index) => (
+            {employeeData.previousPlannings?.map((plan, index) => (
               <Grid item xs={12} md={6} key={index}>
                 <Typography variant="subtitle1">
                   <strong>{plan.planName}:</strong> {plan.dateFrom} to {plan.dateTo}
@@ -238,4 +219,6 @@ export default function EmployeeDetails() {
       </Grid>
     </Paper>
   );
-}
+};
+
+export default EmployeeDetails;

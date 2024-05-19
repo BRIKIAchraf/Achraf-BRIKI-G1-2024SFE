@@ -29,23 +29,20 @@ export const deleteEmployee = createAsyncThunk('employees/deleteEmployee', async
   return id;
 });
 
-export const fetchPlannings = createAsyncThunk('employees/fetchPlannings', async () => {
+export const fetchPlannings = createAsyncThunk('employee/fetchPlannings', async () => {
   const response = await axios.get(`${BASE_URL}/plannings`);
+  console.log('fetchPlannings response:', response.data);
   return response.data;
 });
 
-export const fetchDepartments = createAsyncThunk('employees/fetchDepartments', async () => {
-  const response = await axios.get(`${BASE_URL}/departements`);
-  return response.data;
-});
-
-export const fetchLoginMethods = createAsyncThunk('employees/fetchLoginMethods', async () => {
-  const response = await axios.get(`${BASE_URL}/loginMethods`);
+export const fetchDepartments = createAsyncThunk('employee/fetchDepartments', async () => {
+  const response = await axios.get(`${BASE_URL}/departments`);
+  console.log('fetchDepartments response:', response.data);
   return response.data;
 });
 
 const employeeSlice = createSlice({
-  name: 'employees',
+  name: 'employee', // Ensure this matches the state path
   initialState: {
     employees: [],
     employee: null,
@@ -118,18 +115,6 @@ const employeeSlice = createSlice({
         state.departments = action.payload;
       })
       .addCase(fetchDepartments.rejected, (state, action) => {
-        state.status = 'failed';
-        state.error = action.error.message;
-      })
-      // Fetch Login Methods
-      .addCase(fetchLoginMethods.pending, (state) => {
-        state.status = 'loading';
-      })
-      .addCase(fetchLoginMethods.fulfilled, (state, action) => {
-        state.status = 'succeeded';
-        state.loginMethods = action.payload;
-      })
-      .addCase(fetchLoginMethods.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.error.message;
       });

@@ -210,7 +210,7 @@ const SamplePage = () => {
                 <TableBody>
                   {filteredEmployees.length > 0 ? (
                     filteredEmployees.slice((page - 1) * itemsPerPage, page * itemsPerPage).map((employee) => (
-                      <TableRow key={employee._id} hover onClick={() => navigate(`/employee-details/${employee._id}`)} style={{ cursor: 'pointer' }}>
+                      <TableRow key={employee._id} hover style={{ cursor: 'pointer' }}>
                         <TableCell padding="checkbox">
                           <Checkbox
                             checked={deleteEmployeeIds.includes(employee._id)}
@@ -227,7 +227,7 @@ const SamplePage = () => {
                         <TableCell>{employee.login_method}</TableCell>
                         <TableCell>{employee.id_departement?.name}</TableCell>
                         <TableCell>
-                          <IconButton color="primary">
+                          <IconButton color="primary" onClick={() => navigate(`/sample-page/employee-details/${employee._id}`)}>
                             <EditIcon />
                           </IconButton>
                           <IconButton color="primary">

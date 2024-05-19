@@ -52,7 +52,7 @@ const MainRoutes = {
     { path: '/AddLeaveForm1', element: <AddLeaveForm1/>},
     { path: '/addplanning', element: <AddPlanning /> },
     { path: '/LoginMethods', element: <LoginMethods /> },
-    { path: '/employee-details/:id', element: <EmployeeDetails /> },
+    { path: '/sample-page/employee-details/:id', element: <EmployeeDetails /> },
     { path: '/LeaveDashboard/:id', element: <LeaveDashboard /> },
     {path: '/AddEmployee', element: <AddEmployee />},
     {path: '/edit-planning/:planningId', element: <EditPlanning />},
