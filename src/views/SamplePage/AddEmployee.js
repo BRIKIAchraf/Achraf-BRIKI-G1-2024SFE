@@ -6,14 +6,14 @@ import {
 import SaveIcon from '@mui/icons-material/Save';
 import { blue, green, grey } from '@mui/material/colors';
 
+
 const AddEmployee = () => {
   const [employeeData, setEmployeeData] = useState({
-    user_id: '',
     nom: '',
     prenom: '',
     date_naissance: '',
     type: '',
-    login_method: '',  // Ensure this is populated with a valid value
+    login_method: '',
     id_planning: '',
     id_departement: '',
   });
@@ -98,7 +98,6 @@ const AddEmployee = () => {
       });
       setSnackbarOpen(true);
       setEmployeeData({
-        user_id: '',
         nom: '',
         prenom: '',
         date_naissance: '',
@@ -143,20 +142,12 @@ const AddEmployee = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="User ID"
-                    variant="outlined"
-                    name="user_id"
-                    value={employeeData.user_id}
-                    onChange={handleInputChange}
-                    sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}
-                  />
-                  <TextField
-                    fullWidth
                     label="First Name"
                     variant="outlined"
                     name="prenom"
                     value={employeeData.prenom}
                     onChange={handleInputChange}
+                    required
                     sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}
                   />
                   <TextField
@@ -166,6 +157,7 @@ const AddEmployee = () => {
                     name="nom"
                     value={employeeData.nom}
                     onChange={handleInputChange}
+                    required
                     sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}
                   />
                   <TextField
@@ -177,6 +169,7 @@ const AddEmployee = () => {
                     name="date_naissance"
                     value={employeeData.date_naissance}
                     onChange={handleInputChange}
+                    required
                     sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}
                   />
                   <Button

@@ -34,6 +34,7 @@ const DepartmentManagement = () => {
   const { employees, status: employeeStatus } = useSelector(state => state.employees);
 
   useEffect(() => {
+    console.log("Fetching departments and employees...");
     if (status === 'idle') {
       dispatch(fetchDepartments());
     }
@@ -41,6 +42,14 @@ const DepartmentManagement = () => {
       dispatch(fetchEmployees());
     }
   }, [status, employeeStatus, dispatch]);
+
+  useEffect(() => {
+    console.log("Departments:", departments);
+  }, [departments]);
+
+  useEffect(() => {
+    console.log("Employees:", employees);
+  }, [employees]);
 
   const [newDepartmentName, setNewDepartmentName] = useState('');
   const [selectedEmployee, setSelectedEmployee] = useState('');
@@ -167,14 +176,18 @@ const DepartmentManagement = () => {
         {editableDepartment && Array.isArray(editableDepartment.employees) && editableDepartment.employees.length > 0 && (
           <Box mt={2}>
             <Typography variant="h6">Employees</Typography>
-            {editableDepartment.employees.map(employee => (
-              <Box key={employee} display="flex" alignItems="center" justifyContent="space-between">
-                <Typography>{Array.isArray(employees) && employees.find(emp => emp._id === employee)?.firstName} {Array.isArray(employees) && employees.find(emp => emp._id === employee)?.lastName}</Typography>
-                <IconButton color="error" onClick={() => handleRemoveEmployee(employee)}>
-                  <DeleteIcon />
-                </IconButton>
-              </Box>
-            ))}
+            {editableDepartment.employees.map(employee => {
+              const emp = employees.find(emp => emp._id === employee);
+              console.log("Employee:", emp);
+              return (
+                <Box key={employee} display="flex" alignItems="center" justifyContent="space-between">
+                  <Typography>{emp ? `${emp.nom} ${emp.prenom}` : 'Unknown Employee'}</Typography>
+                  <IconButton color="error" onClick={() => handleRemoveEmployee(employee)}>
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
+              );
+            })}
           </Box>
         )}
       </DialogContent>
@@ -232,7 +245,7 @@ const DepartmentManagement = () => {
             >
               {Array.isArray(employees) && employees.map((employee) => (
                 <MenuItem key={employee._id} value={employee._id}>
-                  {`${employee.firstName} ${employee.lastName}`}
+                  {`${employee.nom} ${employee.prenom}`}
                 </MenuItem>
               ))}
             </TextField>
