@@ -7,36 +7,27 @@ import SaveIcon from '@mui/icons-material/Save';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-
-const mockPlanningData = {
-  _id: '66116b70a21f9b5a7c9c104f',
-  intitule: 'Planning Example',
-  jours: [
-    {
-      _id: '66116b70a21f9b5a7c9c1051',
-      h_entree1: '2024-05-15T09:00:00',
-      h_sortie1: '2024-05-15T13:00:00',
-      h_entree2: '2024-05-15T14:00:00',
-      h_sortie2: '2024-05-15T18:00:00'
-    }
-  ],
-  employees: [
-    { _id: '1', name: 'John Doe' },
-    { _id: '2', name: 'Jane Smith' }
-  ]
-};
+import axios from 'axios';
 
 const EditPlanning = () => {
   const { planningId } = useParams(); // Get the planning ID from the route params
   const navigate = useNavigate();
-  const [updatedPlanning, setUpdatedPlanning] = useState(mockPlanningData);
+  const [updatedPlanning, setUpdatedPlanning] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
   useEffect(() => {
     // Fetch the planning data based on planningId and update the state
-    // This mock data is used for demonstration. Replace it with actual API call
-    setUpdatedPlanning(mockPlanningData);
+    const fetchPlanning = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3001/api/plannings/${planningId}`);
+        setUpdatedPlanning(response.data);
+      } catch (error) {
+        console.error('Error fetching planning data:', error);
+      }
+    };
+
+    fetchPlanning();
   }, [planningId]);
 
   const handleInputChange = (e) => {
@@ -67,16 +58,25 @@ const EditPlanning = () => {
     setUpdatedPlanning({ ...updatedPlanning, employees: newEmployees });
   };
 
-  const handleSave = () => {
-    // Mock saving data
-    console.log('Updated Planning:', updatedPlanning);
-    setSnackbarMessage('Planning updated successfully!');
-    setSnackbarOpen(true);
+  const handleSave = async () => {
+    try {
+      await axios.put(`http://localhost:3001/api/plannings/${planningId}`, updatedPlanning);
+      setSnackbarMessage('Planning updated successfully!');
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error('Error saving planning:', error);
+      setSnackbarMessage('Error saving planning');
+      setSnackbarOpen(true);
+    }
   };
 
   const handleBack = () => {
-    navigate('/planning-management');
+    navigate('/PlanningManagement');
   };
+
+  if (!updatedPlanning) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -120,7 +120,7 @@ const EditPlanning = () => {
                     style={{ marginBottom: '16px' }}
                   />
                 </Grid>
-                {updatedPlanning.jours.map((jour, index) => (
+                {updatedPlanning.jours && updatedPlanning.jours.map((jour, index) => (
                   <Box key={jour._id} sx={{ width: '100%', mb: 2, border: '1px solid #ccc', borderRadius: 2, p: 2 }}>
                     <Typography variant="h6" style={{ color: '#1976d2', fontWeight: 'bold' }}>Day {jour._id}</Typography>
                     <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -178,7 +178,7 @@ const EditPlanning = () => {
                 <Grid item xs={12}>
                   <Typography variant="h6" style={{ color: '#1976d2', fontWeight: 'bold' }}>Employees</Typography>
                 </Grid>
-                {updatedPlanning.employees.map((employee, index) => (
+                {updatedPlanning.employees && updatedPlanning.employees.map((employee, index) => (
                   <Grid item xs={12} key={employee._id}>
                     <Box display="flex" alignItems="center" sx={{ mt: 2 }}>
                       <TextField
