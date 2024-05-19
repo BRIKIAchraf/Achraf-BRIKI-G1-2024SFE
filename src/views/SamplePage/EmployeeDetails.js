@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Avatar, Button, FormControl, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Typography, Box, TextField } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -8,12 +8,14 @@ import HistoryIcon from '@mui/icons-material/History';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { blue, deepPurple, green, red, yellow } from '@mui/material/colors';
 import { jsPDF } from 'jspdf';
 import axios from 'axios'; // Import axios for API calls
 
 const EmployeeDetails = () => {
   const { id } = useParams(); // Get the employee ID from the route params
+  const navigate = useNavigate(); // Get the navigate function from react-router-dom
   const [employeeData, setEmployeeData] = useState(null);
   const [editMode, setEditMode] = useState(false);
 
@@ -41,7 +43,7 @@ const EmployeeDetails = () => {
     const doc = new jsPDF();
     doc.setFontSize(12);
     doc.text(`Name: ${employeeData.nom} ${employeeData.prenom}`, 10, 10);
-    doc.text(`Birthdate: ${employeeData.date_naissance}`, 10, 20);
+    doc.text(`Birthdate: ${new Date(employeeData.date_naissance).toISOString().split('T')[0]}`, 10, 20);
     doc.text(`Login Method: ${employeeData.login_method}`, 10, 30);
     doc.text(`Department: ${employeeData.id_departement?.name}`, 10, 40);
     doc.text(`Planning: ${employeeData.id_planning?.name}`, 10, 50);
@@ -56,6 +58,10 @@ const EmployeeDetails = () => {
       doc.text(`${plan.planName} from ${plan.dateFrom} to ${plan.dateTo}`, 10, 20 + (10 * index));
     });
     doc.save('EmployeeDetails.pdf');
+  };
+
+  const handleBackToList = () => {
+    navigate('/sample-page'); // Navigate back to the employee list page
   };
 
   if (!employeeData) {
@@ -97,7 +103,8 @@ const EmployeeDetails = () => {
                 variant="outlined"
                 fullWidth
                 name="date_naissance"
-                value={employeeData.date_naissance}
+                type="date"
+                value={new Date(employeeData.date_naissance).toISOString().split('T')[0]}
                 onChange={handleInputChange}
                 sx={{ mb: 2 }}
               />
@@ -112,7 +119,7 @@ const EmployeeDetails = () => {
             </>
           ) : (
             <>
-              <Typography variant="subtitle1"><strong>Birthdate:</strong> {employeeData.date_naissance}</Typography>
+              <Typography variant="subtitle1"><strong>Birthdate:</strong> {new Date(employeeData.date_naissance).toISOString().split('T')[0]}</Typography>
               <Typography variant="subtitle1"><strong>Nationality:</strong> {employeeData.nationality}</Typography>
             </>
           )}
@@ -215,6 +222,15 @@ const EmployeeDetails = () => {
           sx={{ mb: 2 }}
         >
           Download PDF
+        </Button>
+
+        <Button
+          variant="contained"
+          startIcon={<ArrowBackIcon />}
+          onClick={handleBackToList}
+          sx={{ mb: 2 }}
+        >
+          Back to Employee List
         </Button>
       </Grid>
     </Paper>
