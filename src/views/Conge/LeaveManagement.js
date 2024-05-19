@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchLeaves, revokeLeave } from '../../store/leaveSlice';
-import { Card, CardHeader, CardContent, Divider, Grid, Typography, TextField, MenuItem, AvatarGroup, Avatar, InputAdornment, Stack, Pagination, IconButton } from '@mui/material';
-import Breadcrumb from 'component/Breadcrumb';
-import { gridSpacing } from 'config.js';
+import { Card, CardHeader, CardContent, Divider, Grid, Typography, TextField, MenuItem, Avatar, InputAdornment, Stack, Pagination, IconButton } from '@mui/material';
+import Breadcrumb from '../../component/Breadcrumb'; // Ensure the path to Breadcrumb component is correct
+import { gridSpacing } from '../../config'; // Ensure the path to config is correct
 import SearchIcon from '@mui/icons-material/Search';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import DeleteIcon from '@mui/icons-material/Delete';

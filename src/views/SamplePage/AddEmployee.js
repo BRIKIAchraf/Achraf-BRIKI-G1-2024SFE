@@ -5,18 +5,19 @@ import {
 } from '@mui/material';
 import SaveIcon from '@mui/icons-material/Save';
 import { blue, green, grey } from '@mui/material/colors';
+
 const AddEmployee = () => {
   const [employeeData, setEmployeeData] = useState({
+    user_id: '',
     nom: '',
     prenom: '',
     date_naissance: '',
     type: '',
-    login_method: '',
+    login_method: '',  // Ensure this is populated with a valid value
     id_planning: '',
     id_departement: '',
-    picture: ''
   });
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const [activeStep, setActiveStep] = useState(0);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [plannings, setPlannings] = useState([]);
@@ -67,14 +68,7 @@ const AddEmployee = () => {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-        setEmployeeData((prev) => ({ ...prev, picture: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setImagePreview(null);
+      setImageFile(file);
     }
   };
 
@@ -88,10 +82,23 @@ const AddEmployee = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    Object.keys(employeeData).forEach((key) => {
+      formData.append(key, employeeData[key]);
+    });
+    if (imageFile) {
+      formData.append('picture', imageFile);
+    }
+
     try {
-      await axios.post('http://localhost:3001/api/employes', employeeData);
+      await axios.post('http://localhost:3001/api/employes', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       setSnackbarOpen(true);
       setEmployeeData({
+        user_id: '',
         nom: '',
         prenom: '',
         date_naissance: '',
@@ -99,9 +106,8 @@ const AddEmployee = () => {
         login_method: '',
         id_planning: '',
         id_departement: '',
-        picture: ''
       });
-      setImagePreview(null);
+      setImageFile(null);
       setActiveStep(0);
     } catch (error) {
       console.error('Error creating employee:', error);
@@ -135,6 +141,15 @@ const AddEmployee = () => {
             {activeStep === 0 && (
               <Grid container spacing={3} justifyContent="center">
                 <Grid item xs={12}>
+                  <TextField
+                    fullWidth
+                    label="User ID"
+                    variant="outlined"
+                    name="user_id"
+                    value={employeeData.user_id}
+                    onChange={handleInputChange}
+                    sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}
+                  />
                   <TextField
                     fullWidth
                     label="First Name"
@@ -197,8 +212,8 @@ const AddEmployee = () => {
                       sx={{ borderRadius: '8px', height: 64 }}
                     >
                       {loginMethods.map((method) => (
-                        <MenuItem key={method._id} value={method._id}>
-                          {method.name}
+                        <MenuItem key={method} value={method}>
+                          {method}
                         </MenuItem>
                       ))}
                     </Select>
@@ -269,10 +284,10 @@ const AddEmployee = () => {
                       onChange={handleImageChange}
                     />
                   </Button>
-                  {imagePreview && (
+                  {imageFile && (
                     <Avatar
                       alt="Employee Picture"
-                      src={imagePreview}
+                      src={URL.createObjectURL(imageFile)}
                       sx={{ width: 200, height: 200, mb: 3 }}
                     />
                   )}
@@ -314,7 +329,3 @@ const AddEmployee = () => {
 };
 
 export default AddEmployee;
-
-
-
-

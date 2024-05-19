@@ -8,6 +8,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
+import { format, parseISO } from 'date-fns';
 
 const EditPlanning = () => {
   const { planningId } = useParams(); // Get the planning ID from the route params
@@ -35,6 +36,13 @@ const EditPlanning = () => {
   };
 
   const handleDayChange = (index, field, value) => {
+    const newJours = updatedPlanning.jours.map((jour, i) =>
+      i === index ? { ...jour, [field]: value } : jour
+    );
+    setUpdatedPlanning({ ...updatedPlanning, jours: newJours });
+  };
+
+  const handleDateChange = (index, field, value) => {
     const newJours = updatedPlanning.jours.map((jour, i) =>
       i === index ? { ...jour, [field]: value } : jour
     );
@@ -122,8 +130,22 @@ const EditPlanning = () => {
                 </Grid>
                 {updatedPlanning.jours && updatedPlanning.jours.map((jour, index) => (
                   <Box key={jour._id} sx={{ width: '100%', mb: 2, border: '1px solid #ccc', borderRadius: 2, p: 2 }}>
-                    <Typography variant="h6" style={{ color: '#1976d2', fontWeight: 'bold' }}>Day {jour._id}</Typography>
+                    <Typography variant="h6" style={{ color: '#1976d2', fontWeight: 'bold' }}>
+                      Day {format(parseISO(jour.h_entree1), 'dd MMM yyyy')} to {format(parseISO(jour.h_sortie2), 'dd MMM yyyy')}
+                    </Typography>
                     <Grid container spacing={2} sx={{ mt: 1 }}>
+                      <Grid item xs={6}>
+                        <Typography variant="subtitle1" style={{ fontWeight: 'bold', marginBottom: '8px' }}>Date</Typography>
+                        <TextField
+                          type="date"
+                          fullWidth
+                          variant="outlined"
+                          name="date"
+                          value={jour.h_entree1.split('T')[0]}
+                          onChange={(e) => handleDateChange(index, 'h_entree1', `${e.target.value}T${jour.h_entree1.split('T')[1]}`)}
+                          style={{ marginBottom: '16px' }}
+                        />
+                      </Grid>
                       <Grid item xs={6}>
                         <Typography variant="subtitle1" style={{ fontWeight: 'bold', marginBottom: '8px' }}>Morning Start</Typography>
                         <TextField
@@ -132,7 +154,7 @@ const EditPlanning = () => {
                           variant="outlined"
                           name="h_entree1"
                           value={jour.h_entree1.split('T')[1]}
-                          onChange={(e) => handleDayChange(index, 'h_entree1', `2024-05-15T${e.target.value}`)}
+                          onChange={(e) => handleDayChange(index, 'h_entree1', `${jour.h_entree1.split('T')[0]}T${e.target.value}`)}
                           style={{ marginBottom: '16px' }}
                         />
                       </Grid>
@@ -144,7 +166,7 @@ const EditPlanning = () => {
                           variant="outlined"
                           name="h_sortie1"
                           value={jour.h_sortie1.split('T')[1]}
-                          onChange={(e) => handleDayChange(index, 'h_sortie1', `2024-05-15T${e.target.value}`)}
+                          onChange={(e) => handleDayChange(index, 'h_sortie1', `${jour.h_sortie1.split('T')[0]}T${e.target.value}`)}
                           style={{ marginBottom: '16px' }}
                         />
                       </Grid>
@@ -156,7 +178,7 @@ const EditPlanning = () => {
                           variant="outlined"
                           name="h_entree2"
                           value={jour.h_entree2.split('T')[1]}
-                          onChange={(e) => handleDayChange(index, 'h_entree2', `2024-05-15T${e.target.value}`)}
+                          onChange={(e) => handleDayChange(index, 'h_entree2', `${jour.h_entree2.split('T')[0]}T${e.target.value}`)}
                           style={{ marginBottom: '16px' }}
                         />
                       </Grid>
@@ -168,7 +190,7 @@ const EditPlanning = () => {
                           variant="outlined"
                           name="h_sortie2"
                           value={jour.h_sortie2.split('T')[1]}
-                          onChange={(e) => handleDayChange(index, 'h_sortie2', `2024-05-15T${e.target.value}`)}
+                          onChange={(e) => handleDayChange(index, 'h_sortie2', `${jour.h_sortie2.split('T')[0]}T${e.target.value}`)}
                           style={{ marginBottom: '16px' }}
                         />
                       </Grid>
