@@ -19,6 +19,7 @@ export const revokeLeave = createAsyncThunk('leaves/revokeLeave', async (leaveId
     await axios.delete(`http://localhost:3001/api/leave/revoke/${leaveId}`);
     return leaveId;
   } catch (error) {
+    console.log("Error revoking leave:", error.response ? error.response.data : error);
     return rejectWithValue(error.response ? error.response.data : 'Error revoking leave');
   }
 });
