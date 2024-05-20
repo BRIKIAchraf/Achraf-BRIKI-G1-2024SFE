@@ -32,32 +32,11 @@ export const deleteDepartment = createAsyncThunk('departements/deleteDepartment'
   await axios.delete(`http://localhost:3001/api/departements/${departmentId}`);
   return departmentId;
 });
+
 export const assignEmployeeToDepartment = createAsyncThunk('departements/assignEmployeeToDepartment', async ({ departmentId, employeeId }) => {
-  try {
-    console.log('Assigning employee to department...');
-    const response = await fetch('http://localhost:3001/api/departements/assign-employee', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ departmentId, employeeId })
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to assign employee to department');
-    }
-
-    const data = await response.json();
-    console.log('Assignment successful:', data);
-
-    return { departmentId, employeeId };
-  } catch (error) {
-    console.error('Error assigning employee:', error);
-    throw new Error(`Error assigning employee: ${error.message}`);
-  }
+  const response = await axios.post('http://localhost:3001/api/departements/assign-employee', { departmentId, employeeId });
+  return { departmentId, employeeId };
 });
-
-
 
 export const updateDepartment = createAsyncThunk('departements/updateDepartment', async ({ id, name }) => {
   const response = await axios.put(`http://localhost:3001/api/departements/${id}`, { name });
@@ -101,7 +80,7 @@ const departementSlice = createSlice({
       })
       .addCase(assignEmployeeToDepartment.fulfilled, (state, action) => {
         const { departmentId, employeeId } = action.payload;
-        const department = state.departments.find(dept => dept.id === departmentId);
+        const department = state.departments.find(dep => dep.id === departmentId);
         if (department && !department.employees.includes(employeeId)) {
           department.employees.push(employeeId);
         }

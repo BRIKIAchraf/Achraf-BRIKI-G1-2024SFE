@@ -15,7 +15,8 @@ import EditIcon from '@mui/icons-material/Edit';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
-import { fetchEmployees, createEmployee, deleteEmployee } from '../../store/employeeSlice'; // Updated import
+import { fetchEmployees, createEmployee, deleteEmployee } from '../../store/employeeSlice';
+import { jsPDF } from 'jspdf'; // Import jsPDF
 
 const primaryColor = '#388e3c';
 
@@ -88,6 +89,43 @@ const SamplePage = () => {
     });
     setOpenDeleteDialog(false);
     setSnackbarOpen(true);
+  };
+
+  const handleGeneratePDF = (employee) => {
+    const doc = new jsPDF();
+    const pageHeight = doc.internal.pageSize.height;
+
+    // Add header
+    doc.setFillColor(100, 100, 255);
+    doc.rect(0, 0, 210, 30, 'F');
+    doc.setFontSize(20);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Rapport d'employee", 40, 20);
+
+    // Add employee details
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.setDrawColor(0, 0, 0);
+    doc.setFillColor(230, 230, 250);
+    doc.rect(14, 40, 182, 60, 'FD');
+
+    doc.setTextColor(0, 0, 0);
+    doc.text('Employee Details', 14, 50);
+    doc.setFontSize(10);
+    doc.text(`Name: ${employee.nom} ${employee.prenom}`, 14, 60);
+    doc.text(`Birthdate: ${new Date(employee.date_naissance).toISOString().split('T')[0]}`, 14, 70);
+    doc.text(`Login Method: ${employee.login_method}`, 14, 80);
+    doc.text(`Department: ${employee.id_departement?.name}`, 14, 90);
+
+    // Add footer
+    doc.setFillColor(100, 100, 255);
+    doc.rect(0, pageHeight - 20, 210, 20, 'F');
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Page 1", 14, pageHeight - 10);
+    doc.text("Generated on " + new Date().toLocaleDateString(), 150, pageHeight - 10);
+
+    doc.save(`EmployeeDetails_${employee.nom}_${employee.prenom}.pdf`);
   };
 
   const filteredEmployees = Array.isArray(employees.employees) ? employees.employees.filter(employee =>
@@ -230,7 +268,7 @@ const SamplePage = () => {
                           <IconButton color="primary" onClick={() => navigate(`/sample-page/employee-details/${employee._id}`)}>
                             <EditIcon />
                           </IconButton>
-                          <IconButton color="primary">
+                          <IconButton color="primary" onClick={() => handleGeneratePDF(employee)}>
                             <PictureAsPdfIcon />
                           </IconButton>
                         </TableCell>

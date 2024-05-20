@@ -271,6 +271,8 @@ const DepartmentManagement = () => {
               fullWidth
               margin="normal"
             >
+
+
               {departments.map((department) => (
                 <MenuItem key={department.id} value={department.id}>
                   {department.name}

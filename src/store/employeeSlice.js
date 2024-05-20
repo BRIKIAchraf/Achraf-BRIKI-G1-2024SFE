@@ -3,10 +3,10 @@ import axios from 'axios';
 
 const BASE_URL = 'http://localhost:3001/api';
 
-// Thunks for fetching data from the API
 export const fetchEmployees = createAsyncThunk('employees/fetchEmployees', async () => {
   const response = await axios.get(`${BASE_URL}/employes`);
-  return response.data;
+ // return response.data;
+  return response.data.employees; 
 });
 
 export const fetchEmployeeById = createAsyncThunk('employees/fetchEmployeeById', async (id) => {
@@ -31,31 +31,27 @@ export const deleteEmployee = createAsyncThunk('employees/deleteEmployee', async
 
 export const fetchPlannings = createAsyncThunk('employee/fetchPlannings', async () => {
   const response = await axios.get(`${BASE_URL}/plannings`);
-  console.log('fetchPlannings response:', response.data);
   return response.data;
 });
 
 export const fetchDepartments = createAsyncThunk('employee/fetchDepartments', async () => {
   const response = await axios.get(`${BASE_URL}/departments`);
-  console.log('fetchDepartments response:', response.data);
   return response.data;
 });
 
 const employeeSlice = createSlice({
-  name: 'employee', // Ensure this matches the state path
+  name: 'employee',
   initialState: {
     employees: [],
     employee: null,
     plannings: [],
     departments: [],
-    loginMethods: [],
     status: 'idle',
     error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
     builder
-      // Employees
       .addCase(fetchEmployees.pending, (state) => {
         state.status = 'loading';
       })
@@ -67,7 +63,6 @@ const employeeSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
-      // Employee by ID
       .addCase(fetchEmployeeById.pending, (state) => {
         state.status = 'loading';
       })
@@ -79,22 +74,19 @@ const employeeSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
-      // Create Employee
       .addCase(createEmployee.fulfilled, (state, action) => {
         state.employees.push(action.payload);
       })
-      // Update Employee
       .addCase(updateEmployee.fulfilled, (state, action) => {
         const index = state.employees.findIndex((emp) => emp._id === action.payload._id);
         if (index !== -1) {
           state.employees[index] = action.payload;
         }
+        state.employee = action.payload; // Ensure the updated employee is set
       })
-      // Delete Employee
       .addCase(deleteEmployee.fulfilled, (state, action) => {
         state.employees = state.employees.filter((employee) => employee._id !== action.payload);
       })
-      // Fetch Plannings
       .addCase(fetchPlannings.pending, (state) => {
         state.status = 'loading';
       })
@@ -106,7 +98,6 @@ const employeeSlice = createSlice({
         state.status = 'failed';
         state.error = action.error.message;
       })
-      // Fetch Departments
       .addCase(fetchDepartments.pending, (state) => {
         state.status = 'loading';
       })

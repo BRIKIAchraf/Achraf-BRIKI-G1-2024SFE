@@ -45,33 +45,63 @@ const EmployeeDetails = () => {
 
   const handleGeneratePDF = () => {
     const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.setTextColor(40);
-    doc.text("Rapport d'employee", 14, 22);
+    
+    // Add header
+    doc.setFillColor(100, 100, 255); // Light blue color
+    doc.rect(0, 0, 210, 30, 'F');
+    doc.setFontSize(20);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Rapport d'employee", 14, 20);
 
+    // Add footer
+    doc.setFillColor(100, 100, 255); // Light blue color
+    doc.rect(0, 277, 210, 20, 'F');
+    doc.setFontSize(10);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Page 1", 14, 288);
+    doc.text("Generated on " + new Date().toLocaleDateString(), 150, 288);
+
+    // Add employee details
     doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
     doc.text(`Name: ${employeeData.nom} ${employeeData.prenom}`, 14, 40);
     doc.text(`Birthdate: ${new Date(employeeData.date_naissance).toISOString().split('T')[0]}`, 14, 50);
     doc.text(`Login Method: ${employeeData.login_method}`, 14, 60);
     doc.text(`Department: ${employeeData.id_departement?.name}`, 14, 70);
     doc.text(`Planning: ${employeeData.id_planning?.name}`, 14, 80);
 
+    // Add previous departments
     doc.addPage();
-    doc.text('Previous Departments:', 14, 22);
+    doc.setFillColor(100, 100, 255); // Light blue color
+    doc.rect(0, 0, 210, 30, 'F');
+    doc.setFontSize(20);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Rapport d'employee", 14, 20);
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Previous Departments:', 14, 40);
     employeeData.previousDepartments?.forEach((dept, index) => {
-      doc.text(`${dept.name} from ${dept.dateFrom} to ${dept.dateTo}`, 14, 32 + (10 * index));
+      doc.text(`${dept.name} from ${dept.dateFrom} to ${dept.dateTo}`, 14, 50 + (10 * index));
     });
 
+    // Add previous plannings
     doc.addPage();
-    doc.text('Previous Plannings:', 14, 22);
+    doc.setFillColor(100, 100, 255); // Light blue color
+    doc.rect(0, 0, 210, 30, 'F');
+    doc.setFontSize(20);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Rapport d'employee", 14, 20);
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Previous Plannings:', 14, 40);
     employeeData.previousPlannings?.forEach((plan, index) => {
-      doc.text(`${plan.planName} from ${plan.dateFrom} to ${plan.dateTo}`, 14, 32 + (10 * index));
+      doc.text(`${plan.planName} from ${plan.dateFrom} to ${plan.dateTo}`, 14, 50 + (10 * index));
     });
 
     const pdfBlob = doc.output('blob');
     const url = URL.createObjectURL(pdfBlob);
     setPdfUrl(url);
-    setShowPdf(true); // Show the PDF preview
+    setShowPdf(true);
   };
 
   const handleDownloadPDF = () => {
@@ -284,6 +314,14 @@ const EmployeeDetails = () => {
                 <iframe src={pdfUrl} width="100%" height="100%" title="PDF Preview" />
               </Box>
             </Rnd>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleDownloadPDF}
+              sx={{ mt: 2 }}
+            >
+              Download PDF
+            </Button>
           </Grid>
         )}
       </Grid>

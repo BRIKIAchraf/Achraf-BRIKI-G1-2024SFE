@@ -25,6 +25,13 @@ const CustomTextField = styled(TextField)(({ theme }) => ({
   }
 }));
 
+const convertTimeToDate = (timeString) => {
+  const [hours, minutes] = timeString.split(':');
+  const now = new Date();
+  now.setHours(hours, minutes, 0, 0);
+  return now;
+};
+
 const AddPlanningForm = () => {
   const [intitule, setIntitule] = useState('');
   const [planningStartDate, setPlanningStartDate] = useState(null);
@@ -37,7 +44,6 @@ const AddPlanningForm = () => {
     const fetchEmployees = async () => {
       try {
         const response = await axios.get('http://localhost:3001/api/employes');
-        console.log('Fetched employees:', response.data); // Log the fetched employees
         if (Array.isArray(response.data.employees)) {
           setEmployees(response.data.employees);
         } else {
@@ -50,41 +56,42 @@ const AddPlanningForm = () => {
     fetchEmployees();
   }, []);
 
-  useEffect(() => {
-    console.log('Updated employees state:', employees);
-  }, [employees]);
-
   const handleJourChange = (index, field, value) => {
-    console.log(`Changing day ${index}, field ${field} to ${value}`);
     const newJours = [...jours];
     newJours[index][field] = value;
     setJours(newJours);
   };
 
   const handleEmployeeChange = (index, value) => {
-    console.log(`Changing employees for day ${index} to ${value}`);
     const newJours = [...jours];
     newJours[index].employees = value;
     setJours(newJours);
   };
 
   const addJour = () => {
-    console.log('Adding a new day');
     setJours([...jours, { h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
   };
 
   const removeJour = (index) => {
-    console.log(`Removing day ${index}`);
     setJours(jours.filter((_, idx) => idx !== index));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const planningData = { intitule, planningStartDate, planningEndDate, jours };
-    console.log('Submitting planning data:', planningData); // Log the data being submitted
+    const planningData = {
+      intitule,
+      planningStartDate,
+      planningEndDate,
+      jours: jours.map(jour => ({
+        ...jour,
+        h_entree1: convertTimeToDate(jour.h_entree1),
+        h_sortie1: convertTimeToDate(jour.h_sortie1),
+        h_entree2: convertTimeToDate(jour.h_entree2),
+        h_sortie2: convertTimeToDate(jour.h_sortie2)
+      }))
+    };
     try {
-      await axios.post('http://localhost:3001/api/planning', planningData);
-      console.log('Planning added successfully');
+      await axios.post('http://localhost:3001/api/plannings', planningData);
       setSuccessMessage('Planning added successfully!');
       setIntitule('');
       setPlanningStartDate(null);
