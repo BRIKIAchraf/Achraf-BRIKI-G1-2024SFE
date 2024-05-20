@@ -6,7 +6,7 @@ const BASE_URL = 'http://localhost:3001/api';
 // Thunks for fetching data from the API
 export const fetchEmployees = createAsyncThunk('employees/fetchEmployees', async () => {
   const response = await axios.get(`${BASE_URL}/employes`);
-  return response.data.employees;  // Extract the employees array from the response
+  return response.data;
 });
 
 export const fetchEmployeeById = createAsyncThunk('employees/fetchEmployeeById', async (id) => {
@@ -61,7 +61,7 @@ const employeeSlice = createSlice({
       })
       .addCase(fetchEmployees.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.employees = action.payload; // Update the state with the employees array
+        state.employees = action.payload;
       })
       .addCase(fetchEmployees.rejected, (state, action) => {
         state.status = 'failed';

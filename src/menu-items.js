@@ -157,20 +157,6 @@ export default {
           url: '/departmentmanagement',
           icon: icons.BusinessOutlinedIcon
         },
-        {
-          id :'LeaveDashboard',
-          title: 'Leave Dashboard',
-          type: 'item',
-          url: '/LeaveDashboard',
-          icon: icons.EventNoteOutlinedIcon
-        },
-        /*{
-          id: 'edit-planning',
-          title: 'Modifier un horraire',
-          type: 'item',
-          url: '/EditPlanning',
-          icon: icons.AccessTimeIcon
-        },*/
       ]
     },
   ]
