@@ -14,6 +14,30 @@ export const fetchLeaves = createAsyncThunk('leaves/fetchLeaves', async (_, { re
   }
 });
 
+
+export const fetchLeaveById = createAsyncThunk('leaves/fetchLeaveById', async (leaveId, { rejectWithValue }) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/api/leave/${leaveId}`);
+    const leave = response.data.leave;
+
+    // Fetch employee details for each employee ID
+    const employeeDetails = await Promise.all(
+      leave.employees.map(async (employee) => {
+        const employeeId = typeof employee === 'object' ? employee._id : employee;
+        const employeeResponse = await axios.get(`http://localhost:3001/api/employes/${employeeId}`);
+        return employeeResponse.data;
+      })
+    );
+
+    // Combine leave and employee details
+    leave.employees = employeeDetails;
+
+    return leave;
+  } catch (error) {
+    return rejectWithValue(error.response ? error.response.data : 'Error fetching leave details');
+  }
+});
+
 export const revokeLeave = createAsyncThunk('leaves/revokeLeave', async (leaveId, { rejectWithValue }) => {
   try {
     await axios.delete(`http://localhost:3001/api/leave/revoke/${leaveId}`);
@@ -28,6 +52,7 @@ const leaveSlice = createSlice({
   name: 'leaves',
   initialState: {
     leaves: [],
+    leaveDetails: null,
     status: 'idle',
     error: null,
   },
@@ -45,6 +70,12 @@ const leaveSlice = createSlice({
       .addCase(fetchLeaves.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload || 'Failed to fetch leaves';
+      })
+      .addCase(fetchLeaveById.fulfilled, (state, action) => {
+        state.leaveDetails = action.payload;
+      })
+      .addCase(fetchLeaveById.rejected, (state, action) => {
+        state.error = action.payload || 'Failed to fetch leave details';
       })
       .addCase(revokeLeave.fulfilled, (state, action) => {
         state.leaves = state.leaves.filter((leave) => leave._id !== action.payload);

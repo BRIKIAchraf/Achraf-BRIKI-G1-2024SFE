@@ -7,6 +7,7 @@ import { gridSpacing } from '../../config'; // Ensure the path to config is corr
 import SearchIcon from '@mui/icons-material/Search';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { Link } from 'react-router-dom';
 
 const LeaveManagement = () => {
   const dispatch = useDispatch();
@@ -122,6 +123,9 @@ const LeaveManagement = () => {
                 <CardContent>
                   <Typography variant="body2">From: {new Date(leave.startDate).toLocaleDateString()}</Typography>
                   <Typography variant="body2">To: {new Date(leave.endDate).toLocaleDateString()}</Typography>
+                  <Link to={`/leave/details/${leave._id}`} style={{ textDecoration: 'none' }}>
+                    <Typography variant="body2" color="primary" align="center" sx={{ mt: 2 }}>View Details</Typography>
+                  </Link>
                 </CardContent>
               </Card>
             </Grid>

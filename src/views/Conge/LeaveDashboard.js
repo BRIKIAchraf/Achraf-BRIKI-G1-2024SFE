@@ -1,5 +1,7 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchLeaveById } from '../../store/leaveSlice'; // Ensure the correct path to your slice
 import {
   Box, Card, CardContent, Chip, Grid, IconButton, List, ListItem, ListItemText, Typography, InputAdornment, Divider, Avatar, TextField, Pagination
 } from '@mui/material';
@@ -20,9 +22,11 @@ const departmentColors = {
   Operations: blue[400]
 };
 
-export default function LeaveDetails({ leaves }) {
+export default function LeaveDetails() {
   const { leaveId } = useParams();
-  const [leave, setLeave] = useState(null);
+  const dispatch = useDispatch();
+  const leave = useSelector((state) => state.leaves.leaveDetails);
+
   const [filter, setFilter] = useState('');
   const [employees, setEmployees] = useState([]);
   const [editMode, setEditMode] = useState({});
@@ -30,15 +34,17 @@ export default function LeaveDetails({ leaves }) {
   const pageSize = 3;
 
   useEffect(() => {
-    const selectedLeave = leaves.find(leave => leave.id === parseInt(leaveId));
-    setLeave(selectedLeave);
-    if (selectedLeave) {
-      setEmployees(selectedLeave.employees);
+    dispatch(fetchLeaveById(leaveId));
+  }, [dispatch, leaveId]);
+
+  useEffect(() => {
+    if (leave) {
+      setEmployees(leave.employees);
     }
-  }, [leaveId, leaves]);
+  }, [leave]);
 
   const handleDelete = (id) => {
-    setEmployees(employees.filter(employee => employee.id !== id));
+    setEmployees(employees.filter(employee => employee._id !== id));
   };
 
   const handleEdit = (id) => {
@@ -47,14 +53,15 @@ export default function LeaveDetails({ leaves }) {
 
   const handleSave = (id) => {
     const updatedEmployee = {
-      name: document.getElementById(`name-${id}`).value,
+      nom: document.getElementById(`nom-${id}`).value,
+      prenom: document.getElementById(`prenom-${id}`).value,
       department: document.getElementById(`department-${id}`).value,
       leaveStart: document.getElementById(`leaveStart-${id}`).value,
       leaveEnd: document.getElementById(`leaveEnd-${id}`).value
     };
     setEmployees(
       employees.map(employee =>
-        employee.id === id ? { ...employee, ...updatedEmployee } : employee
+        employee._id === id ? { ...employee, ...updatedEmployee } : employee
       )
     );
     setEditMode({ ...editMode, [id]: false });
@@ -62,7 +69,8 @@ export default function LeaveDetails({ leaves }) {
 
   const filteredEmployees = useMemo(() => 
     employees.filter(employee =>
-      employee.name.toLowerCase().includes(filter.toLowerCase()) ||
+      employee.nom.toLowerCase().includes(filter.toLowerCase()) ||
+      employee.prenom.toLowerCase().includes(filter.toLowerCase()) ||
       employee.department.toLowerCase().includes(filter.toLowerCase())
     ), [filter, employees]);
 
@@ -123,35 +131,35 @@ export default function LeaveDetails({ leaves }) {
       </Card>
       <Grid container spacing={2}>
         {filteredEmployees.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((employee, index) => (
-          <Grid key={employee.id} item xs={12} md={6}>
+          <Grid key={employee._id} item xs={12} md={6}>
             <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
               <CardContent>
                 <Typography variant="h6" gutterBottom sx={{ color: blue[800], fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
-                  <PeopleIcon sx={{ mr: 1, color: blue[500] }} />{employee.name} - Leave Details
-                  <IconButton onClick={() => handleDelete(employee.id)} color="error" sx={{ marginLeft: 'auto' }}>
+                  <PeopleIcon sx={{ mr: 1, color: blue[500] }} />{employee.nom} {employee.prenom} - Leave Details
+                  <IconButton onClick={() => handleDelete(employee._id)} color="error" sx={{ marginLeft: 'auto' }}>
                     <DeleteIcon />
                   </IconButton>
-                  {!editMode[employee.id] && (
-                    <IconButton onClick={() => handleEdit(employee.id)} color="primary">
+                  {!editMode[employee._id] && (
+                    <IconButton onClick={() => handleEdit(employee._id)} color="primary">
                       <EditIcon />
                     </IconButton>
                   )}
                 </Typography>
                 <List sx={{ maxHeight: 300, overflow: 'auto', borderRadius: 2 }}>
                   <ListItem>
-                    <Avatar alt={employee.name} src={employee.avatar} sx={{ width: 60, height: 60, marginRight: 2 }} />
-                    {editMode[employee.id] ? (
-                      <ListItemText primary={<TextField id={`name-${employee.id}`} defaultValue={employee.name} />} secondary={<TextField id={`department-${employee.id}`} defaultValue={employee.department} />} />
+                    <Avatar alt={employee.nom} src={employee.picture} sx={{ width: 60, height: 60, marginRight: 2 }} />
+                    {editMode[employee._id] ? (
+                      <ListItemText primary={<TextField id={`nom-${employee._id}`} defaultValue={employee.nom} />} secondary={<TextField id={`prenom-${employee._id}`} defaultValue={employee.prenom} />} />
                     ) : (
-                      <ListItemText primary={<Typography variant="h5" color="primary">{employee.name}</Typography>} secondary={`Department: ${employee.department}`} />
+                      <ListItemText primary={<Typography variant="h5" color="primary">{employee.nom} {employee.prenom}</Typography>} secondary={`Department: ${employee.department}`} />
                     )}
                     <ListItemText secondary={
                       <>
-                        {editMode[employee.id] ? (
+                        {editMode[employee._id] ? (
                           <>
-                            <TextField id={`leaveStart-${employee.id}`} defaultValue={employee.leaveStart} />
+                            <TextField id={`leaveStart-${employee._id}`} defaultValue={employee.leaveStart} />
                             <ArrowRightAltIcon />
-                            <TextField id={`leaveEnd-${employee.id}`} defaultValue={employee.leaveEnd} />
+                            <TextField id={`leaveEnd-${employee._id}`} defaultValue={employee.leaveEnd} />
                           </>
                         ) : (
                           <Typography variant="subtitle1">From: {employee.leaveStart} <ArrowRightAltIcon /> To: {employee.leaveEnd}</Typography>
@@ -163,23 +171,23 @@ export default function LeaveDetails({ leaves }) {
                   <ListItem sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <AccessTimeIcon sx={{ color: yellow[800], mr: 1 }} />
-                      {editMode[employee.id] ? (
+                      {editMode[employee._id] ? (
                         <Typography sx={{ fontSize: '1.2rem', fontWeight: 'medium', display: 'flex', alignItems: 'center' }}>
-                          <TextField id={`name-${employee.id}`} defaultValue={employee.name} />
+                          <TextField id={`nom-${employee._id}`} defaultValue={employee.nom} />
                           <ArrowRightAltIcon />
-                          <TextField id={`leaveStart-${employee.id}`} defaultValue={employee.leaveStart} />
+                          <TextField id={`leaveStart-${employee._id}`} defaultValue={employee.leaveStart} />
                           <ArrowRightAltIcon />
-                          <TextField id={`leaveEnd-${employee.id}`} defaultValue={employee.leaveEnd} />
+                          <TextField id={`leaveEnd-${employee._id}`} defaultValue={employee.leaveEnd} />
                         </Typography>
                       ) : (
                         <Typography sx={{ fontSize: '1.2rem', fontWeight: 'medium', display: 'flex', alignItems: 'center' }}>
-                          {employee.name} - {employee.leaveStart} <ArrowRightAltIcon /> {employee.leaveEnd}
+                          {employee.nom} - {employee.leaveStart} <ArrowRightAltIcon /> {employee.leaveEnd}
                         </Typography>
                       )}
                     </Box>
                     <Box>
-                      {editMode[employee.id] && (
-                        <IconButton onClick={() => handleSave(employee.id)} color="primary">
+                      {editMode[employee._id] && (
+                        <IconButton onClick={() => handleSave(employee._id)} color="primary">
                           <SaveIcon />
                         </IconButton>
                       )}

@@ -53,7 +53,7 @@ const MainRoutes = {
     { path: '/addplanning', element: <AddPlanning /> },
     { path: '/LoginMethods', element: <LoginMethods /> },
     { path: '/sample-page/employee-details/:id', element: <EmployeeDetails /> },
-    { path: '/LeaveDashboard/:id', element: <LeaveDashboard /> },
+    { path: '/leave/details/:leaveId', element: <LeaveDashboard /> },
     {path: '/AddEmployee', element: <AddEmployee />},
     {path: '/edit-planning/:planningId', element: <EditPlanning />},
 
