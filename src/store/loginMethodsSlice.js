@@ -1,11 +1,19 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const fetchLoginMethods = createAsyncThunk('loginMethods/fetchLoginMethods', async () => {
-  const response = await axios.get('http://localhost:3001/api/loginMethods/list');
-  console.log('API Response:', response.data);  // Added console log to check the API response
-  return response.data;
-});
+export const fetchLoginMethods = createAsyncThunk(
+  'loginMethods/fetchLoginMethods',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get('http://localhost:3001/api/loginMethods/list');
+      console.log("API Response:", response.data);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching login methods:", error);
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 const loginMethodsSlice = createSlice({
   name: 'loginMethods',
@@ -23,13 +31,13 @@ const loginMethodsSlice = createSlice({
       })
       .addCase(fetchLoginMethods.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.loginMethods = action.payload.loginMethods;
-        state.totalCount = action.payload.totalCount;
-        console.log('Login Methods:', state.loginMethods);  // Added console log to check the login methods in state
+        state.loginMethods = action.payload.loginMethods; // Accessing the array correctly
+        state.totalCount = action.payload.totalCount; // Accessing the total count correctly
+        console.log("Login Methods:", state.loginMethods);
       })
       .addCase(fetchLoginMethods.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error = action.payload || action.error.message;
       });
   }
 });

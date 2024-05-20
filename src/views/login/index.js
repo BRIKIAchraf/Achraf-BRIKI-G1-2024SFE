@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchLoginMethods } from '../../store/loginMethodsSlice';
-import { Typography, Grid, TextField, MenuItem, Button, IconButton, Dialog, DialogActions, DialogContent, DialogTitle, Snackbar, Alert, Stack, Pagination } from '@mui/material';
+import {
+  Typography, Grid, TextField, MenuItem, Button, IconButton, Dialog,
+  DialogActions, DialogContent, DialogTitle, Snackbar, Alert, Stack, Pagination
+} from '@mui/material';
 import FingerprintIcon from '@mui/icons-material/Fingerprint';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import LockIcon from '@mui/icons-material/Lock';
@@ -145,12 +148,10 @@ const LoginMethods = () => {
     method.code.toLowerCase().includes(filter.toLowerCase())
   );
 
-  const filteredAssignedMethods = Object.keys(assignedLoginMethods)
-    .flatMap(employee => assignedLoginMethods[employee].map(method => ({ ...method, employee })))
-    .filter(method =>
-      method.code.toLowerCase().includes(filter.toLowerCase()) ||
-      method.employee.toLowerCase().includes(filter.toLowerCase())
-    );
+  const filteredAssignedMethods = loginMethods.filter(method =>
+    method.methodType.toLowerCase().includes(filter.toLowerCase()) ||
+    (method.assignedTo && (method.assignedTo.nom.toLowerCase().includes(filter.toLowerCase()) || method.assignedTo.prenom.toLowerCase().includes(filter.toLowerCase())))
+  );
 
   const paginatedUnassignedMethods = filteredUnassignedMethods.slice((page - 1) * rowsPerPage, page * rowsPerPage);
   const paginatedAssignedMethods = filteredAssignedMethods.slice((page - 1) * rowsPerPage, page * rowsPerPage);
@@ -239,8 +240,8 @@ const LoginMethods = () => {
           <Grid container spacing={4} justifyContent="center">
             {paginatedUnassignedMethods.map((method, index) => (
               <Grid key={index} item xs={12} sm={6} md={4} style={{ textAlign: 'center' }}>
-                {renderIcon(method.method)}
-                <Typography variant="h6" sx={{ color: '#1976d2' }}>{method.method}</Typography>
+                {renderIcon(method.methodType)}
+                <Typography variant="h6" sx={{ color: '#1976d2' }}>{method.methodType}</Typography>
                 <Typography variant="body2" sx={{ color: '#616161' }}>Code: {method.code}</Typography>
                 <TextField
                   select
@@ -267,15 +268,13 @@ const LoginMethods = () => {
           <Grid container spacing={4} justifyContent="center">
             {paginatedAssignedMethods.map((method, index) => (
               <Grid key={index} item xs={12} sm={6} md={4} style={{ textAlign: 'center' }}>
-                {renderIcon(method.method)}
-                <Typography variant="h6" sx={{ color: '#1976d2' }}>{method.method}</Typography>
-                <Typography variant="body2" sx={{ color: '#616161' }}>Code: {method.code}</Typography>
-                <Typography variant="body2" sx={{ color: '#616161' }}>Employee: {method.employee}</Typography>
-                <Typography variant="body2" sx={{ color: '#616161' }}>Department: {method.department}</Typography>
-                <IconButton color="primary" onClick={() => openEditDialog(method.employee, index)}>
+                {renderIcon(method.methodType)}
+                <Typography variant="h6" sx={{ color: '#1976d2' }}>{method.methodType}</Typography>
+                <Typography variant="body2" sx={{ color: '#616161' }}>Employee: {method.assignedTo?.nom} {method.assignedTo?.prenom}</Typography>
+                <IconButton color="primary" onClick={() => openEditDialog(method.assignedTo?.nom, index)}>
                   <EditIcon />
                 </IconButton>
-                <IconButton color="error" onClick={() => deleteLoginMethod(method.employee, index)}>
+                <IconButton color="error" onClick={() => deleteLoginMethod(method.assignedTo?.nom, index)}>
                   <DeleteIcon />
                 </IconButton>
               </Grid>

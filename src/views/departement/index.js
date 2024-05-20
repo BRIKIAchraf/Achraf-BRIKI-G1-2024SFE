@@ -74,15 +74,23 @@ const DepartmentManagement = () => {
     }
   };
 
-  const handleAssignEmployee = () => {
+  const handleAssignEmployee = async () => {
     if (selectedEmployee && selectedDepartment) {
-      dispatch(assignEmployeeToDepartment({ departmentId: selectedDepartment, employeeId: selectedEmployee }));
-      setSelectedEmployee('');
-      setSelectedDepartment('');
-      setSnackbarMessage('Employee assigned successfully!');
-      setSnackbarOpen(true);
+      try {
+        // Send selected employeeId and departmentId
+        await dispatch(assignEmployeeToDepartment({ departementId: selectedDepartment, employeeId: selectedEmployee }));
+        setSelectedEmployee('');
+        setSelectedDepartment('');
+        setSnackbarMessage('Employee assigned successfully!');
+        setSnackbarOpen(true);
+      } catch (error) {
+        console.error('Error assigning employee:', error);
+        setSnackbarMessage('Failed to assign employee.');
+        setSnackbarOpen(true);
+      }
     }
   };
+  
 
   const handleDeleteDepartment = (departmentId) => {
     if (departmentId) {
@@ -178,7 +186,6 @@ const DepartmentManagement = () => {
             <Typography variant="h6">Employees</Typography>
             {editableDepartment.employees.map(employee => {
               const emp = employees.find(emp => emp._id === employee);
-              console.log("Employee:", emp);
               return (
                 <Box key={employee} display="flex" alignItems="center" justifyContent="space-between">
                   <Typography>{emp ? `${emp.nom} ${emp.prenom}` : 'Unknown Employee'}</Typography>
