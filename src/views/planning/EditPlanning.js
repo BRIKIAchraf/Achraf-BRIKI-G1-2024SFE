@@ -49,15 +49,15 @@ const EditPlanning = () => {
     setUpdatedPlanning({ ...updatedPlanning, jours: newJours });
   };
 
-  const handleEmployeeChange = (index, value) => {
+  const handleEmployeeChange = (index, field, value) => {
     const newEmployees = updatedPlanning.employees.map((employee, i) =>
-      i === index ? { ...employee, name: value } : employee
+      i === index ? { ...employee, [field]: value } : employee
     );
     setUpdatedPlanning({ ...updatedPlanning, employees: newEmployees });
   };
 
   const handleAddEmployee = () => {
-    const newEmployee = { _id: Date.now().toString(), name: '' };
+    const newEmployee = { _id: Date.now().toString(), nom: '', prenom: '' };
     setUpdatedPlanning({ ...updatedPlanning, employees: [...updatedPlanning.employees, newEmployee] });
   };
 
@@ -204,13 +204,23 @@ const EditPlanning = () => {
                   <Grid item xs={12} key={employee._id}>
                     <Box display="flex" alignItems="center" sx={{ mt: 2 }}>
                       <TextField
-                        label={`Employee ${index + 1}`}
+                        label={`Employee ${index + 1} First Name`}
                         type="text"
                         fullWidth
                         variant="outlined"
-                        name={`employee_${index}`}
-                        value={employee.name}
-                        onChange={(e) => handleEmployeeChange(index, e.target.value)}
+                        name={`employee_${index}_prenom`}
+                        value={employee.prenom}
+                        onChange={(e) => handleEmployeeChange(index, 'prenom', e.target.value)}
+                        style={{ marginBottom: '16px' }}
+                      />
+                      <TextField
+                        label={`Employee ${index + 1} Last Name`}
+                        type="text"
+                        fullWidth
+                        variant="outlined"
+                        name={`employee_${index}_nom`}
+                        value={employee.nom}
+                        onChange={(e) => handleEmployeeChange(index, 'nom', e.target.value)}
                         style={{ marginBottom: '16px' }}
                       />
                       <IconButton color="error" onClick={() => handleRemoveEmployee(index)}>

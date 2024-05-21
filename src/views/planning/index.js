@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { fetchPlannings, deletePlanning, addPlanning } from '../../store/planningSlice';
+import { fetchPlannings, deletePlanning } from '../../store/planningSlice';
 import {
   Card, CardHeader, CardContent, Divider, Grid, Typography, Table, TableHead,
   TableBody, TableRow, TableCell, Button, TableContainer, CircularProgress, Dialog, DialogActions,
@@ -10,7 +10,6 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ScheduleIcon from '@mui/icons-material/Schedule';
-import AddIcon from '@mui/icons-material/Add';
 import Breadcrumb from 'component/Breadcrumb';
 import { gridSpacing } from 'config.js';
 
@@ -20,8 +19,6 @@ const PlanningManagement = () => {
   const { plannings, status } = useSelector(state => state.planning);
   const [openDialog, setOpenDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-  const [openAddDialog, setOpenAddDialog] = useState(false);
-  const [newPlanning, setNewPlanning] = useState({ intitule: '' });
   const [selectedPlannings, setSelectedPlannings] = useState([]);
   const [filter, setFilter] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -45,19 +42,6 @@ const PlanningManagement = () => {
 
   const handleClose = () => {
     setOpenDialog(false);
-    setOpenAddDialog(false);
-  };
-
-  const handleAddPlanning = () => {
-    dispatch(addPlanning(newPlanning));
-    setSnackbarMessage('Planning added successfully!');
-    setSnackbarOpen(true);
-    setOpenAddDialog(false);
-    setNewPlanning({ intitule: '' });
-  };
-
-  const handleInputChange = (e) => {
-    setNewPlanning({ ...newPlanning, [e.target.name]: e.target.value });
   };
 
   const handleSelectAllClick = (event) => {
@@ -131,14 +115,6 @@ const PlanningManagement = () => {
               onChange={handleFilterChange}
               style={{ marginRight: '16px' }}
             />
-            <Button
-              variant="contained"
-              color="secondary"
-              startIcon={<AddIcon />}
-              onClick={() => setOpenAddDialog(true)}
-            >
-              Add Planning
-            </Button>
             <Button
               variant="contained"
               color="error"
@@ -258,28 +234,6 @@ const PlanningManagement = () => {
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={confirmDelete} color="error" autoFocus>
             Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Dialog open={openAddDialog} onClose={handleClose}>
-        <DialogTitle>Add New Planning</DialogTitle>
-        <DialogContent>
-          <TextField
-            autoFocus
-            margin="normal"
-            label="Intitule"
-            type="text"
-            fullWidth
-            variant="outlined"
-            name="intitule"
-            value={newPlanning.intitule}
-            onChange={handleInputChange}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleAddPlanning} color="primary">
-            Add
           </Button>
         </DialogActions>
       </Dialog>
