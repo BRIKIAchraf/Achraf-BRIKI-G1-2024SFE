@@ -89,6 +89,7 @@ const LoginMethods = () => {
     setMethodToDelete(id);
     setConfirmDialogOpen(true);
   };
+  
   useEffect(() => {
     fetchEmployees();
   }, []);
@@ -101,6 +102,7 @@ const LoginMethods = () => {
       console.error('Error fetching employees:', error);
     }
   };
+
   const confirmDeleteMethod = async () => {
     try {
       await axios.delete(`http://localhost:3001/api/loginMethods/delete/${methodToDelete}`);
@@ -160,6 +162,8 @@ const LoginMethods = () => {
   );
 
   const paginatedMethods = filteredMethods.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  const assignedMethods = paginatedMethods.filter(method => method.assignedTo);
+  const unassignedMethods = paginatedMethods.filter(method => !method.assignedTo);
 
   return (
     <div style={{ padding: '20px', maxWidth: '960px', margin: '0 auto' }}>
@@ -202,7 +206,7 @@ const LoginMethods = () => {
 
         <Grid item xs={12} md={8}>
           <Typography variant="h6" gutterBottom sx={{ color: '#0288d1', fontWeight: 'bold' }}>
-            Login Methods:
+            Assigned Login Methods:
           </Typography>
           <TextField
             label="Filter"
@@ -213,7 +217,7 @@ const LoginMethods = () => {
             style={{ marginBottom: '20px' }}
           />
           <Grid container spacing={4} justifyContent="center">
-            {paginatedMethods.map((method) => (
+            {assignedMethods.map((method) => (
               <Grid key={method._id} item xs={12} sm={6} md={4} style={{ textAlign: 'center' }}>
                 {renderIcon(method.methodType)}
                 <Typography variant="h6" sx={{ color: '#1976d2' }}>{method.methodType}</Typography>
@@ -231,6 +235,21 @@ const LoginMethods = () => {
                     </IconButton>
                   </>
                 )}
+              </Grid>
+            ))}
+          </Grid>
+
+          <Typography variant="h6" gutterBottom sx={{ color: '#0288d1', fontWeight: 'bold', marginTop: '20px' }}>
+            Unassigned Login Methods:
+          </Typography>
+          <Grid container spacing={4} justifyContent="center">
+            {unassignedMethods.map((method) => (
+              <Grid key={method._id} item xs={12} sm={6} md={4} style={{ textAlign: 'center' }}>
+                {renderIcon(method.methodType)}
+                <Typography variant="h6" sx={{ color: '#1976d2' }}>{method.methodType}</Typography>
+                <Typography variant="body2" sx={{ color: '#616161' }}>
+                  Code: {typeof method.identifier === 'object' ? JSON.stringify(method.identifier) : method.identifier}
+                </Typography>
                 {!method.assignedTo && (
                   <TextField
                     select
@@ -239,13 +258,11 @@ const LoginMethods = () => {
                     fullWidth
                     onChange={(e) => assignLoginMethod(method._id, e.target.value)}
                   >
-                    {Object.keys(employeesByDepartment).flatMap(department =>
-                      employeesByDepartment[department].map(employee => (
-                        <MenuItem key={employee} value={employee}>
-                          {employee}
-                        </MenuItem>
-                      ))
-                    )}
+                    {employees.map(employee => (
+                      <MenuItem key={employee._id} value={employee._id}>
+                        {employee.nom} {employee.prenom}
+                      </MenuItem>
+                    ))}
                   </TextField>
                 )}
               </Grid>

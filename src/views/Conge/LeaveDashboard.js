@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchLeaveById } from '../../store/leaveSlice'; // Ensure the correct path to your slice
 import {
-  Box, Card, CardContent, Chip, Grid, IconButton, List, ListItem, ListItemText, Typography, InputAdornment, Divider, Avatar, TextField, Pagination
+  Box, Card, CardContent, Chip, Grid, IconButton, List, ListItem, ListItemText, Typography, InputAdornment, Divider, Avatar, TextField, Pagination, Button
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import BusinessIcon from '@mui/icons-material/Business';
@@ -13,6 +13,7 @@ import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { blue, green, red, yellow, grey, purple, orange } from '@mui/material/colors';
 
 const departmentColors = {
@@ -22,10 +23,16 @@ const departmentColors = {
   Operations: blue[400]
 };
 
+const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
 export default function LeaveDetails() {
   const { leaveId } = useParams();
   const dispatch = useDispatch();
   const leave = useSelector((state) => state.leaves.leaveDetails);
+  const navigate = useNavigate();
 
   const [filter, setFilter] = useState('');
   const [employees, setEmployees] = useState([]);
@@ -88,8 +95,20 @@ export default function LeaveDetails() {
     setCurrentPage(value);
   };
 
+  const handleBackClick = () => {
+    navigate('/LeaveManagement');  // Adjust the path as needed
+  };
+
   return (
     <Box sx={{ p: 3 }}>
+      <Button
+        variant="contained"
+        startIcon={<ArrowBackIcon />}
+        onClick={handleBackClick}
+        sx={{ mb: 3 }}
+      >
+        Back to List
+      </Button>
       <TextField
         fullWidth
         label="Search by name or department"
@@ -151,7 +170,7 @@ export default function LeaveDetails() {
                     {editMode[employee._id] ? (
                       <ListItemText primary={<TextField id={`nom-${employee._id}`} defaultValue={employee.nom} />} secondary={<TextField id={`prenom-${employee._id}`} defaultValue={employee.prenom} />} />
                     ) : (
-                      <ListItemText primary={<Typography variant="h5" color="primary">{employee.nom} {employee.prenom}</Typography>} secondary={`Department: ${employee.department}`} />
+                      <ListItemText primary={<Typography variant="h5" color="primary">{employee.nom} {employee.prenom}</Typography>} secondary={`Department: ${employee.department || 'Not assigned to department'}`} />
                     )}
                     <ListItemText secondary={
                       <>
@@ -162,7 +181,7 @@ export default function LeaveDetails() {
                             <TextField id={`leaveEnd-${employee._id}`} defaultValue={employee.leaveEnd} />
                           </>
                         ) : (
-                          <Typography variant="subtitle1">From: {employee.leaveStart} <ArrowRightAltIcon /> To: {employee.leaveEnd}</Typography>
+                          <Typography variant="subtitle1">From: {formatDate(employee.leaveStart)} <ArrowRightAltIcon /> To: {formatDate(employee.leaveEnd)}</Typography>
                         )}
                       </>
                     } />
@@ -173,15 +192,13 @@ export default function LeaveDetails() {
                       <AccessTimeIcon sx={{ color: yellow[800], mr: 1 }} />
                       {editMode[employee._id] ? (
                         <Typography sx={{ fontSize: '1.2rem', fontWeight: 'medium', display: 'flex', alignItems: 'center' }}>
-                          <TextField id={`nom-${employee._id}`} defaultValue={employee.nom} />
-                          <ArrowRightAltIcon />
                           <TextField id={`leaveStart-${employee._id}`} defaultValue={employee.leaveStart} />
                           <ArrowRightAltIcon />
                           <TextField id={`leaveEnd-${employee._id}`} defaultValue={employee.leaveEnd} />
                         </Typography>
                       ) : (
                         <Typography sx={{ fontSize: '1.2rem', fontWeight: 'medium', display: 'flex', alignItems: 'center' }}>
-                          {employee.nom} - {employee.leaveStart} <ArrowRightAltIcon /> {employee.leaveEnd}
+                          {formatDate(employee.leaveStart)} <ArrowRightAltIcon /> {formatDate(employee.leaveEnd)}
                         </Typography>
                       )}
                     </Box>
