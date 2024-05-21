@@ -72,7 +72,10 @@ const LeaveManagement = () => {
         <Typography variant="subtitle2" color="inherit">Home</Typography>
         <Typography variant="subtitle2" color="primary">Gestion de congé</Typography>
       </Breadcrumb>
-      <Grid container spacing={gridSpacing}>
+      <Grid container spacing={gridSpacing} justifyContent="center">
+        <Grid item xs={12}>
+          <Typography variant="h4" align="center" color="primary" gutterBottom>Leave Management</Typography>
+        </Grid>
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
@@ -107,10 +110,20 @@ const LeaveManagement = () => {
         {paginatedLeaves.length > 0 ? (
           paginatedLeaves.map((leave) => (
             <Grid key={leave._id} item xs={12} sm={6} md={4} lg={3}>
-              <Card>
+              <Card sx={{ bgcolor: '#f5f5f5', borderRadius: 2 }}>
                 <CardHeader
-                  title={<Typography component="div" variant="h6" sx={{ textAlign: 'center' }}>{leave.leaveName || leave.type}</Typography>}
-                  subheader={leave.employees.length > 0 ? leave.employees.map(emp => `${emp.nom} ${emp.prenom}`).join(', ') : 'No employee assigned'}
+                  title={<Typography component="div" variant="h6" sx={{ textAlign: 'center', color: '#1976d2' }}>{leave.leaveName || leave.type}</Typography>}
+                  subheader={
+                    leave.employees.length > 0 ? (
+                      leave.employees.map(emp => (
+                        <Typography key={emp._id} variant="subtitle1" sx={{ fontWeight: 'bold', color: '#2e7d32' }}>
+                          {`${emp.nom} ${emp.prenom}`}
+                        </Typography>
+                      ))
+                    ) : (
+                      <Typography variant="subtitle1" sx={{ color: '#d32f2f' }}>No employee assigned</Typography>
+                    )
+                  }
                   avatar={<ScheduleIcon />}
                   titleTypographyProps={{ align: 'center' }}
                   action={
@@ -121,8 +134,12 @@ const LeaveManagement = () => {
                 />
                 <Divider />
                 <CardContent>
-                  <Typography variant="body2">From: {new Date(leave.startDate).toLocaleDateString()}</Typography>
-                  <Typography variant="body2">To: {new Date(leave.endDate).toLocaleDateString()}</Typography>
+                  <Typography variant="body2" display="flex" alignItems="center">
+                    <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} /> From: {new Date(leave.startDate).toLocaleDateString()}
+                  </Typography>
+                  <Typography variant="body2" display="flex" alignItems="center">
+                    <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} /> To: {new Date(leave.endDate).toLocaleDateString()}
+                  </Typography>
                   <Link to={`/leave/details/${leave._id}`} style={{ textDecoration: 'none' }}>
                     <Typography variant="body2" color="primary" align="center" sx={{ mt: 2 }}>View Details</Typography>
                   </Link>

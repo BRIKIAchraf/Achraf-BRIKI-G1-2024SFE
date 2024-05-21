@@ -128,6 +128,18 @@ const EditPlanning = () => {
                     style={{ marginBottom: '16px' }}
                   />
                 </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    label="End Date"
+                    type="date"
+                    fullWidth
+                    variant="outlined"
+                    name="endDate"
+                    value={updatedPlanning.endDate?.split('T')[0]}
+                    onChange={handleInputChange}
+                    style={{ marginBottom: '16px' }}
+                  />
+                </Grid>
                 {updatedPlanning.jours && updatedPlanning.jours.map((jour, index) => (
                   <Box key={jour._id} sx={{ width: '100%', mb: 2, border: '1px solid #ccc', borderRadius: 2, p: 2 }}>
                     <Typography variant="h6" style={{ color: '#1976d2', fontWeight: 'bold' }}>
