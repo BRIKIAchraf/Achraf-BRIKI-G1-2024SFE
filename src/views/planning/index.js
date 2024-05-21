@@ -5,7 +5,7 @@ import { fetchPlannings, deletePlanning, addPlanning } from '../../store/plannin
 import {
   Card, CardHeader, CardContent, Divider, Grid, Typography, Table, TableHead,
   TableBody, TableRow, TableCell, Button, TableContainer, CircularProgress, Dialog, DialogActions,
-  DialogContent, DialogContentText, DialogTitle, IconButton, TextField, Checkbox, Toolbar, Alert, Snackbar
+  DialogContent, DialogContentText, DialogTitle, TextField, Checkbox, Toolbar, Alert, Snackbar
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
@@ -171,7 +171,6 @@ const PlanningManagement = () => {
                             color="primary"
                           />
                         </TableCell>
-                        <TableCell>ID</TableCell>
                         <TableCell>Intitule</TableCell>
                         <TableCell>Details</TableCell>
                         <TableCell>Employees</TableCell>
@@ -188,15 +187,14 @@ const PlanningManagement = () => {
                               color="primary"
                             />
                           </TableCell>
-                          <TableCell>{planning._id}</TableCell>
                           <TableCell>{planning.intitule}</TableCell>
                           <TableCell>
                             <div>
                               {planning.jours && planning.jours.map((jour) => (
-                                <div key={jour._id} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
-                                  <ScheduleIcon style={{ marginRight: '8px' }} />
+                                <div key={jour._id} style={{ display: 'flex', alignItems: 'center', marginBottom: '8px', backgroundColor: '#f5f5f5', padding: '8px', borderRadius: '4px' }}>
+                                  <ScheduleIcon style={{ marginRight: '8px', color: '#1976d2' }} />
                                   <div>
-                                    <strong>Day {jour._id}:</strong><br />
+                                    <strong>Day:</strong> {new Date(jour.h_entree1).toLocaleDateString()}<br />
                                     Morning: {new Date(jour.h_entree1).toLocaleTimeString()} - {new Date(jour.h_sortie1).toLocaleTimeString()}<br />
                                     Afternoon: {new Date(jour.h_entree2).toLocaleTimeString()} - {new Date(jour.h_sortie2).toLocaleTimeString()}
                                   </div>
@@ -206,7 +204,7 @@ const PlanningManagement = () => {
                           </TableCell>
                           <TableCell>
                             {planning.employees && planning.employees.map((employee) => (
-                              <div key={employee._id}>
+                              <div key={employee._id} style={{ backgroundColor: '#e3f2fd', padding: '8px', borderRadius: '4px', marginBottom: '4px' }}>
                                 {employee.name}
                               </div>
                             ))}
