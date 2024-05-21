@@ -88,7 +88,8 @@ const AddPlanningForm = () => {
         h_sortie1: convertTimeToDate(jour.h_sortie1),
         h_entree2: convertTimeToDate(jour.h_entree2),
         h_sortie2: convertTimeToDate(jour.h_sortie2)
-      }))
+      })),
+      employees: jours.flatMap(jour => jour.employees)
     };
     try {
       await axios.post('http://localhost:3001/api/plannings', planningData);

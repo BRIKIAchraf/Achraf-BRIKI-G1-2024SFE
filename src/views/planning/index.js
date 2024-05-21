@@ -203,11 +203,15 @@ const PlanningManagement = () => {
                             </div>
                           </TableCell>
                           <TableCell>
-                            {planning.employees && planning.employees.map((employee) => (
-                              <div key={employee._id} style={{ backgroundColor: '#e3f2fd', padding: '8px', borderRadius: '4px', marginBottom: '4px' }}>
-                                {employee.name}
-                              </div>
-                            ))}
+                            {planning.employees && planning.employees.length > 0 ? (
+                              planning.employees.map((employee) => (
+                                <div key={employee._id} style={{ backgroundColor: '#e3f2fd', padding: '8px', borderRadius: '4px', marginBottom: '4px' }}>
+                                  {employee.nom ? `${employee.nom} ${employee.prenom}` : 'Employee name not found'}
+                                </div>
+                              ))
+                            ) : (
+                              <Typography>No employees found</Typography>
+                            )}
                           </TableCell>
                           <TableCell>
                             <Button
