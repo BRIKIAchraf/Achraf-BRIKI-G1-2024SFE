@@ -34,8 +34,14 @@ export const deleteDepartment = createAsyncThunk('departements/deleteDepartment'
 });
 
 export const assignEmployeeToDepartment = createAsyncThunk('departements/assignEmployeeToDepartment', async ({ departmentId, employeeId }) => {
-  const response = await axios.post('http://localhost:3001/api/departements/assign-employee', { departmentId, employeeId });
-  return { departmentId, employeeId };
+  try {
+    console.log('Assigning employee:', { departmentId, employeeId });
+    const response = await axios.post('http://localhost:3001/api/departements/assign-employee', { departementId: departmentId, employeeId });
+    return { departmentId, employeeId };
+  } catch (error) {
+    console.error('Error in assignEmployeeToDepartment:', error.response ? error.response.data : error.message);
+    throw error;
+  }
 });
 
 export const updateDepartment = createAsyncThunk('departements/updateDepartment', async ({ id, name }) => {

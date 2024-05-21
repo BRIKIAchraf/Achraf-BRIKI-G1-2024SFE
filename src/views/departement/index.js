@@ -34,7 +34,6 @@ const DepartmentManagement = () => {
   const { employees, status: employeeStatus } = useSelector(state => state.employees);
 
   useEffect(() => {
-    console.log("Fetching departments and employees...");
     if (status === 'idle') {
       dispatch(fetchDepartments());
     }
@@ -76,9 +75,11 @@ const DepartmentManagement = () => {
 
   const handleAssignEmployee = async () => {
     if (selectedEmployee && selectedDepartment) {
+      console.log("Selected Department:", selectedDepartment);
+      console.log("Selected Employee:", selectedEmployee);
       try {
         // Send selected employeeId and departmentId
-        await dispatch(assignEmployeeToDepartment({ departementId: selectedDepartment, employeeId: selectedEmployee }));
+        await dispatch(assignEmployeeToDepartment({ departmentId: selectedDepartment, employeeId: selectedEmployee }));
         setSelectedEmployee('');
         setSelectedDepartment('');
         setSnackbarMessage('Employee assigned successfully!');
@@ -88,9 +89,11 @@ const DepartmentManagement = () => {
         setSnackbarMessage('Failed to assign employee.');
         setSnackbarOpen(true);
       }
+    } else {
+      setSnackbarMessage('Please select both an employee and a department.');
+      setSnackbarOpen(true);
     }
   };
-  
 
   const handleDeleteDepartment = (departmentId) => {
     if (departmentId) {
@@ -271,8 +274,6 @@ const DepartmentManagement = () => {
               fullWidth
               margin="normal"
             >
-
-
               {departments.map((department) => (
                 <MenuItem key={department.id} value={department.id}>
                   {department.name}
