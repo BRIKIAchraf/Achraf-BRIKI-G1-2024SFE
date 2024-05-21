@@ -21,7 +21,7 @@ export const createEmployee = createAsyncThunk('employees/createEmployee', async
 
 export const updateEmployee = createAsyncThunk('employees/updateEmployee', async ({ id, employee }) => {
   const response = await axios.put(`${BASE_URL}/employes/${id}`, employee);
-  return response.data;
+  return response.data.employees;
 });
 
 export const deleteEmployee = createAsyncThunk('employees/deleteEmployee', async (id) => {

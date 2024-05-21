@@ -10,6 +10,7 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 import LockIcon from '@mui/icons-material/Lock';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import axios from 'axios';
 
 const LoginMethods = () => {
   const dispatch = useDispatch();
@@ -25,8 +26,6 @@ const LoginMethods = () => {
   const [inputValue, setInputValue] = useState('');
   const [selectedDepartment, setSelectedDepartment] = useState('');
   const [selectedEmployee, setSelectedEmployee] = useState('');
-  const [unassignedLoginMethods, setUnassignedLoginMethods] = useState([]);
-  const [assignedLoginMethods, setAssignedLoginMethods] = useState({});
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -35,9 +34,10 @@ const LoginMethods = () => {
   const [methodToDelete, setMethodToDelete] = useState(null);
   const [filter, setFilter] = useState('');
   const [page, setPage] = useState(1);
+  const [employees, setEmployees] = useState([]);
   const rowsPerPage = 6;
 
-  const loginMethodsOptions = ['Fingerprint', 'Credit Card', 'Password'];
+  const loginMethodsOptions = ['Card', 'Fingerprint', 'Password'];
   const departments = ['HR', 'Finance', 'IT'];
   const employeesByDepartment = {
     HR: ['John Doe', 'Jane Smith'],
@@ -45,23 +45,22 @@ const LoginMethods = () => {
     IT: ['Mark Davis', 'Emily Wilson']
   };
 
-  const addLoginMethod = () => {
+  const addLoginMethod = async () => {
     if (selectedMethod && inputValue) {
-      const methodDetails = {
-        method: selectedMethod,
-        code: inputValue,
-        department: selectedDepartment,
-        employee: selectedEmployee
+      const newLoginMethod = {
+        methodType: selectedMethod,
+        identifier: selectedMethod !== 'Fingerprint' ? inputValue : undefined,
+        fingerprintTemplate: selectedMethod === 'Fingerprint' ? { template: inputValue } : undefined
       };
 
-      if (selectedEmployee) {
-        const updatedMethods = { ...assignedLoginMethods };
-        const methods = updatedMethods[selectedEmployee] || [];
-        methods.push(methodDetails);
-        updatedMethods[selectedEmployee] = methods;
-        setAssignedLoginMethods(updatedMethods);
-      } else {
-        setUnassignedLoginMethods([...unassignedLoginMethods, methodDetails]);
+      try {
+        await axios.post('http://localhost:3001/api/loginMethods/add', newLoginMethod);
+        setSnackbarMessage('Login method added successfully!');
+        dispatch(fetchLoginMethods(page, rowsPerPage));
+      } catch (error) {
+        setSnackbarMessage('Failed to add login method.');
+      } finally {
+        setSnackbarOpen(true);
       }
 
       // Reset fields
@@ -69,47 +68,54 @@ const LoginMethods = () => {
       setInputValue('');
       setSelectedDepartment('');
       setSelectedEmployee('');
-      setSnackbarMessage('Login method added successfully!');
-      setSnackbarOpen(true);
     } else {
       alert('Please fill in all fields.');
     }
   };
 
-  const assignLoginMethod = (index, employee, department) => {
-    const methodToAssign = unassignedLoginMethods[index];
-    const updatedUnassigned = [...unassignedLoginMethods];
-    updatedUnassigned.splice(index, 1);
-    setUnassignedLoginMethods(updatedUnassigned);
-
-    methodToAssign.employee = employee;
-    methodToAssign.department = department;
-
-    const updatedMethods = { ...assignedLoginMethods };
-    const methods = updatedMethods[employee] || [];
-    methods.push(methodToAssign);
-    updatedMethods[employee] = methods;
-    setAssignedLoginMethods(updatedMethods);
+  const assignLoginMethod = async (loginMethodId, employeeId) => {
+    try {
+      await axios.post('http://localhost:3001/api/loginMethods/assign', { loginMethodId, employeeId });
+      setSnackbarMessage('Login method assigned successfully!');
+      dispatch(fetchLoginMethods(page, rowsPerPage));
+    } catch (error) {
+      setSnackbarMessage('Failed to assign login method.');
+    } finally {
+      setSnackbarOpen(true);
+    }
   };
 
-  const deleteLoginMethod = (employee, index) => {
-    setMethodToDelete({ employee, index });
+  const deleteLoginMethod = async (id) => {
+    setMethodToDelete(id);
     setConfirmDialogOpen(true);
   };
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
 
-  const confirmDeleteMethod = () => {
-    const { employee, index } = methodToDelete;
-    const updatedMethods = { ...assignedLoginMethods };
-    updatedMethods[employee].splice(index, 1);
-    setAssignedLoginMethods(updatedMethods);
-    setConfirmDialogOpen(false);
-    setSnackbarMessage('Login method deleted successfully!');
-    setSnackbarOpen(true);
+  const fetchEmployees = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/api/employes');
+      setEmployees(response.data.employees);
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    }
+  };
+  const confirmDeleteMethod = async () => {
+    try {
+      await axios.delete(`http://localhost:3001/api/loginMethods/delete/${methodToDelete}`);
+      setSnackbarMessage('Login method deleted successfully!');
+      dispatch(fetchLoginMethods(page, rowsPerPage));
+    } catch (error) {
+      setSnackbarMessage('Failed to delete login method.');
+    } finally {
+      setConfirmDialogOpen(false);
+      setSnackbarOpen(true);
+    }
   };
 
-  const openEditDialog = (employee, index) => {
-    const methodToEdit = assignedLoginMethods[employee][index];
-    setMethodToEdit({ ...methodToEdit, employee, index });
+  const openEditDialog = (method) => {
+    setMethodToEdit(method);
     setEditDialogOpen(true);
   };
 
@@ -117,21 +123,24 @@ const LoginMethods = () => {
     setMethodToEdit({ ...methodToEdit, [e.target.name]: e.target.value });
   };
 
-  const saveEditedMethod = () => {
-    const { employee, index, ...updatedMethod } = methodToEdit;
-    const updatedMethods = { ...assignedLoginMethods };
-    updatedMethods[employee][index] = updatedMethod;
-    setAssignedLoginMethods(updatedMethods);
-    setEditDialogOpen(false);
-    setSnackbarMessage('Login method updated successfully!');
-    setSnackbarOpen(true);
+  const saveEditedMethod = async () => {
+    try {
+      await axios.put(`/api/loginMethods/update/${methodToEdit._id}`, methodToEdit);
+      setSnackbarMessage('Login method updated successfully!');
+      dispatch(fetchLoginMethods(page, rowsPerPage));
+    } catch (error) {
+      setSnackbarMessage('Failed to update login method.');
+    } finally {
+      setEditDialogOpen(false);
+      setSnackbarOpen(true);
+    }
   };
 
   const renderIcon = (methodType) => {
     switch(methodType) {
       case 'Fingerprint':
         return <FingerprintIcon style={{ fontSize: '120px', color: '#3f51b5' }} />;
-      case 'Credit Card':
+      case 'Card':
         return <CreditCardIcon style={{ fontSize: '120px', color: '#ff9800' }} />;
       case 'Password':
         return <LockIcon style={{ fontSize: '120px', color: '#4caf50' }} />;
@@ -142,19 +151,15 @@ const LoginMethods = () => {
 
   const handlePageChange = (event, value) => {
     setPage(value);
+    dispatch(fetchLoginMethods(value, rowsPerPage));
   };
 
-  const filteredUnassignedMethods = unassignedLoginMethods.filter(method =>
-    method.code.toLowerCase().includes(filter.toLowerCase())
-  );
-
-  const filteredAssignedMethods = loginMethods.filter(method =>
+  const filteredMethods = loginMethods.filter(method =>
     method.methodType.toLowerCase().includes(filter.toLowerCase()) ||
     (method.assignedTo && (method.assignedTo.nom.toLowerCase().includes(filter.toLowerCase()) || method.assignedTo.prenom.toLowerCase().includes(filter.toLowerCase())))
   );
 
-  const paginatedUnassignedMethods = filteredUnassignedMethods.slice((page - 1) * rowsPerPage, page * rowsPerPage);
-  const paginatedAssignedMethods = filteredAssignedMethods.slice((page - 1) * rowsPerPage, page * rowsPerPage);
+  const paginatedMethods = filteredMethods.slice((page - 1) * rowsPerPage, page * rowsPerPage);
 
   return (
     <div style={{ padding: '20px', maxWidth: '960px', margin: '0 auto' }}>
@@ -190,36 +195,6 @@ const LoginMethods = () => {
             fullWidth
             style={{ marginBottom: '16px' }}
           />
-          <TextField
-            select
-            label="Department (Optional)"
-            variant="outlined"
-            value={selectedDepartment}
-            onChange={(e) => setSelectedDepartment(e.target.value)}
-            fullWidth
-            style={{ marginBottom: '16px' }}
-          >
-            {departments.map((department) => (
-              <MenuItem key={department} value={department}>
-                {department}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            select
-            label="Employee (Optional)"
-            variant="outlined"
-            value={selectedEmployee}
-            onChange={(e) => setSelectedEmployee(e.target.value)}
-            fullWidth
-            style={{ marginBottom: '16px' }}
-          >
-            {selectedDepartment && employeesByDepartment[selectedDepartment].map((employee) => (
-              <MenuItem key={employee} value={employee}>
-                {employee}
-              </MenuItem>
-            ))}
-          </TextField>
           <Button variant="contained" color="primary" onClick={addLoginMethod} fullWidth>
             Add Login Method
           </Button>
@@ -227,7 +202,7 @@ const LoginMethods = () => {
 
         <Grid item xs={12} md={8}>
           <Typography variant="h6" gutterBottom sx={{ color: '#0288d1', fontWeight: 'bold' }}>
-            Unassigned Login Methods:
+            Login Methods:
           </Typography>
           <TextField
             label="Filter"
@@ -238,52 +213,48 @@ const LoginMethods = () => {
             style={{ marginBottom: '20px' }}
           />
           <Grid container spacing={4} justifyContent="center">
-            {paginatedUnassignedMethods.map((method, index) => (
-              <Grid key={index} item xs={12} sm={6} md={4} style={{ textAlign: 'center' }}>
+            {paginatedMethods.map((method) => (
+              <Grid key={method._id} item xs={12} sm={6} md={4} style={{ textAlign: 'center' }}>
                 {renderIcon(method.methodType)}
                 <Typography variant="h6" sx={{ color: '#1976d2' }}>{method.methodType}</Typography>
-                <Typography variant="body2" sx={{ color: '#616161' }}>Code: {method.code}</Typography>
-                <TextField
-                  select
-                  label="Assign to Employee"
-                  variant="outlined"
-                  fullWidth
-                  onChange={(e) => assignLoginMethod(index, e.target.value, method.department)}
-                >
-                  {Object.keys(employeesByDepartment).flatMap(department =>
-                    employeesByDepartment[department].map(employee => (
-                      <MenuItem key={employee} value={employee}>
-                        {employee}
-                      </MenuItem>
-                    ))
-                  )}
-                </TextField>
-              </Grid>
-            ))}
-          </Grid>
-
-          <Typography variant="h6" gutterBottom style={{ marginTop: '30px' }} sx={{ color: '#0288d1', fontWeight: 'bold' }}>
-            Assigned Login Methods:
-          </Typography>
-          <Grid container spacing={4} justifyContent="center">
-            {paginatedAssignedMethods.map((method, index) => (
-              <Grid key={index} item xs={12} sm={6} md={4} style={{ textAlign: 'center' }}>
-                {renderIcon(method.methodType)}
-                <Typography variant="h6" sx={{ color: '#1976d2' }}>{method.methodType}</Typography>
-                <Typography variant="body2" sx={{ color: '#616161' }}>Employee: {method.assignedTo?.nom} {method.assignedTo?.prenom}</Typography>
-                <IconButton color="primary" onClick={() => openEditDialog(method.assignedTo?.nom, index)}>
-                  <EditIcon />
-                </IconButton>
-                <IconButton color="error" onClick={() => deleteLoginMethod(method.assignedTo?.nom, index)}>
-                  <DeleteIcon />
-                </IconButton>
+                <Typography variant="body2" sx={{ color: '#616161' }}>
+                  Code: {typeof method.identifier === 'object' ? JSON.stringify(method.identifier) : method.identifier}
+                </Typography>
+                {method.assignedTo && (
+                  <>
+                    <Typography variant="body2" sx={{ color: '#616161' }}>Employee: {method.assignedTo.nom} {method.assignedTo.prenom}</Typography>
+                    <IconButton color="primary" onClick={() => openEditDialog(method)}>
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton color="error" onClick={() => deleteLoginMethod(method._id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </>
+                )}
+                {!method.assignedTo && (
+                  <TextField
+                    select
+                    label="Assign to Employee"
+                    variant="outlined"
+                    fullWidth
+                    onChange={(e) => assignLoginMethod(method._id, e.target.value)}
+                  >
+                    {Object.keys(employeesByDepartment).flatMap(department =>
+                      employeesByDepartment[department].map(employee => (
+                        <MenuItem key={employee} value={employee}>
+                          {employee}
+                        </MenuItem>
+                      ))
+                    )}
+                  </TextField>
+                )}
               </Grid>
             ))}
           </Grid>
 
           <Stack spacing={2} style={{ marginTop: '20px' }}>
             <Pagination
-              count={Math.ceil((filteredUnassignedMethods.length + filteredAssignedMethods.length) / rowsPerPage)}
+              count={Math.ceil(filteredMethods.length / rowsPerPage)}
               page={page}
               onChange={handlePageChange}
               variant="outlined"
@@ -310,8 +281,8 @@ const LoginMethods = () => {
           <TextField
             label="Code"
             variant="outlined"
-            name="code"
-            value={methodToEdit?.code || ''}
+            name="identifier"
+            value={methodToEdit?.identifier || ''}
             onChange={handleEditInputChange}
             fullWidth
             style={{ marginBottom: '20px' }}
@@ -320,8 +291,8 @@ const LoginMethods = () => {
             select
             label="Login Method"
             variant="outlined"
-            name="method"
-            value={methodToEdit?.method || ''}
+            name="methodType"
+            value={methodToEdit?.methodType || ''}
             onChange={handleEditInputChange}
             fullWidth
           >
