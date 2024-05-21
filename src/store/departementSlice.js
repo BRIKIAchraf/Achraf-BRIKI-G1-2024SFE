@@ -39,7 +39,7 @@ export const assignEmployeeToDepartment = createAsyncThunk('departements/assignE
     const response = await axios.post('http://localhost:3001/api/departements/assign-employee', { departementId: departmentId, employeeId });
     return { departmentId, employeeId };
   } catch (error) {
-    console.error('Error in assignEmployeeToDepartment:', error.response ? error.response.data : error.message);
+    console.error('Error in assignEmployeeToDepartment:', error.response.data);
     throw error;
   }
 });
