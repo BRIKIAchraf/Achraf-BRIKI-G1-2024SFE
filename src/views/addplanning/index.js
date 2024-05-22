@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, IconButton, List, ListItem, ListItemText, styled, Typography } from '@mui/material';
+import { TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, IconButton, List, ListItem, ListItemText, Card, CardContent, CardHeader, Divider, styled, Typography } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -104,105 +104,119 @@ const AddPlanningForm = () => {
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <form onSubmit={handleSubmit}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <CustomTextField
-              fullWidth
-              label="Title"
-              value={intitule}
-              onChange={(e) => setIntitule(e.target.value)}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <DatePicker
-              label="Planning Start Date"
-              value={planningStartDate}
-              onChange={setPlanningStartDate}
-              renderInput={(params) => <CustomTextField {...params} />}
-            />
-          </Grid>
-          <Grid item xs={6}>
-            <DatePicker
-              label="Planning End Date"
-              value={planningEndDate}
-              onChange={setPlanningEndDate}
-              renderInput={(params) => <CustomTextField {...params} />}
-            />
-          </Grid>
-          {jours.map((jour, index) => (
-            <React.Fragment key={index}>
-              {['Morning', 'Afternoon'].map((period, pIndex) => (
-                <React.Fragment key={period}>
-                  <Grid item xs={3}>
-                    <CustomTextField
-                      type="time"
-                      label={`Heure Entrée ${pIndex + 1} (${period})`}
-                      value={jour[`h_entree${pIndex + 1}`]}
-                      onChange={(e) => handleJourChange(index, `h_entree${pIndex + 1}`, e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                    />
+    <Card sx={{ borderRadius: '16px', boxShadow: 3 }}>
+      <CardHeader 
+        title="Add Planning Form" 
+        sx={{ 
+          background: 'linear-gradient(45deg, #388E3C 30%, #66BB6A 90%)', 
+          color: 'white',
+          fontWeight: 'bold'
+        }}
+        titleTypographyProps={{ variant: 'h5' }}
+      />
+      <Divider variant="middle" sx={{ borderBottomWidth: 2 }} />
+      <CardContent>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <CustomTextField
+                  fullWidth
+                  label="Title"
+                  value={intitule}
+                  onChange={(e) => setIntitule(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <DatePicker
+                  label="Planning Start Date"
+                  value={planningStartDate}
+                  onChange={setPlanningStartDate}
+                  renderInput={(params) => <CustomTextField {...params} />}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <DatePicker
+                  label="Planning End Date"
+                  value={planningEndDate}
+                  onChange={setPlanningEndDate}
+                  renderInput={(params) => <CustomTextField {...params} />}
+                />
+              </Grid>
+              {jours.map((jour, index) => (
+                <React.Fragment key={index}>
+                  {['Morning', 'Afternoon'].map((period, pIndex) => (
+                    <React.Fragment key={period}>
+                      <Grid item xs={3}>
+                        <CustomTextField
+                          type="time"
+                          label={`Heure Entrée ${pIndex + 1} (${period})`}
+                          value={jour[`h_entree${pIndex + 1}`]}
+                          onChange={(e) => handleJourChange(index, `h_entree${pIndex + 1}`, e.target.value)}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                      <Grid item xs={3}>
+                        <CustomTextField
+                          type="time"
+                          label={`Heure Sortie ${pIndex + 1} (${period})`}
+                          value={jour[`h_sortie${pIndex + 1}`]}
+                          onChange={(e) => handleJourChange(index, `h_sortie${pIndex + 1}`, e.target.value)}
+                          InputLabelProps={{ shrink: true }}
+                        />
+                      </Grid>
+                    </React.Fragment>
+                  ))}
+                  <Grid item xs={12}>
+                    <FormControl fullWidth>
+                      <InputLabel>Assign Employees</InputLabel>
+                      <Select
+                        multiple
+                        value={jour.employees}
+                        onChange={(e) => handleEmployeeChange(index, e.target.value)}
+                        renderValue={(selected) => (
+                          <List dense>
+                            {selected.map((id) => (
+                              <ListItem key={id}>
+                                <ListItemText primary={employees.find(emp => emp._id === id)?.nom} />
+                              </ListItem>
+                            ))}
+                          </List>
+                        )}
+                      >
+                        {Array.isArray(employees) && employees.map(emp => (
+                          <MenuItem key={emp._id} value={emp._id}>
+                            {emp.nom} {emp.prenom}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   </Grid>
-                  <Grid item xs={3}>
-                    <CustomTextField
-                      type="time"
-                      label={`Heure Sortie ${pIndex + 1} (${period})`}
-                      value={jour[`h_sortie${pIndex + 1}`]}
-                      onChange={(e) => handleJourChange(index, `h_sortie${pIndex + 1}`, e.target.value)}
-                      InputLabelProps={{ shrink: true }}
-                    />
+                  <Grid item xs={1} style={{ display: 'flex', alignItems: 'flex-end' }}>
+                    <IconButton onClick={() => removeJour(index)} color="error">
+                      <DeleteIcon />
+                    </IconButton>
                   </Grid>
                 </React.Fragment>
               ))}
               <Grid item xs={12}>
-                <FormControl fullWidth>
-                  <InputLabel>Assign Employees</InputLabel>
-                  <Select
-                    multiple
-                    value={jour.employees}
-                    onChange={(e) => handleEmployeeChange(index, e.target.value)}
-                    renderValue={(selected) => (
-                      <List dense>
-                        {selected.map((id) => (
-                          <ListItem key={id}>
-                            <ListItemText primary={employees.find(emp => emp._id === id)?.nom} />
-                          </ListItem>
-                        ))}
-                      </List>
-                    )}
-                  >
-                    {Array.isArray(employees) && employees.map(emp => (
-                      <MenuItem key={emp._id} value={emp._id}>
-                        {emp.nom} {emp.prenom}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <Button startIcon={<AddCircleOutlineIcon />} onClick={addJour} variant="outlined">
+                  Add Day
+                </Button>
               </Grid>
-              <Grid item xs={1} style={{ display: 'flex', alignItems: 'flex-end' }}>
-                <IconButton onClick={() => removeJour(index)} color="error">
-                  <DeleteIcon />
-                </IconButton>
+              <Grid item xs={12}>
+                <Button type="submit" variant="contained" color="primary">Create Planning</Button>
               </Grid>
-            </React.Fragment>
-          ))}
-          <Grid item xs={12}>
-            <Button startIcon={<AddCircleOutlineIcon />} onClick={addJour} variant="outlined">
-              Add Day
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            <Button type="submit" variant="contained" color="primary">Create Planning</Button>
-          </Grid>
-          {successMessage && (
-            <Grid item xs={12}>
-              <Typography color="green">{successMessage}</Typography>
+              {successMessage && (
+                <Grid item xs={12}>
+                  <Typography color="green">{successMessage}</Typography>
+                </Grid>
+              )}
             </Grid>
-          )}
-        </Grid>
-      </form>
-    </LocalizationProvider>
+          </form>
+        </LocalizationProvider>
+      </CardContent>
+    </Card>
   );
 };
 
