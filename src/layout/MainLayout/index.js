@@ -9,7 +9,7 @@ import NotificationSection from 'layout/MainLayout/Header/NotificationSection';
 import SearchSection from 'layout/MainLayout/Header/SearchSection';
 import ProfileSection from 'layout/MainLayout/Header/ProfileSection';
 import MenuTwoToneIcon from '@mui/icons-material/MenuTwoTone';
-
+import Footer from 'layout/MainLayout/Footer/footer';
 // project import
 import { drawerWidth } from 'config.js';
 import Sidebar from './Sidebar';
@@ -144,6 +144,7 @@ const MainLayout = () => {
           )}
         </OutletDiv>
       </Main>
+    
     </Box>
   );
 };

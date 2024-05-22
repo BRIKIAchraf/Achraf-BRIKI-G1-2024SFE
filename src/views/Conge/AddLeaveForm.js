@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Button, Grid, Avatar, Typography, MenuItem, Card, CardContent, CardHeader, Divider } from '@mui/material';
+import { TextField, Button, Grid, Avatar, Typography, MenuItem, Card, CardContent, CardHeader, Divider, Snackbar, Alert } from '@mui/material';
 import { LocalizationProvider, DateRangePicker } from '@mui/x-date-pickers-pro';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AddLeaveForm = () => {
   const [leaveName, setLeaveName] = useState('');
@@ -12,6 +13,8 @@ const AddLeaveForm = () => {
   const [status, setStatus] = useState('pending');
   const [employees, setEmployees] = useState([]); // All available employees
   const [successMessage, setSuccessMessage] = useState('');
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -57,9 +60,15 @@ const AddLeaveForm = () => {
       setSelectedEmployees([]);
       setLeaveType('');
       setStatus('pending');
+      setOpenSnackbar(true);
+      navigate('/LeaveManagement'); // Redirect to the leave list page
     } catch (error) {
       console.error('Error adding leave:', error);
     }
+  };
+
+  const handleCloseSnackbar = () => {
+    setOpenSnackbar(false);
   };
 
   return (
@@ -67,7 +76,7 @@ const AddLeaveForm = () => {
       <CardHeader 
         title="Add Leave Form" 
         sx={{ 
-          background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)', 
+          background: 'linear-gradient(45deg, #388E3C 30%, #66BB6A 90%)', 
           color: 'white',
           fontWeight: 'bold'
         }}
@@ -83,6 +92,7 @@ const AddLeaveForm = () => {
                 label="Leave Name"
                 value={leaveName}
                 onChange={(e) => setLeaveName(e.target.value)}
+                required
                 sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }}
               />
             </Grid>
@@ -95,9 +105,9 @@ const AddLeaveForm = () => {
                   onChange={(newValue) => setDateRange(newValue)}
                   textField={(params) => (
                     <>
-                      <TextField {...params[0]} sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }} />
+                      <TextField {...params[0]} required sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }} />
                       <Grid sx={{ mx: 2 }}> to </Grid>
-                      <TextField {...params[1]} sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }} />
+                      <TextField {...params[1]} required sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }} />
                     </>
                   )}
                 />
@@ -110,6 +120,7 @@ const AddLeaveForm = () => {
                 label="Select Employee"
                 value=""
                 onChange={handleEmployeeSelect}
+               
                 sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }}
               >
                 {employees.map((employee) => (
@@ -127,6 +138,7 @@ const AddLeaveForm = () => {
                 value={leaveType}
                 onChange={(e) => setLeaveType(e.target.value)}
                 helperText="Select the type of leave"
+                required
                 sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }}
               >
                 <MenuItem value="annual">Annual</MenuItem>
@@ -143,6 +155,7 @@ const AddLeaveForm = () => {
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
                 helperText="Select the status of the leave"
+                required
                 sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }}
               >
                 <MenuItem value="pending">Pending</MenuItem>
@@ -158,12 +171,22 @@ const AddLeaveForm = () => {
               </Grid>
             ))}
           </Grid>
-          <Button type="submit" variant="contained" color="primary" sx={{ borderRadius: '20px', fontWeight: 'bold' }}>Add Leave</Button>
+          <Button type="submit" variant="contained" color="primary" sx={{ borderRadius: '20px', fontWeight: 'bold' }}  >Add Leave</Button>
           {successMessage && (
             <Typography color="green">{successMessage}</Typography>
           )}
         </form>
       </CardContent>
+      <Snackbar 
+        open={openSnackbar} 
+        autoHideDuration={6000} 
+        onClose={handleCloseSnackbar} 
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }} // Position at the top center
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success" sx={{ width: '100%' }}>
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Card>
   );
 };
