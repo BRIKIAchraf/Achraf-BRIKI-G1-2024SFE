@@ -51,7 +51,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
         </Grid>
       </Box>
       <Divider />
-      <PerfectScrollbar style={{ height: 'calc(100vh - 65px)', padding: '10px' }}>
+      <PerfectScrollbar style={{ height: 'calc(100vh - 100px)', padding: '10px' }}>
         <MenuList />
       </PerfectScrollbar>
     </>
@@ -72,7 +72,12 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
             width: drawerWidth,
             borderRight: 'none',
             boxShadow: '0 0.15rem 1.75rem 0 rgba(33, 40, 50, 0.15)',
-            top: { md: 64, sm: 0 }
+            top: { md: '10px', sm: '10px' }, // Adjust top spacing
+            borderRadius: '10px',
+            border: '1px solid #388E3C', // Green border
+            backgroundColor: '#388E3C', // Green background
+            margin: '10px', // Add margin for spacing
+            height: 'calc(100% - 40px)', // Adjust height to create more space at the bottom
           }
         }}
         ModalProps={{ keepMounted: true }}

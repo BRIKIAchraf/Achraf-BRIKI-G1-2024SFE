@@ -5,7 +5,9 @@ import { Outlet } from 'react-router-dom';
 import { styled, useTheme } from '@mui/material/styles';
 import { useMediaQuery, AppBar, Box, Toolbar } from '@mui/material';
 import { keyframes } from '@mui/material/styles';
-
+import  NotificationSection from 'layout/MainLayout/Header/NotificationSection';
+import SearchSection from 'layout/MainLayout/Header/SearchSection';
+import ProfileSection from 'layout/MainLayout/Header/ProfileSection';
 // project import
 import { drawerWidth } from 'config.js';
 import Header from './Header';
@@ -88,12 +90,7 @@ const MainLayout = () => {
 
   return (
     <Box sx={{ display: 'flex', width: '100%' }}>
-      <AppBar position="fixed" sx={{ zIndex: 1200 }}>
-        <Toolbar>
-          <Header drawerOpen={drawerOpen} drawerToggle={handleDrawerToggle} />
-        </Toolbar>
-      </AppBar>
-      <Sidebar drawerOpen={drawerOpen} drawerToggle={handleDrawerToggle} />
+      <Sidebar drawerOpen={drawerOpen} drawerToggle={handleDrawerToggle} sx={{ zIndex: 1400 }} />
       <Main
         style={{
           marginLeft: drawerOpen ? 0 : `-${drawerWidth}px`,
