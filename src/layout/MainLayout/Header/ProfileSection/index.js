@@ -56,7 +56,7 @@ const ProfileSection = () => {
         onClick={handleToggle}
         color="inherit"
       >
-        <AccountCircleTwoToneIcon sx={{ fontSize: '1.5rem' }} />
+        <AccountCircleTwoToneIcon sx={{ fontSize: '1.5rem', color : 'green'  }} />
       </Button>
       <Popper
         placement="bottom-end"
@@ -96,7 +96,7 @@ const ProfileSection = () => {
                 >
                   <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
                     <ListItemIcon>
-                      <PersonTwoToneIcon />
+                      <PersonTwoToneIcon   />
                     </ListItemIcon>
                     <ListItemText primary="Profile" />
                   </ListItemButton>

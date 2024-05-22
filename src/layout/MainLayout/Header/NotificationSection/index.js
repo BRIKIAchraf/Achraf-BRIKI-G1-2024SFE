@@ -71,7 +71,7 @@ const NotificationSection = () => {
         onClick={handleToggle}
         color="inherit"
       >
-        <NotificationsNoneTwoToneIcon sx={{ fontSize: '1.5rem' }} />
+        <NotificationsNoneTwoToneIcon sx={{ fontSize: '1.5rem' , color : 'green'  }} />
       </Button>
       <Popper
         placement="bottom-end"

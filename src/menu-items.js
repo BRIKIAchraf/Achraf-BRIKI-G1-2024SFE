@@ -58,7 +58,6 @@ export default {
     {
       id: 'pages',
       title: 'Pages',
-      caption: 'Prebuild Pages',
       type: 'group',
       icon: icons.NavigationOutlinedIcon,
       children: [

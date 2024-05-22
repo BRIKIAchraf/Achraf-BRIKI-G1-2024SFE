@@ -3,21 +3,25 @@ import { Outlet } from 'react-router-dom';
 
 // material-ui
 import { styled, useTheme } from '@mui/material/styles';
-import { useMediaQuery, AppBar, Box, Toolbar } from '@mui/material';
+import { useMediaQuery, AppBar, Box, Toolbar, Grid, IconButton } from '@mui/material';
 import { keyframes } from '@mui/material/styles';
-import  NotificationSection from 'layout/MainLayout/Header/NotificationSection';
+import NotificationSection from 'layout/MainLayout/Header/NotificationSection';
 import SearchSection from 'layout/MainLayout/Header/SearchSection';
 import ProfileSection from 'layout/MainLayout/Header/ProfileSection';
+import MenuTwoToneIcon from '@mui/icons-material/MenuTwoTone';
+
 // project import
 import { drawerWidth } from 'config.js';
-import Header from './Header';
 import Sidebar from './Sidebar';
 
 // custom style
+const mainBackgroundColor = '#F2F7FF'; // Define your desired background color here
+
 const Main = styled((props) => <main {...props} />)(({ theme }) => ({
   width: '100%',
   minHeight: '100vh',
   flexGrow: 1,
+  backgroundColor: mainBackgroundColor, // Apply background color
   transition: theme.transitions.create('margin', {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen
@@ -90,7 +94,40 @@ const MainLayout = () => {
 
   return (
     <Box sx={{ display: 'flex', width: '100%' }}>
-      <Sidebar drawerOpen={drawerOpen} drawerToggle={handleDrawerToggle} sx={{ zIndex: 1400 }} />
+      <AppBar
+        position="fixed"
+        sx={{
+          zIndex: 1200,
+          width: { sm: `calc(100% - ${drawerOpen ? drawerWidth : 0}px)` },
+          ml: { sm: `${drawerOpen ? drawerWidth : 0}px` },
+          backgroundColor: mainBackgroundColor, // Set AppBar background color
+          boxShadow: 'none'
+        }}
+      >
+        <Toolbar  sx= {{ backgroundColor: mainBackgroundColor,}}>
+          <Grid container alignItems="center" justifyContent="space-between">
+            <Grid item>
+              <IconButton
+                edge="start"
+                sx={{ mr: theme.spacing(1.25)   }}
+                color="inherit"
+                aria-label="open drawer"
+                onClick={handleDrawerToggle}
+                size="large"
+                
+              >
+                <MenuTwoToneIcon sx={{ fontSize: '1.5rem', color: 'green' }} /> {/* Change the color here */}
+              </IconButton>
+            </Grid>
+            <Grid item sx={{ display: 'flex', alignItems: 'center' }}>
+              <SearchSection />
+              <NotificationSection />
+              <ProfileSection />
+            </Grid>
+          </Grid>
+        </Toolbar>
+      </AppBar>
+      <Sidebar drawerOpen={drawerOpen} drawerToggle={handleDrawerToggle} />
       <Main
         style={{
           marginLeft: drawerOpen ? 0 : `-${drawerWidth}px`,

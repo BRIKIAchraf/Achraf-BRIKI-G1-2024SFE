@@ -10,6 +10,7 @@ import PopupState, { bindToggle, bindPopper } from 'material-ui-popup-state';
 // Icons
 import SearchTwoToneIcon from '@mui/icons-material/SearchTwoTone';
 import CloseTwoToneIcon from '@mui/icons-material/CloseTwoTone';
+import { red } from '@mui/material/colors';
 
 const SearchSection = () => {
   const theme = useTheme();
@@ -47,7 +48,7 @@ const SearchSection = () => {
               color="inherit"
               onClick={handleSearch}
             >
-              <SearchTwoToneIcon sx={{ fontSize: '1.5rem' }} />
+              <SearchTwoToneIcon sx={{ fontSize: '1.5rem', color : 'green' }} />
             </Button>
             <Popper
               {...bindPopper(popupState)}

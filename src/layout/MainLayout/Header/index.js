@@ -27,7 +27,7 @@ const Header = ({ drawerToggle }) => {
           <Box sx={{ display: { xs: 'none', md: 'block' } }}>
             <Grid item>
               <Box mt={0.5}>
-                
+                {/* Logo or other content can go here */}
               </Box>
             </Grid>
           </Box>
@@ -40,7 +40,7 @@ const Header = ({ drawerToggle }) => {
               onClick={drawerToggle}
               size="large"
             >
-              <MenuTwoToneIcon sx={{ fontSize: '1.5rem' }} />
+              <MenuTwoToneIcon sx={{ fontSize: '1.5rem', color: '#1976D2' }} /> {/* Blue color */}
             </IconButton>
           </Grid>
         </Grid>
