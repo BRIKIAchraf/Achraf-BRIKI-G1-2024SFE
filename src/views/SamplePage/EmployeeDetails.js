@@ -212,8 +212,8 @@ const EmployeeDetails = () => {
               ) : (
                 <>
                   <Typography variant="subtitle1"><strong>Type:</strong> {employeeData.type}</Typography>
-                  <Typography variant="subtitle1"><strong>Planning ID:</strong> {employeeData.id_planning?.name}</Typography>
-                  <Typography variant="subtitle1"><strong>Department ID:</strong> {employeeData.id_departement?.name}</Typography>
+                  <Typography variant="subtitle1"><strong>Planning:</strong> {employeeData.id_planning?.name}</Typography>
+                  <Typography variant="subtitle1"><strong>Department:</strong> {employeeData.id_departement?.name}</Typography>
                 </>
               )}
               {editMode ? (

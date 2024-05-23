@@ -5,10 +5,12 @@ import { LocalizationProvider, DatePicker, TimePicker } from '@mui/x-date-picker
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import {
   Card, CardHeader, CardContent, Divider, Grid, Typography, Paper, TextField, MenuItem, Button, TableContainer, Table,
-  TableHead, TableRow, TableCell, TableBody, TablePagination, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
+  TableHead, TableRow, TableCell, TableBody, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions,
+  IconButton, InputAdornment, Stack, Pagination
 } from '@mui/material';
 import Breadcrumb from 'component/Breadcrumb';
 import { gridSpacing } from 'config.js';
+import SearchIcon from '@mui/icons-material/Search';
 
 const AttendanceCard = ({ attendance }) => {
   const punchStatus = attendance.punch === 0 ? "Missing" : "Completed";
@@ -34,7 +36,7 @@ const AttendanceManagement = () => {
   const dispatch = useDispatch();
   const { attendances, status, error } = useSelector((state) => state.attendances);
 
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchName, setSearchName] = useState('');
   const [searchTime, setSearchTime] = useState(null);
@@ -54,13 +56,13 @@ const AttendanceManagement = () => {
     }
   }, [attendances, status]);
 
-  const handleChangePage = (event, newPage) => {
+  const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
+  const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+    setPage(1);
   };
 
   const handleSearch = () => {
@@ -231,21 +233,21 @@ const AttendanceManagement = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {filteredAttendances.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(attendance => (
+                    {filteredAttendances.slice((page - 1) * rowsPerPage, page * rowsPerPage).map(attendance => (
                       <AttendanceCard attendance={attendance} key={attendance._id} />
                     ))}
                   </TableBody>
                 </Table>
               </TableContainer>
-              <TablePagination
-                rowsPerPageOptions={[5, 10, 25]}
-                component="div"
-                count={filteredAttendances.length}
-                rowsPerPage={rowsPerPage}
-                page={page}
-                onPageChange={handleChangePage}
-                onRowsPerPageChange={handleChangeRowsPerPage}
-              />
+              <Stack spacing={2} sx={{ alignItems: 'center', paddingY: 4 }}>
+                <Pagination
+                  count={Math.ceil(filteredAttendances.length / rowsPerPage)}
+                  page={page}
+                  onChange={handlePageChange}
+                  variant="outlined"
+                  color="primary"
+                />
+              </Stack>
             </CardContent>
           </Card>
         </Grid>

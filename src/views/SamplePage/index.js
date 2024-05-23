@@ -295,7 +295,7 @@ const SamplePage = () => {
       </Grid>
 
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        <DialogTitle>Add New Employee</DialogTitle>
+        
         <DialogContent>
           <TextField autoFocus margin="dense" name="nom" label="Nom" type="text" fullWidth value={newEmployee.nom} onChange={handleFieldChange} sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '4px' } }} />
           <TextField margin="dense" name="prenom" label="Prénom" type="text" fullWidth value={newEmployee.prenom} onChange={handleFieldChange} sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '4px' } }} />
