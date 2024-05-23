@@ -110,7 +110,7 @@ const LeaveManagement = () => {
         {paginatedLeaves.length > 0 ? (
           paginatedLeaves.map((leave) => (
             <Grid key={leave._id} item xs={12} sm={6} md={4} lg={3}>
-              <Card sx={{ bgcolor: '#F2F7FF', borderRadius: 2 }}>
+              <Card sx={{ bgcolor: '#e8f9fd', borderRadius: 2 }}>
                 <CardHeader
                   title={<Typography component="div" variant="h6" sx={{ textAlign: 'center', color: '#1976d2' }}>{leave.leaveName || leave.type}</Typography>}
                   subheader={

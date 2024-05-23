@@ -15,7 +15,10 @@ import DevicesOutlinedIcon from '@mui/icons-material/DevicesOutlined';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined'; // New icon for department
-
+import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import ViewListIcon from '@mui/icons-material/ViewList';
+import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
 const icons = {
   NavigationOutlinedIcon,
   HomeOutlinedIcon,
@@ -33,7 +36,13 @@ const icons = {
   DevicesOutlinedIcon,
   AddCircleOutlineIcon,
   LockOpenIcon,
-  BusinessOutlinedIcon
+  BusinessOutlinedIcon,
+  ListAltOutlinedIcon,
+  EventNoteOutlinedIcon,
+  ScheduleIcon,
+  ViewListIcon,
+  AccessTimeIcon,
+  PersonAddOutlinedIcon
 };
 
 // Configuration du menu
@@ -73,7 +82,7 @@ export default {
               title: 'Ajouter un employe',
               type: 'item',
               url: '/AddEmployee',
-              icon: icons.PersonOutlinedIcon
+              icon: icons.PersonAddOutlinedIcon
             },
             {
               id :'EmployeeDetails',
@@ -95,14 +104,14 @@ export default {
               title: 'Ajouter un congé',
               type: 'item',
               url: '/AddLeaveForm1',
-              icon: icons.EventNoteOutlinedIcon,
+              icon: icons.AddCircleOutlineIcon,
             },
             {
               id: 'list-leave-form',
               title: 'Voir les conges',
               type: 'item',
               url: '/LeaveManagement',
-              icon: icons.EventNoteOutlinedIcon,
+              icon: icons.ListAltOutlinedIcon,
             }
           ]
         },
@@ -117,14 +126,14 @@ export default {
               title: 'Ajouter un Horraire',
               type: 'item',
               url: 'AddPlanning',
-              icon: icons.AccessTimeIcon,
+              icon: icons.ScheduleIcon,
             },
             {
               id: 'list-planning',
               title: 'Liste des Horraires',
               type: 'item',
               url: 'PlanningManagement',
-              icon: icons.AccessTimeIcon,
+              icon: icons.ViewListIcon,
             }
           ]
         },

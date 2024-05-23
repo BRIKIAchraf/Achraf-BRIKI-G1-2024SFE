@@ -152,7 +152,7 @@ const DepartmentManagement = () => {
   const renderDepartments = () => (
     <Box display="flex" flexDirection="row" justifyContent="flex-start" flexWrap="wrap" gap={4}>
       {paginatedDepartments.map((department) => (
-        <Paper key={department.id} style={{ padding: '20px', width: '220px', textAlign: 'center', position: 'relative', backgroundColor: '#F2F7FF' }}>
+        <Paper key={department.id} style={{ padding: '20px', width: '220px', textAlign: 'center', position: 'relative', backgroundColor: '#f5f5f5' }}>
           {getIcon(department.name)}
           <Typography variant="h6" style={{ marginTop: '10px', color: 'green', textAlign: 'center' }}>{department.name}</Typography>
           <Typography variant="body2">{`Employees: ${department.employees.length}`}</Typography>
