@@ -113,7 +113,7 @@ const SamplePage = () => {
     doc.text('Employee Details', 14, 50);
     doc.setFontSize(10);
     doc.text(`Name: ${employee.nom} ${employee.prenom}`, 14, 60);
-    doc.text(`Birthdate: ${new Date(employee.date_naissance).toISOString().split('T')[0]}`, 14, 70);
+    doc.text(`Birthdate: ${new Date(employee.date_naissance).toLocaleDateString()}`, 14, 70); // Ensure valid date format
     doc.text(`Login Method: ${employee.login_method}`, 14, 80);
     doc.text(`Department: ${employee.id_departement?.name}`, 14, 90);
 
@@ -128,7 +128,7 @@ const SamplePage = () => {
     doc.save(`EmployeeDetails_${employee.nom}_${employee.prenom}.pdf`);
   };
 
-  const filteredEmployees = Array.isArray(employees.employees) ? employees.employees.filter(employee =>
+  const filteredEmployees = Array.isArray(employees) ? employees.filter(employee =>
     (employee.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
       employee.prenom.toLowerCase().includes(searchTerm.toLowerCase())) &&
     (searchDepartment ? employee.id_departement?.name === searchDepartment : true) &&
@@ -259,11 +259,11 @@ const SamplePage = () => {
                         <TableCell>
                           <Avatar src={employee.picture} alt={`${employee.prenom} ${employee.nom}`} />
                         </TableCell>
-                        <TableCell>{employee.prenom}</TableCell>
                         <TableCell>{employee.nom}</TableCell>
-                        <TableCell>{employee.date_naissance}</TableCell>
+                        <TableCell>{employee.prenom}</TableCell>
+                        <TableCell>{employee.date_naissance ? new Date(employee.date_naissance).toLocaleDateString() : 'N/A'}</TableCell> {/* Ensure valid date format */}
                         <TableCell>{employee.login_method}</TableCell>
-                        <TableCell>{employee.id_departement?.name}</TableCell>
+                        <TableCell>{employee.department}</TableCell>
                         <TableCell>
                           <IconButton color="primary" onClick={() => navigate(`/sample-page/employee-details/${employee._id}`)}>
                             <EditIcon />
@@ -276,7 +276,7 @@ const SamplePage = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={8} align="center">Aucun employee</TableCell>
+                      <TableCell colSpan={8} align="center">Aucun employé</TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -295,7 +295,7 @@ const SamplePage = () => {
       </Grid>
 
       <Dialog open={openAddDialog} onClose={() => setOpenAddDialog(false)}>
-        
+        <DialogTitle>Ajouter un nouvel employé</DialogTitle>
         <DialogContent>
           <TextField autoFocus margin="dense" name="nom" label="Nom" type="text" fullWidth value={newEmployee.nom} onChange={handleFieldChange} sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '4px' } }} />
           <TextField margin="dense" name="prenom" label="Prénom" type="text" fullWidth value={newEmployee.prenom} onChange={handleFieldChange} sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '4px' } }} />
@@ -323,7 +323,7 @@ const SamplePage = () => {
         <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Vous etes sur de supprimer cette employee(s)?
+            Vous êtes sûr de supprimer cet employé(s)?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -343,7 +343,7 @@ const SamplePage = () => {
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: '100%' }}>
-          Action Terminer avec success!
+          Action terminée avec succès!
         </Alert>
       </Snackbar>
     </>
