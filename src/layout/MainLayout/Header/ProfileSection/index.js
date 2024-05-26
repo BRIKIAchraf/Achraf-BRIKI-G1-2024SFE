@@ -7,14 +7,14 @@ import PersonTwoToneIcon from '@mui/icons-material/PersonTwoTone';
 import LockOpenTwoTone from '@mui/icons-material/LockOpenTwoTone';
 import AccountCircleTwoToneIcon from '@mui/icons-material/AccountCircleTwoTone';
 import MeetingRoomTwoToneIcon from '@mui/icons-material/MeetingRoomTwoTone';
-
+import useAuth from 'hooks/useAuth';
 // Auth0 hook
 import { useAuth0 } from '@auth0/auth0-react';
 
 const ProfileSection = () => {
   const theme = useTheme();
-  const { logout, isAuthenticated } = useAuth0();
-
+  const { isAuthenticated } = useAuth0();
+  const { logout } = useAuth();
   const [selectedIndex, setSelectedIndex] = React.useState(1);
   const [open, setOpen] = React.useState(false);
   const anchorRef = React.useRef(null);
@@ -56,7 +56,7 @@ const ProfileSection = () => {
         onClick={handleToggle}
         color="inherit"
       >
-        <AccountCircleTwoToneIcon sx={{ fontSize: '1.5rem', color : 'green'  }} />
+        <AccountCircleTwoToneIcon sx={{ fontSize: '1.5rem', color: 'green' }} />
       </Button>
       <Popper
         placement="bottom-end"
@@ -96,7 +96,7 @@ const ProfileSection = () => {
                 >
                   <ListItemButton selected={selectedIndex === 1} onClick={(event) => handleListItemClick(event, 1)}>
                     <ListItemIcon>
-                      <PersonTwoToneIcon   />
+                      <PersonTwoToneIcon />
                     </ListItemIcon>
                     <ListItemText primary="Profile" />
                   </ListItemButton>
@@ -106,7 +106,13 @@ const ProfileSection = () => {
                     </ListItemIcon>
                     <ListItemText primary="Lock Screen" />
                   </ListItemButton>
-                  <ListItemButton selected={selectedIndex === 4} onClick={(event) => handleListItemClick(event, 4)}>
+                  <ListItemButton
+                    selected={selectedIndex === 4}
+                    onClick={(event) => {
+                      handleListItemClick(event, 4);
+                      logout({ returnTo: window.location.origin });
+                    }}
+                  >
                     <ListItemIcon>
                       <MeetingRoomTwoToneIcon />
                     </ListItemIcon>
