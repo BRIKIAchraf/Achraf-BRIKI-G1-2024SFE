@@ -2,7 +2,6 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import "nprogress/nprogress.css"; //nprogress
 import { BrowserRouter } from 'react-router-dom';
-import { Auth0Provider } from '@auth0/auth0-react';
 import { AuthProvider } from "./contexts/AuthContext";
 import { disableReactDevTools
  } from '@fvilers/disable-react-devtools';
@@ -24,9 +23,6 @@ if (process.env.NODE_ENV === 'production') {
 
 
 const store = configureStore({ reducer });
-
-const domain = process.env.REACT_APP_AUTH0_DOMAIN;       // Your Auth0 domain
-const clientId = process.env.REACT_APP_AUTH0_CLIENT_ID; // Your Auth0 client ID // The API Identifier that you set up in Auth0
 
 // Function to run after authentication
 const onRedirectCallback = (appState) => {

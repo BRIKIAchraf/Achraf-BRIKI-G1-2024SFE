@@ -10,7 +10,7 @@ module.exports = function override(config) {
     buffer: require.resolve('buffer')
   };
 
-  // https://stackoverflow.com/questions/69135310/workaround-for-cache-size-limit-in-create-react-app-pwa-service-worker
+  // Increase WorkBox cache size limit
   config.plugins.forEach((plugin) => {
     if (plugin instanceof WorkBoxPlugin.InjectManifest) {
       plugin.config.maximumFileSizeToCacheInBytes = 50 * 1024 * 1024;
@@ -24,6 +24,23 @@ module.exports = function override(config) {
       Buffer: ['buffer', 'Buffer']
     })
   ];
+
+  // Add setupMiddlewares to the devServer configuration
+  if (config.devServer) {
+    config.devServer.setupMiddlewares = (middlewares, devServer) => {
+      if (!devServer) {
+        throw new Error('webpack-dev-server is not defined');
+      }
+
+      // Example custom middleware
+      devServer.app.use((req, res, next) => {
+        console.log(`Request URL: ${req.url}`);
+        next();
+      });
+
+      return middlewares;
+    };
+  }
 
   return config;
 };
