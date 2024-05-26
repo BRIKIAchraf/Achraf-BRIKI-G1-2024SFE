@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Avatar, Button, FormControl, Grid, IconButton, InputLabel, MenuItem, Paper, Select, Typography, Box, TextField } from '@mui/material';
+import {
+  Avatar, Button, FormControl, Grid, IconButton, InputLabel, MenuItem, Paper, Select,
+  Typography, Box, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
+} from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import WorkIcon from '@mui/icons-material/Work';
@@ -22,6 +25,7 @@ const EmployeeDetails = () => {
   const [pdfUrl, setPdfUrl] = useState('');
   const [pdfSize, setPdfSize] = useState({ width: '600px', height: '800px' });
   const [showPdf, setShowPdf] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     const fetchEmployeeData = async () => {
@@ -41,6 +45,11 @@ const EmployeeDetails = () => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEmployeeData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return !isNaN(date) ? date.toISOString().split('T')[0] : 'Invalid Date';
   };
 
   const handleGeneratePDF = () => {
@@ -65,7 +74,7 @@ const EmployeeDetails = () => {
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
     doc.text(`Name: ${employeeData.nom} ${employeeData.prenom}`, 14, 40);
-    doc.text(`Birthdate: ${new Date(employeeData.date_naissance).toISOString().split('T')[0]}`, 14, 50);
+    doc.text(`Birthdate: ${formatDate(employeeData.date_naissance)}`, 14, 50);
     doc.text(`Login Method: ${employeeData.login_method}`, 14, 60);
     doc.text(`Department: ${employeeData.id_departement?.name}`, 14, 70);
     doc.text(`Planning: ${employeeData.id_planning?.name}`, 14, 80);
@@ -155,7 +164,7 @@ const EmployeeDetails = () => {
                     fullWidth
                     name="date_naissance"
                     type="date"
-                    value={new Date(employeeData.date_naissance).toISOString().split('T')[0]}
+                    value={formatDate(employeeData.date_naissance)}
                     onChange={handleInputChange}
                     sx={{ mb: 2 }}
                   />
@@ -170,7 +179,7 @@ const EmployeeDetails = () => {
                 </>
               ) : (
                 <>
-                  <Typography variant="subtitle1"><strong>Birthdate:</strong> {new Date(employeeData.date_naissance).toISOString().split('T')[0]}</Typography>
+                  <Typography variant="subtitle1"><strong>Birthdate:</strong> {formatDate(employeeData.date_naissance)}</Typography>
                   <Typography variant="subtitle1"><strong>Nationality:</strong> {employeeData.nationality}</Typography>
                 </>
               )}
@@ -325,6 +334,28 @@ const EmployeeDetails = () => {
           </Grid>
         )}
       </Grid>
+
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Are you sure you want to delete this employee?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={() => { /* Your delete handler logic */ }} color="primary" autoFocus>
+            Confirm
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Paper>
   );
 };

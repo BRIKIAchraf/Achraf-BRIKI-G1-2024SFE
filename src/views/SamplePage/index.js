@@ -112,10 +112,12 @@ const SamplePage = () => {
     doc.setTextColor(0, 0, 0);
     doc.text('Employee Details', 14, 50);
     doc.setFontSize(10);
+    const birthdate = new Date(employee.date_naissance);
+    const validBirthdate = !isNaN(birthdate);
     doc.text(`Name: ${employee.nom} ${employee.prenom}`, 14, 60);
-    doc.text(`Birthdate: ${new Date(employee.date_naissance).toLocaleDateString()}`, 14, 70); // Ensure valid date format
+    doc.text(`Birthdate: ${validBirthdate ? birthdate.toLocaleDateString() : 'Invalid Date'}`, 14, 70);
     doc.text(`Login Method: ${employee.login_method}`, 14, 80);
-    doc.text(`Department: ${employee.id_departement?.name}`, 14, 90);
+    doc.text(`Department: ${employee.id_departement?.name || 'N/A'}`, 14, 90);
 
     // Add footer
     doc.setFillColor(100, 100, 255);
