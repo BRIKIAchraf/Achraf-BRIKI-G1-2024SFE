@@ -50,7 +50,7 @@ export default function Header() {
       <Container>
         <ToolbarStyle>
           <Typography variant="h6" sx={{ fontSize: 19, flexGrow: 1 }}>
-            {BRAND_NAME}
+            Bienvenue
           </Typography>
 
           {isAuthenticated ? (
@@ -88,7 +88,7 @@ export default function Header() {
                   },
                 }}
               >
-                <LinkStyled to="/signup">Create an Account</LinkStyled>
+                <LinkStyled to="/signup">Cree votre compte</LinkStyled>
               </ButtonStyled>
             </>
           )}

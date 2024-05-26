@@ -84,7 +84,7 @@ const Signup = () => {
                 autoFocus
                 fullWidth
                 {...field}
-                label="Name"
+                label="Nom"
                 error={!!errors.name}
                 helperText={errors?.name?.message}
               />
@@ -112,7 +112,7 @@ const Signup = () => {
                 sx={{ mt: 4 }}
                 fullWidth
                 {...field}
-                label="Username"
+                label="Nom"
                 error={!!errors.userName}
                 helperText={errors?.userName?.message}
               />
@@ -124,10 +124,10 @@ const Signup = () => {
             render={({ field }) => (
               <TextField
                 sx={{ mt: 4, mb: 3 }}
-                type="password"
+                type="Mot de passe"
                 fullWidth
                 {...field}
-                label="Password"
+                label="Mot de passe"
                 error={!!errors.password}
                 helperText={errors?.password?.message}
               />
@@ -141,11 +141,6 @@ const Signup = () => {
               name="role"
               render={({ field }) => (
                 <RadioGroup row {...field}>
-                  <FormControlLabel
-                    value="user"
-                    label="User"
-                    control={<Radio />}
-                  />
                   <FormControlLabel
                     value="admin"
                     label="Admin"
@@ -163,13 +158,13 @@ const Signup = () => {
             type="submit"
             variant="contained"
           >
-            Create Account
+            cree votre compte
           </Button>
         </form>
       </Paper>
 
       <Link component="p" variant="body2" sx={{ mt: 2, textAlign: "right" }}>
-        <RouteLink to="/login">Already have an account? Sign in</RouteLink>
+        <RouteLink to="/login"> Si vous avez un compte ? login</RouteLink>
       </Link>
     </Container>
   );
