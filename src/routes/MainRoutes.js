@@ -19,7 +19,7 @@ const DeviceManagement = Loadable(lazy(() => import('../views/devices/index')));
 const DepartmentManagement = Loadable(lazy(() => import('../views/departement/index')));
 const AddLeaveForm1 = Loadable(lazy(() => import('../views/Conge/AddLeaveForm')));
 const AddPlanning = Loadable(lazy(() => import('../views/addplanning/index')));
-const LoginPage = Loadable(lazy(() => import('../views/Login/loginpage')));
+
 const Attendance = Loadable(lazy(() => import('../views/attendances/index')));
 const LoginMethods = Loadable(lazy(() => import('../views/login/index')));
 const EmployeeDetails = Loadable(lazy(() => import('../views/SamplePage/EmployeeDetails')));

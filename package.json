@@ -61,7 +61,7 @@
     "zod": "^3.20.2"
   },
   "scripts": {
-    "start": "PORT=3003 react-app-rewired start",
+    "start": "NODE_OPTIONS='--max-old-space-size=4096' react-app-rewired start",
     "build": "react-app-rewired build",
     "build-stage": "env-cmd -f .env.qa react-app-rewired build",
     "test": "react-scripts test",
@@ -106,6 +106,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.2.5",
     "react-error-overlay": "^6.0.11",
-    "sass": "^1.70.0"
+    "sass": "^1.70.0",
+    "webpack-bundle-analyzer": "^4.10.2"
   }
 }
