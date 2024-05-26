@@ -4,16 +4,12 @@ import axios from 'axios';
 // Thunks
 export const fetchLeaves = createAsyncThunk('leaves/fetchLeaves', async (_, { rejectWithValue }) => {
   try {
-    console.log("Fetching leaves...");
     const response = await axios.get('http://localhost:3001/api/leave/list');
-    console.log("Fetch leaves response:", response.data);
-    return response.data.leaves; // Extract the leaves array from the response
+    return response.data.leaves;
   } catch (error) {
-    console.log("Error fetching leaves:", error.response ? error.response.data : error);
     return rejectWithValue(error.response ? error.response.data : 'Error fetching leaves');
   }
 });
-
 
 export const fetchLeaveById = createAsyncThunk('leaves/fetchLeaveById', async (leaveId, { rejectWithValue }) => {
   try {
@@ -43,7 +39,6 @@ export const revokeLeave = createAsyncThunk('leaves/revokeLeave', async (leaveId
     await axios.delete(`http://localhost:3001/api/leave/revoke/${leaveId}`);
     return leaveId;
   } catch (error) {
-    console.log("Error revoking leave:", error.response ? error.response.data : error);
     return rejectWithValue(error.response ? error.response.data : 'Error revoking leave');
   }
 });
@@ -63,7 +58,6 @@ const leaveSlice = createSlice({
         state.status = 'loading';
       })
       .addCase(fetchLeaves.fulfilled, (state, action) => {
-        console.log("Fetch leaves fulfilled:", action.payload);
         state.leaves = Array.isArray(action.payload) ? action.payload : [];
         state.status = 'succeeded';
       })

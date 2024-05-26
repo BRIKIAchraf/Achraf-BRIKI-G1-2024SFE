@@ -72,7 +72,7 @@ const Signup = () => {
 
   return (
     <Container maxWidth="md" sx={{ paddingY: "1rem" }}>
-      <PageTitle sx={{ mb: 2 }} title="Create an Account" />
+      <PageTitle sx={{ mb: 2 }} title="Creer votre compte" />
 
       <Paper sx={{ p: 4 }}>
         <form onSubmit={handleSubmit(onSubmit)}>
