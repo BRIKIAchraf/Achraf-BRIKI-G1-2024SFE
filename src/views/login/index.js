@@ -168,13 +168,13 @@ const LoginMethods = () => {
   return (
     <div style={{ padding: '20px', maxWidth: '960px', margin: '0 auto' }}>
       <Typography variant="h4" component="h1" gutterBottom align="center" sx={{ color: '#1976d2', fontWeight: 'bold' }}>
-        Manage Login Methods
+        Gestion des methodes de pointage
       </Typography>
 
       <Grid container spacing={6}>
         <Grid item xs={12} md={4}>
           <Typography variant="h6" gutterBottom sx={{ color: '#0288d1', fontWeight: 'bold' }}>
-            Add Login Method
+            Ajouter un methode de pointage
           </Typography>
           <TextField
             select
@@ -200,13 +200,13 @@ const LoginMethods = () => {
             style={{ marginBottom: '16px' }}
           />
           <Button variant="contained" color="primary" onClick={addLoginMethod} fullWidth>
-            Add Login Method
+            Ajouter
           </Button>
         </Grid>
 
         <Grid item xs={12} md={8}>
           <Typography variant="h6" gutterBottom sx={{ color: '#0288d1', fontWeight: 'bold' }}>
-            Assigned Login Methods:
+            Assigner un methode de pointage:
           </Typography>
           <TextField
             label="Filter"
@@ -226,7 +226,7 @@ const LoginMethods = () => {
                 </Typography>
                 {method.assignedTo && (
                   <>
-                    <Typography variant="body2" sx={{ color: '#616161' }}>Employee: {method.assignedTo.nom} {method.assignedTo.prenom}</Typography>
+                    <Typography variant="body2" sx={{ color: '#616161' }}>Employes: {method.assignedTo.nom} {method.assignedTo.prenom}</Typography>
                     <IconButton color="primary" onClick={() => openEditDialog(method)}>
                       <EditIcon />
                     </IconButton>
@@ -240,7 +240,7 @@ const LoginMethods = () => {
           </Grid>
 
           <Typography variant="h6" gutterBottom sx={{ color: '#0288d1', fontWeight: 'bold', marginTop: '20px' }}>
-            Unassigned Login Methods:
+            Unassigner  methode de pointage:
           </Typography>
           <Grid container spacing={4} justifyContent="center">
             {unassignedMethods.map((method) => (
@@ -282,18 +282,18 @@ const LoginMethods = () => {
       </Grid>
 
       <Dialog open={confirmDialogOpen} onClose={() => setConfirmDialogOpen(false)}>
-        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogTitle>Confirmer le supprision</DialogTitle>
         <DialogContent>
-          Are you sure you want to delete this login method?
+          Vous etes sur de supprimer cette methode de pointage?
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmDialogOpen(false)}>Cancel</Button>
-          <Button onClick={confirmDeleteMethod} color="error">Delete</Button>
+          <Button onClick={() => setConfirmDialogOpen(false)}>Sortir</Button>
+          <Button onClick={confirmDeleteMethod} color="error">Supprimer</Button>
         </DialogActions>
       </Dialog>
 
       <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
-        <DialogTitle>Edit Login Method</DialogTitle>
+        <DialogTitle>Modifier un methode de pointage</DialogTitle>
         <DialogContent>
           <TextField
             label="Code"
@@ -306,7 +306,7 @@ const LoginMethods = () => {
           />
           <TextField
             select
-            label="Login Method"
+            label="Methode de pointage"
             variant="outlined"
             name="methodType"
             value={methodToEdit?.methodType || ''}
@@ -322,7 +322,7 @@ const LoginMethods = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setEditDialogOpen(false)}>Cancel</Button>
-          <Button onClick={saveEditedMethod} color="primary">Save</Button>
+          <Button onClick={saveEditedMethod} color="primary">Enregistrer</Button>
         </DialogActions>
       </Dialog>
 

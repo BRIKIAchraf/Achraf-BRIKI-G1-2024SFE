@@ -130,13 +130,13 @@ const DeviceManager = () => {
       <Grid item xs={12} md={6}>
         <CustomCard>
           <CustomCardHeader
-            title="Device Manager"
+            title="Gestion d'appareil"
             titleTypographyProps={{ variant: 'h5' }}
           />
           <CardContent>
             <Grid container spacing={2}>
               <Grid item xs={12}>
-                <Typography variant="h6">Scan Device by Port</Typography>
+                <Typography variant="h6">Scanner Appareils par le Port</Typography>
                 <TextField
                   type="text"
                   value={port}
@@ -151,7 +151,7 @@ const DeviceManager = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <Typography variant="h6">Scan Device by Inet</Typography>
+                <Typography variant="h6">Scanner appareil par Inet</Typography>
                 <TextField
                   type="text"
                   value={inet}
@@ -166,7 +166,7 @@ const DeviceManager = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <Typography variant="h6">Ping Device by ID</Typography>
+                <Typography variant="h6">Ping appareil par ID</Typography>
                 <TextField
                   type="text"
                   value={deviceId}
@@ -181,7 +181,7 @@ const DeviceManager = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <Typography variant="h6">Update Device</Typography>
+                <Typography variant="h6">Modifier Appareil</Typography>
                 <TextField
                   type="text"
                   value={deviceId}
@@ -194,7 +194,7 @@ const DeviceManager = () => {
                   type="text"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  placeholder="New Device Name"
+                  placeholder="Nouveau nom"
                   fullWidth
                   sx={{ mb: 2 }}
                 />
@@ -210,7 +210,7 @@ const DeviceManager = () => {
       <Grid item xs={12} md={6}>
         <CustomCard>
           <CustomCardHeader
-            title="List of Devices"
+            title="Liste des appareils"
             titleTypographyProps={{ variant: 'h5' }}
           />
           <CardContent>

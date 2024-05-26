@@ -74,7 +74,7 @@ const AddLeaveForm = () => {
   return (
     <Card sx={{ borderRadius: '16px', boxShadow: 3 }}>
       <CardHeader 
-        title="Add Leave Form" 
+        title="Ajouter un congé" 
         sx={{ 
           background: 'linear-gradient(45deg, #388E3C 30%, #66BB6A 90%)', 
           color: 'white',
@@ -89,7 +89,7 @@ const AddLeaveForm = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
-                label="Leave Name"
+                label="titulaire de conge"
                 value={leaveName}
                 onChange={(e) => setLeaveName(e.target.value)}
                 required
@@ -99,8 +99,8 @@ const AddLeaveForm = () => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <Grid item xs={12}>
                 <DateRangePicker
-                  startText="Start Date"
-                  endText="End Date"
+                  startText="Debut de congé"
+                  endText="Fin de congé"
                   value={dateRange}
                   onChange={(newValue) => setDateRange(newValue)}
                   textField={(params) => (
@@ -117,7 +117,7 @@ const AddLeaveForm = () => {
               <TextField
                 fullWidth
                 select
-                label="Select Employee"
+                label="Selectionner un employee"
                 value=""
                 onChange={handleEmployeeSelect}
                
@@ -141,7 +141,7 @@ const AddLeaveForm = () => {
                 required
                 sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }}
               >
-                <MenuItem value="annual">Annual</MenuItem>
+                <MenuItem value="annual">Annuel</MenuItem>
                 <MenuItem value="sick">Sick</MenuItem>
                 <MenuItem value="unpaid">Unpaid</MenuItem>
                 <MenuItem value="maternity">Maternity</MenuItem>
@@ -158,9 +158,9 @@ const AddLeaveForm = () => {
                 required
                 sx={{ input: { borderRadius: '12px' }, borderRadius: '12px' }}
               >
-                <MenuItem value="pending">Pending</MenuItem>
-                <MenuItem value="approved">Approved</MenuItem>
-                <MenuItem value="denied">Denied</MenuItem>
+                <MenuItem value="pending">En attend</MenuItem>
+                <MenuItem value="approved">Approuve</MenuItem>
+                <MenuItem value="denied">Refusee</MenuItem>
               </TextField>
             </Grid>
             {selectedEmployees.map((employee, index) => (
@@ -171,7 +171,7 @@ const AddLeaveForm = () => {
               </Grid>
             ))}
           </Grid>
-          <Button type="submit" variant="contained" color="primary" sx={{ borderRadius: '20px', fontWeight: 'bold' }}  >Add Leave</Button>
+          <Button type="submit" variant="contained" color="primary" sx={{ borderRadius: '20px', fontWeight: 'bold' }}  >Ajouter congé</Button>
           {successMessage && (
             <Typography color="green">{successMessage}</Typography>
           )}

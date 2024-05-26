@@ -106,7 +106,7 @@ const AddPlanningForm = () => {
   return (
     <Card sx={{ borderRadius: '16px', boxShadow: 3 }}>
       <CardHeader 
-        title="Add Planning Form" 
+        title="Ajouter un Horaire" 
         sx={{ 
           background: 'linear-gradient(45deg, #388E3C 30%, #66BB6A 90%)', 
           color: 'white',
@@ -122,14 +122,14 @@ const AddPlanningForm = () => {
               <Grid item xs={12}>
                 <CustomTextField
                   fullWidth
-                  label="Title"
+                  label="Titre"
                   value={intitule}
                   onChange={(e) => setIntitule(e.target.value)}
                 />
               </Grid>
               <Grid item xs={6}>
                 <DatePicker
-                  label="Planning Start Date"
+                  label="Debut d'horaire"
                   value={planningStartDate}
                   onChange={setPlanningStartDate}
                   renderInput={(params) => <CustomTextField {...params} />}
@@ -137,7 +137,7 @@ const AddPlanningForm = () => {
               </Grid>
               <Grid item xs={6}>
                 <DatePicker
-                  label="Planning End Date"
+                  label="Fin d'horaire"
                   value={planningEndDate}
                   onChange={setPlanningEndDate}
                   renderInput={(params) => <CustomTextField {...params} />}
@@ -145,7 +145,7 @@ const AddPlanningForm = () => {
               </Grid>
               {jours.map((jour, index) => (
                 <React.Fragment key={index}>
-                  {['Morning', 'Afternoon'].map((period, pIndex) => (
+                  {['Matin', 'Apres-Midi'].map((period, pIndex) => (
                     <React.Fragment key={period}>
                       <Grid item xs={3}>
                         <CustomTextField
@@ -169,7 +169,7 @@ const AddPlanningForm = () => {
                   ))}
                   <Grid item xs={12}>
                     <FormControl fullWidth>
-                      <InputLabel>Assign Employees</InputLabel>
+                      <InputLabel>Assigner un employe</InputLabel>
                       <Select
                         multiple
                         value={jour.employees}
@@ -201,11 +201,11 @@ const AddPlanningForm = () => {
               ))}
               <Grid item xs={12}>
                 <Button startIcon={<AddCircleOutlineIcon />} onClick={addJour} variant="outlined">
-                  Add Day
+                  Ajouter un jour
                 </Button>
               </Grid>
               <Grid item xs={12}>
-                <Button type="submit" variant="contained" color="primary">Create Planning</Button>
+                <Button type="submit" variant="contained" color="primary">Ajouter l'Horaire</Button>
               </Grid>
               {successMessage && (
                 <Grid item xs={12}>

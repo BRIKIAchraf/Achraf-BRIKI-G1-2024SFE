@@ -230,7 +230,7 @@ const Default = () => {
         )}
         <Box display="flex" justifyContent="center" mt={2}>
           <Button variant="contained" color="primary" onClick={handleClosePdf}>
-            Close
+            Fermer
           </Button>
         </Box>
       </PdfWrapper>

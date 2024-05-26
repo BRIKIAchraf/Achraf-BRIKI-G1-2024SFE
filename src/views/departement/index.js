@@ -171,13 +171,13 @@ const DepartmentManagement = () => {
 
   const renderEditDialog = () => (
     <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)}>
-      <DialogTitle>Edit Department</DialogTitle>
+      <DialogTitle>Modifier un departement</DialogTitle>
       <DialogContent>
         <TextField
           autoFocus
           margin="dense"
           id="name"
-          label="Department Name"
+          label="Nom de departement"
           type="text"
           fullWidth
           variant="standard"
@@ -210,13 +210,13 @@ const DepartmentManagement = () => {
 
   const renderConfirmDialog = () => (
     <Dialog open={confirmDialogOpen} onClose={() => setConfirmDialogOpen(false)}>
-      <DialogTitle>Confirm Removal</DialogTitle>
+      <DialogTitle>Confirmer le supprision</DialogTitle>
       <DialogContent>
-        <Typography>Are you sure you want to remove this employee?</Typography>
+        <Typography>vous etes sur vous voulez supprimer cette employe?</Typography>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setConfirmDialogOpen(false)}>Cancel</Button>
-        <Button onClick={confirmRemoveEmployee} color="error">Remove</Button>
+        <Button onClick={() => setConfirmDialogOpen(false)}>Sortie</Button>
+        <Button onClick={confirmRemoveEmployee} color="error">Supprimer</Button>
       </DialogActions>
     </Dialog>
   );
@@ -224,14 +224,14 @@ const DepartmentManagement = () => {
   return (
     <Container style={{ padding: '20px', maxWidth: '1200px' }}>
       <Typography variant="h4" gutterBottom>
-        Department Management System
+        Gestion des departements
       </Typography>
       {renderEditDialog()}
       {renderConfirmDialog()}
       <Grid container spacing={4}>
         <Grid item xs={12} md={4}>
           <Paper style={{ padding: '20px', marginBottom: '20px', backgroundColor: '#f5f5f5' }}>
-            <Typography variant="h6" gutterBottom>Manage Departments</Typography>
+            <Typography variant="h6" gutterBottom>Ajouter un departement</Typography>
             <TextField
               label="New Department Name"
               value={newDepartmentName}
@@ -240,14 +240,14 @@ const DepartmentManagement = () => {
               margin="normal"
             />
             <Button variant="contained" color="primary" onClick={handleAddDepartment} style={{ marginTop: '10px' }}>
-              Add Department
+              Ajouter
             </Button>
           </Paper>
           <Paper style={{ padding: '20px', backgroundColor: '#f5f5f5' }}>
-            <Typography variant="h6" gutterBottom>Assign Employees</Typography>
+            <Typography variant="h6" gutterBottom>Assigner Employe</Typography>
             <TextField
               select
-              label="Select Employee"
+              label="Selectionner un employe"
               value={selectedEmployee}
               onChange={(e) => setSelectedEmployee(e.target.value)}
               fullWidth
@@ -260,7 +260,7 @@ const DepartmentManagement = () => {
               ))}
             </TextField>
             <TextField
-              label="Filter Employees"
+              label="Filtrer un Employes"
               value={filterEmployee}
               onChange={(e) => setFilterEmployee(e.target.value)}
               fullWidth
@@ -268,7 +268,7 @@ const DepartmentManagement = () => {
             />
             <TextField
               select
-              label="Assign Department"
+              label="Assigner departement"
               value={selectedDepartment}
               onChange={(e) => setSelectedDepartment(e.target.value)}
               fullWidth
@@ -281,13 +281,13 @@ const DepartmentManagement = () => {
               ))}
             </TextField>
             <Button variant="contained" color="primary" onClick={handleAssignEmployee} style={{ marginTop: '10px' }}>
-              Assign Employee
+              Assigner Employe
             </Button>
           </Paper>
         </Grid>
         <Grid item xs={12} md={8}>
           <TextField
-            label="Filter Departments"
+            label="Filtrer departement"
             value={filterDepartment}
             onChange={(e) => setFilterDepartment(e.target.value)}
             fullWidth

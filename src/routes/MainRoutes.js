@@ -1,9 +1,15 @@
 import React, { lazy } from 'react';
+import BaseLayout from "../components/layouts/base";
+import PublicGuard from "../routes/PublicGuard";
+import Login from "../pages/auth/Login";
+import Signup from "../pages/auth/Signup";
+import { Navigate, useLocation } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 // project import
 import MainLayout from 'layout/MainLayout';
 import Loadable from 'component/Loadable';
-import { Navigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
+import AuthGuard from 'routes/AuthGuard';
 const DashboardDefault = Loadable(lazy(() => import('../views/Dashboard')));
 const UtilsTypography = Loadable(lazy(() => import('../views/Utils/Typography')));
 const SamplePage = Loadable(lazy(() => import('../views/SamplePage')));
@@ -22,26 +28,16 @@ const AddEmployee = Loadable(lazy(() => import('../views/SamplePage/AddEmployee'
 const EditPlanning = Loadable(lazy(() => import('../views/planning/EditPlanning')));
 
 // ==============================|| MAIN ROUTES ||============================== //
-const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth0();
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  return isAuthenticated ? children : <Navigate to="/LoginPage" />;
-};
+
 const MainRoutes = {
-  path: '/',
-  element: <MainLayout />,
+  element:<AuthGuard allowRole="admin">
+  <MainLayout/>
+  </AuthGuard>,
   children: [
-    {
-      path: '/',
-      element: <DashboardDefault />
-    },
     {
       path: '/dashboard/default',
       element: <DashboardDefault />
-    }, {path: '/LoginPage',
-    element: <LoginPage />},
+    }, 
     { path: '/utils/util-typography', element: <UtilsTypography /> },
     { path: '/sample-page', element:<SamplePage />},
     { path: '/LeaveManagement', element: <LeaveManagement/>}, 
@@ -55,9 +51,7 @@ const MainRoutes = {
     { path: '/sample-page/employee-details/:id', element: <EmployeeDetails /> },
     { path: '/leave/details/:leaveId', element: <LeaveDashboard /> },
     {path: '/AddEmployee', element: <AddEmployee />},
-    {path: '/edit-planning/:planningId', element: <EditPlanning />},
-
-    
+    {path: '/edit-planning/:planningId', element: <EditPlanning />}    
   ]
 };
 export default MainRoutes;

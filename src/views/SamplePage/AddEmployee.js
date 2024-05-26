@@ -120,7 +120,7 @@ const AddEmployee = () => {
     setSnackbarOpen(false);
   };
 
-  const steps = ['Personal Information', 'Professional Details', 'Upload Picture'];
+  const steps = ['Information personelle', 'Information detaille', 'Telecharge Photot'];
 
   return (
     <Box sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
@@ -128,7 +128,7 @@ const AddEmployee = () => {
         <Card sx={{ p: 4, borderRadius: 3, boxShadow: 5, backgroundColor: grey[50], maxWidth: 900 }}>
           <CardContent>
             <Typography variant="h4" sx={{ color: blue[800], mb: 4, fontWeight: 'bold' }}>
-              Add New Employee
+              Ajouter un nouveau  employe
             </Typography>
             <Stepper activeStep={activeStep} sx={{ mb: 4 }}>
               {steps.map((label) => (
@@ -142,7 +142,7 @@ const AddEmployee = () => {
                 <Grid item xs={12}>
                   <TextField
                     fullWidth
-                    label="First Name"
+                    label="Nom"
                     variant="outlined"
                     name="prenom"
                     value={employeeData.prenom}
@@ -152,7 +152,7 @@ const AddEmployee = () => {
                   />
                   <TextField
                     fullWidth
-                    label="Last Name"
+                    label="Prenom"
                     variant="outlined"
                     name="nom"
                     value={employeeData.nom}
@@ -162,7 +162,7 @@ const AddEmployee = () => {
                   />
                   <TextField
                     fullWidth
-                    label="Date of Birth"
+                    label="Date de naissance"
                     type="date"
                     InputLabelProps={{ shrink: true }}
                     variant="outlined"
@@ -178,7 +178,7 @@ const AddEmployee = () => {
                     onClick={handleNext}
                     sx={{ backgroundColor: blue[500], color: 'white', '&:hover': { backgroundColor: blue[700] }, height: 64, width: '100%' }}
                   >
-                    Next
+                    Suivant
                   </Button>
                 </Grid>
               </Grid>
@@ -196,7 +196,7 @@ const AddEmployee = () => {
                     sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}
                   />
                   <FormControl fullWidth sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}>
-                    <InputLabel>Login Method</InputLabel>
+                    <InputLabel>Methodepointage</InputLabel>
                     <Select
                       label="Login Method"
                       name="login_method"
@@ -212,7 +212,7 @@ const AddEmployee = () => {
                     </Select>
                   </FormControl>
                   <FormControl fullWidth sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}>
-                    <InputLabel>Planning</InputLabel>
+                    <InputLabel>Horaire</InputLabel>
                     <Select
                       label="Planning"
                       name="id_planning"
@@ -228,9 +228,9 @@ const AddEmployee = () => {
                     </Select>
                   </FormControl>
                   <FormControl fullWidth sx={{ mb: 3, '& .MuiOutlinedInput-root': { borderRadius: '8px', height: 64 } }}>
-                    <InputLabel>Department</InputLabel>
+                    <InputLabel>Departement</InputLabel>
                     <Select
-                      label="Department"
+                      label="Departement"
                       name="id_departement"
                       value={employeeData.id_departement}
                       onChange={handleInputChange}
@@ -249,7 +249,7 @@ const AddEmployee = () => {
                     onClick={handleNext}
                     sx={{ backgroundColor: blue[500], color: 'white', '&:hover': { backgroundColor: blue[700] }, height: 64, width: '100%' }}
                   >
-                    Next
+                    Suivant
                   </Button>
                   <Button
                     variant="contained"
@@ -257,7 +257,7 @@ const AddEmployee = () => {
                     onClick={handleBack}
                     sx={{ mt: 2, backgroundColor: grey[500], color: 'white', '&:hover': { backgroundColor: grey[700] }, height: 64, width: '100%' }}
                   >
-                    Back
+                    Retourner
                   </Button>
                 </Grid>
               </Grid>
@@ -270,7 +270,7 @@ const AddEmployee = () => {
                     component="label"
                     sx={{ mb: 3, backgroundColor: blue[500], color: 'white', '&:hover': { backgroundColor: blue[700] }, height: 64, width: '100%' }}
                   >
-                    Upload Picture
+                    télecharger le photos
                     <input
                       type="file"
                       hidden
@@ -291,7 +291,7 @@ const AddEmployee = () => {
                     startIcon={<SaveIcon />}
                     sx={{ backgroundColor: green[500], color: 'white', '&:hover': { backgroundColor: green[700] }, height: 64, width: '100%' }}
                   >
-                    Save Employee
+                    Enregsitrer l'employe
                   </Button>
                   <Button
                     variant="contained"
@@ -299,7 +299,7 @@ const AddEmployee = () => {
                     onClick={handleBack}
                     sx={{ mt: 2, backgroundColor: grey[500], color: 'white', '&:hover': { backgroundColor: grey[700] }, height: 64, width: '100%' }}
                   >
-                    Back
+                    Retourner
                   </Button>
                 </Grid>
               </Grid>
@@ -314,7 +314,7 @@ const AddEmployee = () => {
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
-          Employee added successfully!
+          L'employe Ajouter avec succes!
         </Alert>
       </Snackbar>
     </Box>

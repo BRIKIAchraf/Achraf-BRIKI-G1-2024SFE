@@ -152,7 +152,7 @@ const SamplePage = () => {
         <Breadcrumbs aria-label="breadcrumb">
           <Typography color="inherit" sx={{ display: 'flex', alignItems: 'center' }}>
             <HomeIcon sx={{ mr: 0.5 }} fontSize="inherit" />
-            <Link to="/">Home</Link>
+            <Link to="/">Acceuille</Link>
           </Typography>
           <Typography color="primary" sx={{ display: 'flex', alignItems: 'center' }}>
             <WorkIcon sx={{ mr: 0.5 }} fontSize="inherit" />
@@ -164,9 +164,9 @@ const SamplePage = () => {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           <Toolbar sx={{ justifyContent: 'space-between', backgroundColor: primaryColor, borderRadius: '4px', color: 'white' }}>
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Employee Management</Typography>
+            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Gestion d'employes</Typography>
             <Button variant="contained" startIcon={<DeleteIcon />} onClick={handleDeleteSelected} sx={{ backgroundColor: 'white', color: primaryColor, '&:hover': { backgroundColor: '#f0f0f0' }, ml: 2 }}>
-              Delete Selected
+              Supprimer
             </Button>
           </Toolbar>
         </Grid>
@@ -189,7 +189,7 @@ const SamplePage = () => {
         </Grid>
         <Grid item xs={12} sm={3}>
           <FormControl fullWidth>
-            <InputLabel>Department</InputLabel>
+            <InputLabel>Departement</InputLabel>
             <Select
               value={searchDepartment}
               onChange={handleSearchDepartmentChange}
@@ -205,7 +205,7 @@ const SamplePage = () => {
         </Grid>
         <Grid item xs={12} sm={3}>
           <FormControl fullWidth>
-            <InputLabel>Login Method</InputLabel>
+            <InputLabel>Methode de pointage</InputLabel>
             <Select
               value={searchLoginMethod}
               onChange={handleSearchLoginMethodChange}
@@ -236,12 +236,12 @@ const SamplePage = () => {
                         color="primary"
                       />
                     </TableCell>
-                    <TableCell>Picture</TableCell>
-                    <TableCell>First Name</TableCell>
-                    <TableCell>Last Name</TableCell>
-                    <TableCell>Date of Birth</TableCell>
+                    <TableCell>Photos</TableCell>
+                    <TableCell>Nom</TableCell>
+                    <TableCell>Prenom</TableCell>
+                    <TableCell>Date de Naissance</TableCell>
                     <TableCell>Login Method</TableCell>
-                    <TableCell>Department</TableCell>
+                    <TableCell>Departement</TableCell>
                     <TableCell>Actions</TableCell>
                   </TableRow>
                 </TableHead>
@@ -276,7 +276,7 @@ const SamplePage = () => {
                     ))
                   ) : (
                     <TableRow>
-                      <TableCell colSpan={8} align="center">No employees found</TableCell>
+                      <TableCell colSpan={8} align="center">Aucun employee</TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -309,8 +309,8 @@ const SamplePage = () => {
           <TextField margin="dense" name="picture" label="Picture URL" type="text" fullWidth value={newEmployee.picture} onChange={handleFieldChange} sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: '4px' } }} />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenAddDialog(false)} color="primary">Cancel</Button>
-          <Button onClick={handleAddEmployee} color="primary">Add</Button>
+          <Button onClick={() => setOpenAddDialog(false)} color="primary">Sortir</Button>
+          <Button onClick={handleAddEmployee} color="primary">Ajouter</Button>
         </DialogActions>
       </Dialog>
 
@@ -323,15 +323,15 @@ const SamplePage = () => {
         <DialogTitle id="alert-dialog-title">{"Confirm Delete"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete the selected employee(s)?
+            Vous etes sur de supprimer cette employee(s)?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDeleteDialog(false)} color="primary">
-            Cancel
+            Sortir
           </Button>
           <Button onClick={confirmDeleteEmployee} color="primary" autoFocus>
-            Delete
+            Supprimer
           </Button>
         </DialogActions>
       </Dialog>
@@ -343,7 +343,7 @@ const SamplePage = () => {
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       >
         <Alert onClose={() => setSnackbarOpen(false)} severity="success" sx={{ width: '100%' }}>
-          Action completed successfully!
+          Action Terminer avec success!
         </Alert>
       </Snackbar>
     </>

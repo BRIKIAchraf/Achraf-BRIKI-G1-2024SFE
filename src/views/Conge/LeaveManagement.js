@@ -69,17 +69,17 @@ const LeaveManagement = () => {
   return (
     <>
       <Breadcrumb title="Leave Management">
-        <Typography variant="subtitle2" color="inherit">Home</Typography>
+        <Typography variant="subtitle2" color="inherit">Tableau de bord</Typography>
         <Typography variant="subtitle2" color="primary">Gestion de congé</Typography>
       </Breadcrumb>
       <Grid container spacing={gridSpacing} justifyContent="center">
         <Grid item xs={12}>
-          <Typography variant="h4" align="center" color="primary" gutterBottom>Leave Management</Typography>
+          <Typography variant="h4" align="center" color="primary" gutterBottom>Gestion de congé</Typography>
         </Grid>
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
-            label="Search by Employee"
+            label="Chercher par employe"
             variant="outlined"
             value={searchTerm}
             onChange={handleSearchChange}
@@ -95,7 +95,7 @@ const LeaveManagement = () => {
         <Grid item xs={12} md={6}>
           <TextField
             fullWidth
-            label="Filter by Leave Type"
+            label="Filter le conge par Type"
             variant="outlined"
             value={leaveTypeFilter}
             onChange={handleTypeChange}
@@ -121,7 +121,7 @@ const LeaveManagement = () => {
                         </Typography>
                       ))
                     ) : (
-                      <Typography variant="subtitle1" sx={{ color: '#d32f2f' }}>No employee assigned</Typography>
+                      <Typography variant="subtitle1" sx={{ color: '#d32f2f' }}>Aucun employee assigner</Typography>
                     )
                   }
                   avatar={<ScheduleIcon />}
@@ -135,13 +135,13 @@ const LeaveManagement = () => {
                 <Divider />
                 <CardContent>
                   <Typography variant="body2" display="flex" alignItems="center">
-                    <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} /> From: {new Date(leave.startDate).toLocaleDateString()}
+                    <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} /> Du: {new Date(leave.startDate).toLocaleDateString()}
                   </Typography>
                   <Typography variant="body2" display="flex" alignItems="center">
-                    <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} /> To: {new Date(leave.endDate).toLocaleDateString()}
+                    <ScheduleIcon sx={{ mr: 1, color: '#1976d2' }} /> à: {new Date(leave.endDate).toLocaleDateString()}
                   </Typography>
                   <Link to={`/leave/details/${leave._id}`} style={{ textDecoration: 'none' }}>
-                    <Typography variant="body2" color="primary" align="center" sx={{ mt: 2 }}>View Details</Typography>
+                    <Typography variant="body2" color="primary" align="center" sx={{ mt: 2 }}>Voir details</Typography>
                   </Link>
                 </CardContent>
               </Card>

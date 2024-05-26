@@ -1,7 +1,9 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import "nprogress/nprogress.css"; //nprogress
 import { BrowserRouter } from 'react-router-dom';
 import { Auth0Provider } from '@auth0/auth0-react';
+import { AuthProvider } from "./contexts/AuthContext";
 
 // assets
 import 'assets/scss/style.scss';
@@ -32,15 +34,11 @@ const onRedirectCallback = (appState) => {
 const root = createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
-    <Auth0Provider
-      domain={domain}
-      clientId={clientId}
-      authorizationParams={window.location.origin}
-    >
+     <AuthProvider>
       <BrowserRouter basename={process.env.REACT_APP_BASE_NAME}>
         <App />
       </BrowserRouter>
-    </Auth0Provider>
+      </AuthProvider>
   </Provider>
 );
 

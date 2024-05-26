@@ -134,20 +134,20 @@ const AttendanceManagement = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Breadcrumb title="Attendance Management" sx={{ bgcolor: 'primary.main', color: 'white', padding: '12px' }}>
-        <Typography variant="subtitle2" color="inherit">Home</Typography>
-        <Typography variant="subtitle2" color="inherit">Attendance Management</Typography>
+      <Breadcrumb title="Gestion des attendances" sx={{ bgcolor: 'primary.main', color: 'white', padding: '12px' }}>
+        <Typography variant="subtitle2" color="inherit">Tableau de bord</Typography>
+        <Typography variant="subtitle2" color="inherit">Gestion des attendances</Typography>
       </Breadcrumb>
       <Grid container spacing={gridSpacing}>
         <Grid item xs={12}>
           <Card>
-            <CardHeader title={<Typography variant="h4" sx={{ color: 'primary.main' }}>All Attendances</Typography>} sx={{ borderBottom: '1px solid', borderBottomColor: 'divider' }} />
+            <CardHeader title={<Typography variant="h4" sx={{ color: 'primary.main' }}>Tous les attendances</Typography>} sx={{ borderBottom: '1px solid', borderBottomColor: 'divider' }} />
             <Divider />
             <CardContent>
               <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} md={3}>
                   <TextField
-                    label="Search by Name"
+                    label="Chercher par nom"
                     variant="outlined"
                     fullWidth
                     value={searchName}
@@ -156,7 +156,7 @@ const AttendanceManagement = () => {
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <TimePicker
-                    label="Search by Time"
+                    label="Chercher par temps"
                     value={searchTime}
                     onChange={handleSearchTimeChange}
                     renderInput={(params) => <TextField {...params} variant="outlined" fullWidth />}
@@ -165,7 +165,7 @@ const AttendanceManagement = () => {
                 <Grid item xs={12} md={3}>
                   <TextField
                     select
-                    label="Search by Department"
+                    label="Chercher par departement"
                     variant="outlined"
                     fullWidth
                     value={searchDepartment}
@@ -180,7 +180,7 @@ const AttendanceManagement = () => {
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <DatePicker
-                    label="Search Start Date"
+                    label="Chercher debut le date"
                     value={searchStartDate}
                     onChange={handleSearchStartDateChange}
                     renderInput={(params) => <TextField {...params} variant="outlined" fullWidth />}
@@ -188,7 +188,7 @@ const AttendanceManagement = () => {
                 </Grid>
                 <Grid item xs={12} md={3}>
                   <DatePicker
-                    label="Search End Date"
+                    label="Cherche fin de date"
                     value={searchEndDate}
                     onChange={handleSearchEndDateChange}
                     renderInput={(params) => <TextField {...params} variant="outlined" fullWidth />}
@@ -201,7 +201,7 @@ const AttendanceManagement = () => {
                 onClick={handleSearch}
                 style={{ marginTop: '16px' }}
               >
-                Search
+                Chercher
               </Button>
               <Button
                 variant="contained"
@@ -209,7 +209,7 @@ const AttendanceManagement = () => {
                 onClick={deleteAttendancesForCurrentMonth}
                 style={{ marginTop: '16px', marginLeft: '16px' }}
               >
-                Delete Attendances for Current Month
+                Supprimer les attendances pour cette mois
               </Button>
               <Button
                 variant="contained"
@@ -217,16 +217,16 @@ const AttendanceManagement = () => {
                 onClick={deleteAttendancesForCurrentYear}
                 style={{ marginTop: '16px', marginLeft: '16px' }}
               >
-                Delete Attendances for Current Year
+                Supprimer les attendances pour cette année
               </Button>
               <TableContainer component={Paper} style={{ marginTop: '16px' }}>
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell>First Name</TableCell>
-                      <TableCell>Last Name</TableCell>
-                      <TableCell>Login Method</TableCell>
-                      <TableCell>Department</TableCell>
+                      <TableCell>Nom</TableCell>
+                      <TableCell>Prenom</TableCell>
+                      <TableCell>Methode de pointage</TableCell>
+                      <TableCell>Departement</TableCell>
                       <TableCell>Punch Status</TableCell>
                       <TableCell>Active Status</TableCell>
                       <TableCell>Timestamp</TableCell>
@@ -257,7 +257,7 @@ const AttendanceManagement = () => {
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
       >
-        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogTitle>Confirmer le supprission</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Are you sure you want to delete the attendances for the selected period?
@@ -265,10 +265,10 @@ const AttendanceManagement = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
-            Cancel
+            Sortir
           </Button>
           <Button onClick={confirmDeleteAttendanceForPeriod} color="primary">
-            Delete
+            Supprimer
           </Button>
         </DialogActions>
       </Dialog>
