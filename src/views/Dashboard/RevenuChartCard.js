@@ -45,7 +45,7 @@ const RevenuChartCard = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/Dashboard/stats');
+        const response = await axios.get('https://schoolomegup-api.onrender.com/api/Dashboard/stats');
         const { employeesByDepartment } = response.data;
 
         if (employeesByDepartment && Array.isArray(employeesByDepartment)) {

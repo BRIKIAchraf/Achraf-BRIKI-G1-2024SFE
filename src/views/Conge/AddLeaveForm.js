@@ -19,7 +19,7 @@ const AddLeaveForm = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/employes');
+        const response = await axios.get('https://schoolomegup-api.onrender.com/api/employes');
         console.log('Fetched employees:', response.data); // Log the fetched employees
         if (Array.isArray(response.data.employees)) {
           setEmployees(response.data.employees);
@@ -53,7 +53,7 @@ const AddLeaveForm = () => {
     };
     console.log('Submitting leave data:', leaveData); // Log the data being submitted
     try {
-      await axios.post('http://localhost:3001/api/leave/assign', leaveData);
+      await axios.post('https://schoolomegup-api.onrender.com/api/leave/assign', leaveData);
       setSuccessMessage('Leave added successfully!');
       setLeaveName('');
       setDateRange([null, null]);

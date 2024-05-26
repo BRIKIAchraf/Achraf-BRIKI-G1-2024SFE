@@ -5,7 +5,7 @@ export default function PublicGuard({ children }) {
   const { isAuthenticated, user } = useAuth();
 
   if (isAuthenticated) {
-    const useUrl = user?.role === "admin" ? "admin/Dashboard" : "/MainLayout";
+    const useUrl = user?.role === "admin" ? "dashboard/default" : "/MainLayout";
     return <Navigate to={useUrl} />;
   }
   //return <Outlet />;

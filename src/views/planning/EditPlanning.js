@@ -21,7 +21,7 @@ const EditPlanning = () => {
     // Fetch the planning data based on planningId and update the state
     const fetchPlanning = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/api/plannings/${planningId}`);
+        const response = await axios.get(`https://schoolomegup-api.onrender.com/api/plannings/${planningId}`);
         setUpdatedPlanning(response.data);
       } catch (error) {
         console.error('Error fetching planning data:', error);

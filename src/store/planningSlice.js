@@ -2,17 +2,17 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 export const fetchPlannings = createAsyncThunk('planning/fetchPlannings', async () => {
-  const response = await axios.get('http://localhost:3001/api/plannings');
+  const response = await axios.get('https://schoolomegup-api.onrender.com/api/plannings');
   return response.data;
 });
 
 export const deletePlanning = createAsyncThunk('planning/deletePlanning', async (id) => {
-  await axios.delete(`http://localhost:3001/api/plannings${id}`);
+  await axios.delete(`https://schoolomegup-api.onrender.com/api/plannings${id}`);
   return id;
 });
 
 export const addPlanning = createAsyncThunk('planning/addPlanning', async (planning) => {
-  const response = await axios.post('http://localhost:3001/api/plannings', planning);
+  const response = await axios.post('https://schoolomegup-api.onrender.com/api/plannings', planning);
   return response.data;
 });
 

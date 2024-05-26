@@ -5,7 +5,7 @@ import axios from 'axios';
 export const fetchAttendances = createAsyncThunk('attendances/fetchAttendances', async (_, { rejectWithValue }) => {
   try {
     console.log('Fetching attendances...');
-    const response = await axios.get('http://localhost:3001/api/attendances');
+    const response = await axios.get('https://schoolomegup-api.onrender.com/api/attendances');
     console.log('Fetch attendances response:', response.data);
     return response.data;
   } catch (error) {

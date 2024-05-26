@@ -30,7 +30,7 @@ const EmployeeDetails = () => {
   useEffect(() => {
     const fetchEmployeeData = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/api/employes/${id}`);
+        const response = await axios.get(`https://schoolomegup-api.onrender.com/api/employes/${id}`);
         setEmployeeData(response.data);
       } catch (error) {
         console.error('Error fetching employee data:', error);

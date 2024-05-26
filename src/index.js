@@ -4,7 +4,8 @@ import "nprogress/nprogress.css"; //nprogress
 import { BrowserRouter } from 'react-router-dom';
 import { Auth0Provider } from '@auth0/auth0-react';
 import { AuthProvider } from "./contexts/AuthContext";
-
+import { disableReactDevTools
+ } from '@fvilers/disable-react-devtools';
 // assets
 import 'assets/scss/style.scss';
 
@@ -16,6 +17,11 @@ import { Provider } from 'react-redux';
 import App from 'layout/App';
 import reducer from './store/reducer';
 import * as serviceWorker from 'serviceWorker';
+
+if (process.env.NODE_ENV === 'production') {
+  disableReactDevTools();
+}
+
 
 const store = configureStore({ reducer });
 

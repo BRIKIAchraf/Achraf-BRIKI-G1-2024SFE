@@ -54,7 +54,7 @@ const LoginMethods = () => {
       };
 
       try {
-        await axios.post('http://localhost:3001/api/loginMethods/add', newLoginMethod);
+        await axios.post('https://schoolomegup-api.onrender.com/api/loginMethods/add', newLoginMethod);
         setSnackbarMessage('Login method added successfully!');
         dispatch(fetchLoginMethods(page, rowsPerPage));
       } catch (error) {
@@ -75,7 +75,7 @@ const LoginMethods = () => {
 
   const assignLoginMethod = async (loginMethodId, employeeId) => {
     try {
-      await axios.post('http://localhost:3001/api/loginMethods/assign', { loginMethodId, employeeId });
+      await axios.post('https://schoolomegup-api.onrender.com/api/loginMethods/assign', { loginMethodId, employeeId });
       setSnackbarMessage('Login method assigned successfully!');
       dispatch(fetchLoginMethods(page, rowsPerPage));
     } catch (error) {
@@ -96,7 +96,7 @@ const LoginMethods = () => {
 
   const fetchEmployees = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/employes');
+      const response = await axios.get('https://schoolomegup-api.onrender.com/api/employes');
       setEmployees(response.data.employees);
     } catch (error) {
       console.error('Error fetching employees:', error);
@@ -105,7 +105,7 @@ const LoginMethods = () => {
 
   const confirmDeleteMethod = async () => {
     try {
-      await axios.delete(`http://localhost:3001/api/loginMethods/delete/${methodToDelete}`);
+      await axios.delete(`https://schoolomegup-api.onrender.com/api/loginMethods/delete/${methodToDelete}`);
       setSnackbarMessage('Login method deleted successfully!');
       dispatch(fetchLoginMethods(page, rowsPerPage));
     } catch (error) {

@@ -3,7 +3,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 export const fetchStats = createAsyncThunk('dashboard/fetchStats', async () => {
-  const response = await axios.get('http://localhost:3001/api/dashboard/stats');
+  const response = await axios.get('https://schoolomegup-api.onrender.com/api/dashboard/stats');
   return response.data;
 });
 

@@ -5,7 +5,7 @@ export const fetchLoginMethods = createAsyncThunk(
   'loginMethods/fetchLoginMethods',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('http://localhost:3001/api/loginMethods/list');
+      const response = await axios.get('https://schoolomegup-api.onrender.com/api/loginMethods/list');
       console.log("API Response:", response.data);
       return response.data;
     } catch (error) {

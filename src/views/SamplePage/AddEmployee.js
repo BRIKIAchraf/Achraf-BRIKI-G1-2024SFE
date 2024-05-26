@@ -27,7 +27,7 @@ const AddEmployee = () => {
   useEffect(() => {
     const fetchPlannings = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/plannings');
+        const response = await axios.get('https://schoolomegup-api.onrender.com/api/plannings');
         setPlannings(response.data);
         console.log('Fetched plannings:', response.data);
       } catch (error) {
@@ -37,7 +37,7 @@ const AddEmployee = () => {
 
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/departements');
+        const response = await axios.get('https://schoolomegup-api.onrender.com/api/departements');
         setDepartments(response.data);
         console.log('Fetched departments:', response.data);
       } catch (error) {
@@ -47,7 +47,7 @@ const AddEmployee = () => {
 
     const fetchLoginMethods = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/loginMethods');
+        const response = await axios.get('https://schoolomegup-api.onrender.com/api/loginMethods');
         setLoginMethods(response.data);
         console.log('Fetched login methods:', response.data);
       } catch (error) {

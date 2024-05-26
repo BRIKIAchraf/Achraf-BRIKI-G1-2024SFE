@@ -4,7 +4,7 @@ import axios from 'axios';
 // Thunks
 export const fetchDepartments = createAsyncThunk('departements/fetchDepartments', async (_, { rejectWithValue }) => {
   try {
-    const response = await axios.get('http://localhost:3001/api/departements');
+    const response = await axios.get('https://schoolomegup-api.onrender.com/api/departements');
     if (response.data) {
       return response.data.map(dept => ({
         id: dept._id,
@@ -20,7 +20,7 @@ export const fetchDepartments = createAsyncThunk('departements/fetchDepartments'
 });
 
 export const addDepartment = createAsyncThunk('departements/addDepartment', async (department) => {
-  const response = await axios.post('http://localhost:3001/api/departements', { name: department.name });
+  const response = await axios.post('https://schoolomegup-api.onrender.com/api/departements', { name: department.name });
   return {
     id: response.data._id,
     name: department.name,
@@ -29,14 +29,14 @@ export const addDepartment = createAsyncThunk('departements/addDepartment', asyn
 });
 
 export const deleteDepartment = createAsyncThunk('departements/deleteDepartment', async (departmentId) => {
-  await axios.delete(`http://localhost:3001/api/departements/${departmentId}`);
+  await axios.delete(`https://schoolomegup-api.onrender.com/api/departements/${departmentId}`);
   return departmentId;
 });
 
 export const assignEmployeeToDepartment = createAsyncThunk('departements/assignEmployeeToDepartment', async ({ departmentId, employeeId }) => {
   try {
     console.log('Assigning employee:', { departmentId, employeeId });
-    const response = await axios.post('http://localhost:3001/api/departements/assign-employee', { departementId: departmentId, employeeId });
+    const response = await axios.post('https://schoolomegup-api.onrender.com/api/departements/assign-employee', { departementId: departmentId, employeeId });
     return { departmentId, employeeId };
   } catch (error) {
     console.error('Error in assignEmployeeToDepartment:', error.response.data);
@@ -45,7 +45,7 @@ export const assignEmployeeToDepartment = createAsyncThunk('departements/assignE
 });
 
 export const updateDepartment = createAsyncThunk('departements/updateDepartment', async ({ id, name }) => {
-  const response = await axios.put(`http://localhost:3001/api/departements/${id}`, { name });
+  const response = await axios.put(`https://schoolomegup-api.onrender.com/api/departements/${id}`, { name });
   return {
     id,
     name

@@ -6,7 +6,7 @@ export const addJour = createAsyncThunk(
   'jour/addJour',
   async (jourData, { rejectWithValue }) => {
     try {
-      const response = await axios.post('/api/jour', jourData);
+      const response = await axios.post('https://schoolomegup-api.onrender.com/api/jour', jourData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

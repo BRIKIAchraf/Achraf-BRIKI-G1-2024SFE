@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
 
   // login
   const login = async (userName, password) => {
-    const response = await axiosPrivate.post("http://localhost:3001/api/auth/login", {
+    const response = await axiosPrivate.post("https://schoolomegup-api.onrender.com/api/auth/login", {
       userName,
       password,
     });
@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }) => {
 
   // change password
   const changePassword = async (oldPassword, newPassword) => {
-    await axiosPrivate.post("http://localhost:3001/api/auth/change-password", {
+    await axiosPrivate.post("https://schoolomegup-api.onrender.com/api/auth/change-password", {
       oldPassword,
       newPassword,
     });
@@ -100,7 +100,7 @@ export const AuthProvider = ({ children }) => {
   // logout
   const logout = async () => {
     try {
-      await axiosPrivate.get("http://localhost:3001/api/auth/logout");
+      await axiosPrivate.get("https://schoolomegup-api.onrender.com/api/auth/logout");
     } catch (error) {
       console.log(error);
     } finally {
@@ -113,7 +113,7 @@ export const AuthProvider = ({ children }) => {
     console.log("refreshing ...");
 
     try {
-      const response = await axiosPrivate.get("http://localhost:3001/api/auth/refresh");
+      const response = await axiosPrivate.get("https://schoolomegup-api.onrender.com/api/auth/refresh");
       const { accessToken } = response.data;
       const user = decodeJwt(accessToken);
 

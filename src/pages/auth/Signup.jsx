@@ -55,7 +55,7 @@ const Signup = () => {
   const onSubmit = async (data) => {
     setSubmitting(true);
 
-    const response = axios.post("http://localhost:3001/api/auth/signup", data);
+    const response = axios.post("https://schoolomegup-api.onrender.com/api/auth/signup", data);
 
     toast.promise(response, {
       loading: "Saving...",

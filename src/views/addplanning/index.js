@@ -43,7 +43,7 @@ const AddPlanningForm = () => {
   useEffect(() => {
     const fetchEmployees = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/api/employes');
+        const response = await axios.get('https://schoolomegup-api.onrender.com/api/employes');
         if (Array.isArray(response.data.employees)) {
           setEmployees(response.data.employees);
         } else {
@@ -92,7 +92,7 @@ const AddPlanningForm = () => {
       employees: jours.flatMap(jour => jour.employees)
     };
     try {
-      await axios.post('http://localhost:3001/api/plannings', planningData);
+      await axios.post('https://schoolomegup-api.onrender.com/api/plannings', planningData);
       setSuccessMessage('Planning added successfully!');
       setIntitule('');
       setPlanningStartDate(null);

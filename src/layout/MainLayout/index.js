@@ -80,7 +80,7 @@ const MainLayout = () => {
   useEffect(() => {
     const fetchApiStatus = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/check-api-status');
+        const response = await fetch('https://schoolomegup-api.onrender.com/api/check-api-status');
         const data = await response.json();
         setApiStatus(data.status);
       } catch (error) {

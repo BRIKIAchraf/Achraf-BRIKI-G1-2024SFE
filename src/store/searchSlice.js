@@ -4,7 +4,7 @@ export const fetchSearchResults = createAsyncThunk(
   'search/fetchSearchResults',
   async (query, { rejectWithValue }) => {
     try {
-      const response = await fetch(`/api/search?q=${query}`);
+      const response = await fetch(`https://schoolomegup-api.onrender.com/api/search?q=${query}`);
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
       return data;
