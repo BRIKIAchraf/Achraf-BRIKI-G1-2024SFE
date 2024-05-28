@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const BASE_URL = 'https://schoolomegup-api.onrender.com/';
+const BASE_URL = 'https://schoolomegup-api.onrender.com/api';
 
 export const fetchEmployees = createAsyncThunk('employees/fetchEmployees', async () => {
   const response = await axios.get(`${BASE_URL}/employes`);
