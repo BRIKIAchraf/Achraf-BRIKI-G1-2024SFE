@@ -4,6 +4,10 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { styled } from '@mui/material/styles';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchDevices, scanDeviceByPort, scanDeviceByInet, pingDeviceById, updateDevice, removeDevice
+} from '../../store/deviceSlice';
 
 const CustomCard = styled(Card)(({ theme }) => ({
   borderRadius: '16px',
@@ -26,98 +30,70 @@ const DeviceManager = () => {
   const [inet, setInet] = useState('');
   const [deviceId, setDeviceId] = useState('');
   const [newName, setNewName] = useState('');
-  const [devices, setDevices] = useState([]);
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const dispatch = useDispatch();
+  const devices = useSelector(state => state.devices.devices);
+  const status = useSelector(state => state.devices.status);
+  const error = useSelector(state => state.devices.error);
 
   useEffect(() => {
-    fetchDevices();
-  }, []);
-
-  const fetchDevices = async () => {
-    try {
-      setLoading(true);
-      // const data = await listDevices();
-      // setDevices(data);
-      setLoading(false);
-    } catch (error) {
-      setResult('Error listing devices');
-      setLoading(false);
-    }
-  };
+    dispatch(fetchDevices());
+  }, [dispatch]);
 
   const handleScanByPort = async () => {
     try {
-      setLoading(true);
-      // const data = await scanDeviceByPort(port);
-      // setResult(data);
-      setLoading(false);
+      await dispatch(scanDeviceByPort(port)).unwrap();
       setSuccessMessage('Device scanned by port successfully!');
       setOpenSnackbar(true);
-      fetchDevices();
+      dispatch(fetchDevices());
     } catch (error) {
-      setResult('Error scanning device by port');
-      setLoading(false);
+      console.error('Error scanning device by port', error);
     }
   };
 
   const handleScanByInet = async () => {
     try {
-      setLoading(true);
-      // const data = await scanDeviceByInet(inet);
-      // setResult(data);
-      setLoading(false);
+      await dispatch(scanDeviceByInet(inet)).unwrap();
       setSuccessMessage('Device scanned by inet successfully!');
       setOpenSnackbar(true);
-      fetchDevices();
+      dispatch(fetchDevices());
     } catch (error) {
-      setResult('Error scanning device by inet');
-      setLoading(false);
+      console.error('Error scanning device by inet', error);
     }
   };
 
   const handlePingDevice = async () => {
     try {
-      setLoading(true);
-      // const data = await pingDeviceById(deviceId);
-      // setResult(data);
-      setLoading(false);
+      await dispatch(pingDeviceById(deviceId)).unwrap();
       setSuccessMessage('Device pinged successfully!');
       setOpenSnackbar(true);
-      fetchDevices();
+      dispatch(fetchDevices());
     } catch (error) {
-      setResult('Error pinging device');
-      setLoading(false);
+      console.error('Error pinging device', error);
     }
   };
 
   const handleUpdateDevice = async () => {
     try {
-      setLoading(true);
-      // const data = await updateDevice(deviceId, newName);
-      setLoading(false);
+      await dispatch(updateDevice({ deviceId, newName })).unwrap();
       setSuccessMessage('Device updated successfully!');
       setOpenSnackbar(true);
-      fetchDevices();
+      dispatch(fetchDevices());
     } catch (error) {
-      setResult('Error updating device');
-      setLoading(false);
+      console.error('Error updating device', error);
     }
   };
 
   const handleRemoveDevice = async (id) => {
     try {
-      setLoading(true);
-      // await removeDevice(id);
-      setLoading(false);
+      await dispatch(removeDevice(id)).unwrap();
       setSuccessMessage('Device removed successfully!');
       setOpenSnackbar(true);
-      fetchDevices();
+      dispatch(fetchDevices());
     } catch (error) {
-      setResult('Error removing device');
-      setLoading(false);
+      console.error('Error removing device', error);
     }
   };
 
@@ -145,8 +121,8 @@ const DeviceManager = () => {
                   fullWidth
                   sx={{ mb: 2 }}
                 />
-                <CustomButton variant="contained" color="primary" onClick={handleScanByPort} disabled={loading}>
-                  {loading ? <CircularProgress size={24} /> : 'Scan'}
+                <CustomButton variant="contained" color="primary" onClick={handleScanByPort} disabled={status === 'loading'}>
+                  {status === 'loading' ? <CircularProgress size={24} /> : 'Scan'}
                 </CustomButton>
               </Grid>
 
@@ -160,8 +136,8 @@ const DeviceManager = () => {
                   fullWidth
                   sx={{ mb: 2 }}
                 />
-                <CustomButton variant="contained" color="primary" onClick={handleScanByInet} disabled={loading}>
-                  {loading ? <CircularProgress size={24} /> : 'Scan'}
+                <CustomButton variant="contained" color="primary" onClick={handleScanByInet} disabled={status === 'loading'}>
+                  {status === 'loading' ? <CircularProgress size={24} /> : 'Scan'}
                 </CustomButton>
               </Grid>
 
@@ -175,8 +151,8 @@ const DeviceManager = () => {
                   fullWidth
                   sx={{ mb: 2 }}
                 />
-                <CustomButton variant="contained" color="primary" onClick={handlePingDevice} disabled={loading}>
-                  {loading ? <CircularProgress size={24} /> : 'Ping'}
+                <CustomButton variant="contained" color="primary" onClick={handlePingDevice} disabled={status === 'loading'}>
+                  {status === 'loading' ? <CircularProgress size={24} /> : 'Ping'}
                 </CustomButton>
               </Grid>
 
@@ -198,8 +174,8 @@ const DeviceManager = () => {
                   fullWidth
                   sx={{ mb: 2 }}
                 />
-                <CustomButton variant="contained" color="primary" onClick={handleUpdateDevice} disabled={loading}>
-                  {loading ? <CircularProgress size={24} /> : 'Update'}
+                <CustomButton variant="contained" color="primary" onClick={handleUpdateDevice} disabled={status === 'loading'}>
+                  {status === 'loading' ? <CircularProgress size={24} /> : 'Update'}
                 </CustomButton>
               </Grid>
             </Grid>
@@ -214,7 +190,7 @@ const DeviceManager = () => {
             titleTypographyProps={{ variant: 'h5' }}
           />
           <CardContent>
-            {loading ? (
+            {status === 'loading' ? (
               <CircularProgress />
             ) : (
               <List>

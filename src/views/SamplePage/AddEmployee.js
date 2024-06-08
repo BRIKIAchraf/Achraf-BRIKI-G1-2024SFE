@@ -91,7 +91,7 @@ const AddEmployee = () => {
     }
 
     try {
-      await axios.post('http://localhost:3001/api/employes', formData, {
+      await axios.post('https://schoolomegup-api.onrender.com/api/employes', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

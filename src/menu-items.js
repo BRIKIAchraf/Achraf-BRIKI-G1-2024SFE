@@ -19,6 +19,8 @@ import ListAltOutlinedIcon from '@mui/icons-material/ListAltOutlined';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import PersonAddOutlinedIcon from '@mui/icons-material/PersonAddOutlined';
+import ProfileIcon from '@mui/icons-material/AccountCircleOutlined';
+
 const icons = {
   NavigationOutlinedIcon,
   HomeOutlinedIcon,
@@ -42,7 +44,8 @@ const icons = {
   ScheduleIcon,
   ViewListIcon,
   AccessTimeIcon,
-  PersonAddOutlinedIcon
+  PersonAddOutlinedIcon,
+  ProfileIcon
 };
 
 // Configuration du menu
@@ -165,7 +168,15 @@ export default {
           url: '/departmentmanagement',
           icon: icons.BusinessOutlinedIcon
         },
-      ]
+        {
+          id: 'profile',
+          title: 'Profile',
+          type: 'item',
+          url: '/profile',
+          icon: ProfileIcon
+        },
+      ],
+
     },
   ]
 };

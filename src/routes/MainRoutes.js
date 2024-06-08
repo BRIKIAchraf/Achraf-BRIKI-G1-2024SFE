@@ -26,7 +26,7 @@ const EmployeeDetails = Loadable(lazy(() => import('../views/SamplePage/Employee
 const LeaveDashboard = Loadable(lazy(() => import('../views/Conge/LeaveDashboard')));
 const AddEmployee = Loadable(lazy(() => import('../views/SamplePage/AddEmployee')));
 const EditPlanning = Loadable(lazy(() => import('../views/planning/EditPlanning')));
-
+const Profile = Loadable(lazy(() => import('../views/profile/profile')));
 // ==============================|| MAIN ROUTES ||============================== //
 
 const MainRoutes = {
@@ -51,7 +51,8 @@ const MainRoutes = {
     { path: '/sample-page/employee-details/:id', element: <EmployeeDetails /> },
     { path: '/leave/details/:leaveId', element: <LeaveDashboard /> },
     {path: '/AddEmployee', element: <AddEmployee />},
-    {path: '/edit-planning/:planningId', element: <EditPlanning />}    
+    {path: '/edit-planning/:planningId', element: <EditPlanning />},
+    {path: '/Profile', element: <Profile />}
   ]
 };
 export default MainRoutes;
