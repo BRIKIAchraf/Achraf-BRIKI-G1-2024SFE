@@ -36,7 +36,7 @@ export const fetchLeaveById = createAsyncThunk('leaves/fetchLeaveById', async (l
 
 export const revokeLeave = createAsyncThunk('leaves/revokeLeave', async (leaveId, { rejectWithValue }) => {
   try {
-    await axios.delete(`https://schoolomegup-api.onrender.com/api/leave/revoke/${leaveId}`);
+    await axios.put(`https://schoolomegup-api.onrender.com/api/leave/revoke/${leaveId}`); // Changed to PUT for consistency
     return leaveId;
   } catch (error) {
     return rejectWithValue(error.response ? error.response.data : 'Error revoking leave');
@@ -72,7 +72,7 @@ const leaveSlice = createSlice({
         state.error = action.payload || 'Failed to fetch leave details';
       })
       .addCase(revokeLeave.fulfilled, (state, action) => {
-        state.leaves = state.leaves.filter((leave) => leave._id !== action.payload);
+        state.leaves = state.leaves.map((leave) => leave._id === action.payload ? { ...leave, isDeleted: true } : leave);
       })
       .addCase(revokeLeave.rejected, (state, action) => {
         state.error = action.payload || 'Failed to revoke leave';

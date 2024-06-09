@@ -54,6 +54,7 @@ const LeaveManagement = () => {
   };
 
   const filteredLeaves = leaves.filter(leave =>
+    !leave.isDeleted && // Exclude soft-deleted leaves
     (leave.type.toLowerCase().includes(leaveTypeFilter.toLowerCase())) &&
     (
       leave.employees.some(employee => 
