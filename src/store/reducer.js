@@ -12,6 +12,7 @@ import departementReducer from './departementSlice'; // Import the departement s
 import leaveReducer from './leaveSlice'; // Import the leave slice reducer
 import loginMethodsReducer from './loginMethodsSlice'; // Import the leave slice reducer
 import deviceReducer from './deviceSlice';
+import profileReducer from './profileSlice';
 // ==============================|| REDUCER ||============================== //
 
 const reducer = combineReducers({
@@ -25,6 +26,7 @@ const reducer = combineReducers({
   employees: employeeReducer, // Add the employee slice reducer to the root reducer
   loginMethods: loginMethodsReducer, // Add the loginMethods slice reducer to the root reducer
   devices: deviceReducer,
+  profile: profileReducer,
 });
 
 export default reducer;
