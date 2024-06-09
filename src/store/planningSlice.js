@@ -7,7 +7,7 @@ export const fetchPlannings = createAsyncThunk('planning/fetchPlannings', async 
 });
 
 export const deletePlanning = createAsyncThunk('planning/deletePlanning', async (id) => {
-  await axios.delete(`https://schoolomegup-api.onrender.com/api/plannings${id}`);
+  await axios.put(`https://schoolomegup-api.onrender.com/api/plannings/${id}`, { isDeleted: true }); // Update to PUT for soft delete
   return id;
 });
 

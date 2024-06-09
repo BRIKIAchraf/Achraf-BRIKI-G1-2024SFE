@@ -10,13 +10,13 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import ScheduleIcon from '@mui/icons-material/Schedule';
-import Breadcrumb from 'component/Breadcrumb';
-import { gridSpacing } from 'config.js';
+import Breadcrumb from '../../component/Breadcrumb';
+import { gridSpacing } from '../../config';
 
 const PlanningManagement = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { plannings, status } = useSelector(state => state.planning);
+  const { plannings, status, error } = useSelector(state => state.planning) || { plannings: [], status: 'idle', error: null };
   const [openDialog, setOpenDialog] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [selectedPlannings, setSelectedPlannings] = useState([]);
@@ -34,9 +34,10 @@ const PlanningManagement = () => {
   };
 
   const confirmDelete = () => {
-    dispatch(deletePlanning(deleteId));
-    setSnackbarMessage('Planning deleted successfully!');
-    setSnackbarOpen(true);
+    dispatch(deletePlanning(deleteId)).then(() => {
+      setSnackbarMessage('Planning deleted successfully!');
+      setSnackbarOpen(true);
+    });
     setOpenDialog(false);
   };
 
@@ -134,6 +135,8 @@ const PlanningManagement = () => {
             <CardContent>
               {status === 'loading' ? (
                 <CircularProgress />
+              ) : status === 'failed' ? (
+                <Typography color="error">{error}</Typography>
               ) : (
                 <TableContainer>
                   <Table>
