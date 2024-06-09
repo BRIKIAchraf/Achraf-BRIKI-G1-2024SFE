@@ -104,7 +104,35 @@ const EmployeeDetails = () => {
     doc.setTextColor(0, 0, 0);
     doc.text('Previous Plannings:', 14, 40);
     employeeData.previousPlannings?.forEach((plan, index) => {
-      doc.text(`${plan.planName} from ${plan.dateFrom} to ${plan.dateTo}`, 14, 50 + (10 * index));
+      doc.text(`${plan.intitule} from ${formatDate(plan.startDate)} to ${formatDate(plan.endDate)}`, 14, 50 + (10 * index));
+    });
+
+    // Add previous leaves
+    doc.addPage();
+    doc.setFillColor(100, 100, 255); // Light blue color
+    doc.rect(0, 0, 210, 30, 'F');
+    doc.setFontSize(20);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Rapport d'employee", 14, 20);
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Previous Leaves:', 14, 40);
+    employeeData.previousLeaves?.forEach((leave, index) => {
+      doc.text(`${leave.leaveName} from ${formatDate(leave.startDate)} to ${formatDate(leave.endDate)}`, 14, 50 + (10 * index));
+    });
+
+    // Add previous login methods
+    doc.addPage();
+    doc.setFillColor(100, 100, 255); // Light blue color
+    doc.rect(0, 0, 210, 30, 'F');
+    doc.setFontSize(20);
+    doc.setTextColor(255, 255, 255);
+    doc.text("Rapport d'employee", 14, 20);
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Previous Login Methods:', 14, 40);
+    employeeData.previousLoginMethods?.forEach((method, index) => {
+      doc.text(`${method.methodType} assigned to ${method.assignedTo?.nom} ${method.assignedTo?.prenom}`, 14, 50 + (10 * index));
     });
 
     const pdfBlob = doc.output('blob');
@@ -267,7 +295,37 @@ const EmployeeDetails = () => {
                 {employeeData.previousPlannings?.map((plan, index) => (
                   <Grid item xs={12} md={6} key={index}>
                     <Typography variant="subtitle1">
-                      <strong>{plan.planName}:</strong> {plan.dateFrom} to {plan.dateTo}
+                      <strong>{plan.intitule}:</strong> {plan.startDate} to {plan.endDate}
+                    </Typography>
+                  </Grid>
+                ))}
+              </Grid>
+            </Paper>
+
+            <Paper sx={{ p: 2, mb: 2, bgcolor: green[50] }}>
+              <Typography variant="h6" sx={{ color: green[800], mb: 1, fontWeight: 'bold' }}>
+                <WorkIcon sx={{ verticalAlign: 'middle', mr: 1 }} />Previous Leaves
+              </Typography>
+              <Grid container spacing={2}>
+                {employeeData.previousLeaves?.map((leave, index) => (
+                  <Grid item xs={12} md={6} key={index}>
+                    <Typography variant="subtitle1">
+                      <strong>{leave.leaveName}:</strong> {leave.startDate} to {leave.endDate}
+                    </Typography>
+                  </Grid>
+                ))}
+              </Grid>
+            </Paper>
+
+            <Paper sx={{ p: 2, mb: 2, bgcolor: red[50] }}>
+              <Typography variant="h6" sx={{ color: red[800], mb: 1, fontWeight: 'bold' }}>
+                <HistoryIcon sx={{ verticalAlign: 'middle', mr: 1 }} />Previous Login Methods
+              </Typography>
+              <Grid container spacing={2}>
+                {employeeData.previousLoginMethods?.map((method, index) => (
+                  <Grid item xs={12} md={6} key={index}>
+                    <Typography variant="subtitle1">
+                      <strong>{method.methodType}:</strong> {method.assignedTo ? `${method.assignedTo.nom} ${method.assignedTo.prenom}` : 'N/A'}
                     </Typography>
                   </Grid>
                 ))}

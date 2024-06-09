@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchLoginMethods } from '../../store/loginMethodsSlice';
+import { fetchLoginMethods, deleteLoginMethod as deleteMethod } from '../../store/loginMethodsSlice';
 import {
   Typography, Grid, TextField, MenuItem, Button, IconButton, Dialog,
   DialogActions, DialogContent, DialogTitle, Snackbar, Alert, Stack, Pagination
@@ -24,8 +24,6 @@ const LoginMethods = () => {
 
   const [selectedMethod, setSelectedMethod] = useState('');
   const [inputValue, setInputValue] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState('');
-  const [selectedEmployee, setSelectedEmployee] = useState('');
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -38,12 +36,6 @@ const LoginMethods = () => {
   const rowsPerPage = 6;
 
   const loginMethodsOptions = ['Card', 'Fingerprint', 'Password'];
-  const departments = ['HR', 'Finance', 'IT'];
-  const employeesByDepartment = {
-    HR: ['John Doe', 'Jane Smith'],
-    Finance: ['Alice Johnson', 'Bob Brown'],
-    IT: ['Mark Davis', 'Emily Wilson']
-  };
 
   const addLoginMethod = async () => {
     if (selectedMethod && inputValue) {
@@ -66,8 +58,6 @@ const LoginMethods = () => {
       // Reset fields
       setSelectedMethod('');
       setInputValue('');
-      setSelectedDepartment('');
-      setSelectedEmployee('');
     } else {
       alert('Please fill in all fields.');
     }
@@ -85,11 +75,11 @@ const LoginMethods = () => {
     }
   };
 
-  const deleteLoginMethod = async (id) => {
+  const deleteLoginMethod = (id) => {
     setMethodToDelete(id);
     setConfirmDialogOpen(true);
   };
-  
+
   useEffect(() => {
     fetchEmployees();
   }, []);
@@ -105,7 +95,7 @@ const LoginMethods = () => {
 
   const confirmDeleteMethod = async () => {
     try {
-      await axios.delete(`https://schoolomegup-api.onrender.com/api/loginMethods/delete/${methodToDelete}`);
+      await dispatch(deleteMethod(methodToDelete));
       setSnackbarMessage('Login method deleted successfully!');
       dispatch(fetchLoginMethods(page, rowsPerPage));
     } catch (error) {

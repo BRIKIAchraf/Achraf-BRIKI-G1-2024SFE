@@ -6,14 +6,21 @@ export const fetchLoginMethods = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get('https://schoolomegup-api.onrender.com/api/loginMethods/list');
-      console.log("API Response:", response.data);
       return response.data;
     } catch (error) {
-      console.error("Error fetching login methods:", error);
       return rejectWithValue(error.response.data);
     }
   }
 );
+
+export const deleteLoginMethod = createAsyncThunk('loginMethods/deleteLoginMethod', async (id, { rejectWithValue }) => {
+  try {
+    await axios.put(`https://schoolomegup-api.onrender.com/api/loginMethods/delete/${id}`); // Update to PUT for soft delete
+    return id;
+  } catch (error) {
+    return rejectWithValue(error.response.data);
+  }
+});
 
 const loginMethodsSlice = createSlice({
   name: 'loginMethods',
@@ -31,13 +38,15 @@ const loginMethodsSlice = createSlice({
       })
       .addCase(fetchLoginMethods.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        state.loginMethods = action.payload.loginMethods; // Accessing the array correctly
-        state.totalCount = action.payload.totalCount; // Accessing the total count correctly
-        console.log("Login Methods:", state.loginMethods);
+        state.loginMethods = action.payload.loginMethods;
+        state.totalCount = action.payload.totalCount;
       })
       .addCase(fetchLoginMethods.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload || action.error.message;
+      })
+      .addCase(deleteLoginMethod.fulfilled, (state, action) => {
+        state.loginMethods = state.loginMethods.filter(method => method._id !== action.payload);
       });
   }
 });
