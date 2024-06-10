@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, IconButton, List, ListItem, ListItemText, Card, CardContent, CardHeader, Divider, styled, Typography } from '@mui/material';
+import { TextField, Button, FormControl, InputLabel, Select, MenuItem, Grid, IconButton, List, ListItem, ListItemText, Card, CardContent, CardHeader, Divider, styled, Typography, Box } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -36,8 +36,9 @@ const AddPlanningForm = () => {
   const [intitule, setIntitule] = useState('');
   const [planningStartDate, setPlanningStartDate] = useState(null);
   const [planningEndDate, setPlanningEndDate] = useState(null);
-  const [jours, setJours] = useState([{ h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
+  const [sessions, setSessions] = useState([{ h_entree: '', h_sortie: '' }]);
   const [employees, setEmployees] = useState([]); // All available employees
+  const [assignedEmployees, setAssignedEmployees] = useState([]); // Employees assigned to the planning
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
@@ -56,24 +57,22 @@ const AddPlanningForm = () => {
     fetchEmployees();
   }, []);
 
-  const handleJourChange = (index, field, value) => {
-    const newJours = [...jours];
-    newJours[index][field] = value;
-    setJours(newJours);
+  const handleSessionChange = (sessionIndex, field, value) => {
+    const newSessions = [...sessions];
+    newSessions[sessionIndex][field] = value;
+    setSessions(newSessions);
   };
 
-  const handleEmployeeChange = (index, value) => {
-    const newJours = [...jours];
-    newJours[index].employees = value;
-    setJours(newJours);
+  const handleEmployeeChange = (value) => {
+    setAssignedEmployees(value);
   };
 
-  const addJour = () => {
-    setJours([...jours, { h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
+  const addSession = () => {
+    setSessions([...sessions, { h_entree: '', h_sortie: '' }]);
   };
 
-  const removeJour = (index) => {
-    setJours(jours.filter((_, idx) => idx !== index));
+  const removeSession = (sessionIndex) => {
+    setSessions(sessions.filter((_, idx) => idx !== sessionIndex));
   };
 
   const handleSubmit = async (event) => {
@@ -82,14 +81,11 @@ const AddPlanningForm = () => {
       intitule,
       planningStartDate,
       planningEndDate,
-      jours: jours.map(jour => ({
-        ...jour,
-        h_entree1: convertTimeToDate(jour.h_entree1),
-        h_sortie1: convertTimeToDate(jour.h_sortie1),
-        h_entree2: convertTimeToDate(jour.h_entree2),
-        h_sortie2: convertTimeToDate(jour.h_sortie2)
+      sessions: sessions.map(session => ({
+        h_entree: convertTimeToDate(session.h_entree),
+        h_sortie: convertTimeToDate(session.h_sortie)
       })),
-      employees: jours.flatMap(jour => jour.employees)
+      employees: assignedEmployees
     };
     try {
       await axios.post('https://schoolomegup-api.onrender.com/api/plannings', planningData);
@@ -97,7 +93,8 @@ const AddPlanningForm = () => {
       setIntitule('');
       setPlanningStartDate(null);
       setPlanningEndDate(null);
-      setJours([{ h_entree1: '', h_sortie1: '', h_entree2: '', h_sortie2: '', employees: [] }]);
+      setSessions([{ h_entree: '', h_sortie: '' }]);
+      setAssignedEmployees([]);
     } catch (error) {
       console.error('Error adding planning:', error);
     }
@@ -118,7 +115,7 @@ const AddPlanningForm = () => {
       <CardContent>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <form onSubmit={handleSubmit}>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{ marginBottom: 2 }}>
               <Grid item xs={12}>
                 <CustomTextField
                   fullWidth
@@ -143,73 +140,71 @@ const AddPlanningForm = () => {
                   renderInput={(params) => <CustomTextField {...params} />}
                 />
               </Grid>
-              {jours.map((jour, index) => (
-                <React.Fragment key={index}>
-                  {['Matin', 'Apres-Midi'].map((period, pIndex) => (
-                    <React.Fragment key={period}>
-                      <Grid item xs={3}>
-                        <CustomTextField
-                          type="time"
-                          label={`Heure Entrée ${pIndex + 1} (${period})`}
-                          value={jour[`h_entree${pIndex + 1}`]}
-                          onChange={(e) => handleJourChange(index, `h_entree${pIndex + 1}`, e.target.value)}
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </Grid>
-                      <Grid item xs={3}>
-                        <CustomTextField
-                          type="time"
-                          label={`Heure Sortie ${pIndex + 1} (${period})`}
-                          value={jour[`h_sortie${pIndex + 1}`]}
-                          onChange={(e) => handleJourChange(index, `h_sortie${pIndex + 1}`, e.target.value)}
-                          InputLabelProps={{ shrink: true }}
-                        />
-                      </Grid>
-                    </React.Fragment>
-                  ))}
-                  <Grid item xs={12}>
-                    <FormControl fullWidth>
-                      <InputLabel>Assigner un employe</InputLabel>
-                      <Select
-                        multiple
-                        value={jour.employees}
-                        onChange={(e) => handleEmployeeChange(index, e.target.value)}
-                        renderValue={(selected) => (
-                          <List dense>
-                            {selected.map((id) => (
-                              <ListItem key={id}>
-                                <ListItemText primary={employees.find(emp => emp._id === id)?.nom} />
-                              </ListItem>
-                            ))}
-                          </List>
-                        )}
-                      >
-                        {Array.isArray(employees) && employees.map(emp => (
-                          <MenuItem key={emp._id} value={emp._id}>
-                            {emp.nom} {emp.prenom}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
+              {sessions.map((session, sessionIndex) => (
+                <Grid container spacing={2} key={sessionIndex} sx={{ alignItems: 'flex-end', marginTop: 2 }}>
+                  <Grid item xs={5}>
+                    <CustomTextField
+                      type="time"
+                      label={`Heure Entrée ${sessionIndex + 1}`}
+                      value={session.h_entree}
+                      onChange={(e) => handleSessionChange(sessionIndex, 'h_entree', e.target.value)}
+                      InputLabelProps={{ shrink: true }}
+                    />
                   </Grid>
-                  <Grid item xs={1} style={{ display: 'flex', alignItems: 'flex-end' }}>
-                    <IconButton onClick={() => removeJour(index)} color="error">
+                  <Grid item xs={5}>
+                    <CustomTextField
+                      type="time"
+                      label={`Heure Sortie ${sessionIndex + 1}`}
+                      value={session.h_sortie}
+                      onChange={(e) => handleSessionChange(sessionIndex, 'h_sortie', e.target.value)}
+                      InputLabelProps={{ shrink: true }}
+                    />
+                  </Grid>
+                  <Grid item xs={2}>
+                    <IconButton onClick={() => removeSession(sessionIndex)} color="error">
                       <DeleteIcon />
                     </IconButton>
                   </Grid>
-                </React.Fragment>
+                </Grid>
               ))}
-              <Grid item xs={12}>
-                <Button startIcon={<AddCircleOutlineIcon />} onClick={addJour} variant="outlined">
-                  Ajouter un jour
+              <Grid item xs={12} sx={{ marginTop: 2 }}>
+                <Button startIcon={<AddCircleOutlineIcon />} onClick={addSession} variant="outlined" fullWidth>
+                  Ajouter une session
                 </Button>
               </Grid>
-              <Grid item xs={12}>
-                <Button type="submit" variant="contained" color="primary">Ajouter l'Horaire</Button>
+              <Grid item xs={12} sx={{ marginTop: 2 }}>
+                <FormControl fullWidth>
+                  <InputLabel>Assigner un employe</InputLabel>
+                  <Select
+                    multiple
+                    value={assignedEmployees}
+                    onChange={(e) => handleEmployeeChange(e.target.value)}
+                    renderValue={(selected) => (
+                      <List dense>
+                        {selected.map((id) => (
+                          <ListItem key={id}>
+                            <ListItemText primary={employees.find(emp => emp._id === id)?.nom} />
+                          </ListItem>
+                        ))}
+                      </List>
+                    )}
+                  >
+                    {Array.isArray(employees) && employees.map(emp => (
+                      <MenuItem key={emp._id} value={emp._id}>
+                        {emp.nom} {emp.prenom}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} sx={{ marginTop: 2 }}>
+                <Button type="submit" variant="contained" color="primary" fullWidth>
+                  Ajouter l'Horaire
+                </Button>
               </Grid>
               {successMessage && (
-                <Grid item xs={12}>
-                  <Typography color="green">{successMessage}</Typography>
+                <Grid item xs={12} sx={{ marginTop: 2 }}>
+                  <Typography color="green" align="center">{successMessage}</Typography>
                 </Grid>
               )}
             </Grid>
